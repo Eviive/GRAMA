@@ -64,7 +64,7 @@ public class Node {
 	public List<Node> getNeighbors() {
 		return linkList.stream()
 					   .map(Link::getDestination)
-				       .collect(Collectors.toList());
+					   .collect(Collectors.toList());
 	}
 	
 	/**

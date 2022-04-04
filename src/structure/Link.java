@@ -1,5 +1,8 @@
 package structure;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The class representing a Link
  * @author VAILLON Albert
@@ -57,6 +60,18 @@ public class Link {
 	 */
 	public Node getDestination() {
 		return destination;
+	}
+	
+	public List<Node> getLinkedNodes() {
+		for (Link departingLinks: destination.getNodeLinks()) {
+			if (departingLinks.getDestination().getNodeLinks().contains(this)) {
+				List<Node> nodes = new ArrayList<>();
+				nodes.add(departingLinks.destination);
+				nodes.add(destination);
+				return nodes;
+			}
+		}
+		return null;
 	}
 	
 	@Override

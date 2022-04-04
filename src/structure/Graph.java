@@ -51,4 +51,20 @@ public class Graph {
 		return cpt;
 	}
 	
+	/**
+	 * @param type The type of Links we will count
+	 * @return Returns the number of Links with the right type
+	 */
+	public int getNumberLinkType(LinkType type) {
+		int cpt = 0;
+		for (Node node: nodeList.values()) {
+			for (Link link: node.getNodeLinks()) {
+				if (link.getType() == type) {
+					cpt++;
+				}
+			}
+		}
+		return cpt / 2;
+	}
+	
 }
