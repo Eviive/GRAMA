@@ -26,11 +26,11 @@ public class Graph {
 			System.out.println("The graph is empty");
 		} else {
 			for (Node node: nodeList.values()) {
-				System.out.printf("%-22s=>%-4s", node, "");
+				System.out.printf("%-50s",node);
 				
 				List<Link> nodeNeighbors = node.getNodeLinks();
 				for (Link link: nodeNeighbors) {
-					System.out.printf("%-40s\t", link);
+					System.out.printf("%-70s",link);
 				}
 				System.out.println();
 			}
