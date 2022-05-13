@@ -52,6 +52,13 @@ public class Node {
 	}
 	
 	/**
+	 * @return Returns the name of the Node
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
 	 * @return Returns the list of the Node's links
 	 */
 	public List<Link> getNodeLinks() {
