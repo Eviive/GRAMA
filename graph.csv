@@ -5,7 +5,7 @@ V:Oullins|A:7:Lyon|A:14:Venissieux
 V:Lyon|D:2:Food Society Part-Dieu|D:2:La-Part-Dieu|A:7:Oullins|D:2:Bento Mania|D:8:Bron|A:33:Vienne|A:16:Venissieux
 R:Bento Mania|D:2:Lyon|D:0:La-Part-Dieu|D:3:Villeurbanne|D:7:Bron
 V:Venissieux|D:9:Food Society Part-Dieu|A:16:Lyon|A:14:Oullins|A:28:Vienne|A:21:Chasse-sur-Rhone
-V:Bron|D:8:Lyon|D:7:Bento Mania|D:2:KFC Bron|D:2:Porte des Alpes
+V:Bron|D:8:Lyon|D:7:Bento Mania|D:6:Villeurbanne|D:2:KFC Bron|D:2:Porte des Alpes
 R:KFC Bron|D:0:Porte des Alpes|D:2:Bron|N:7:Villeurbanne
 V:Vienne|A:28:Venissieux|A:33:Lyon|A:27:Chanas|A:11:Chasse-sur-Rhone|A:10:Centre Commercial Chasse|D:13:Saint-Clair-du-Rhone
 L:Porte des Alpes|D:2:Bron|D:9:Villeurbanne|D:0:KFC Bron
