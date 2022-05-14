@@ -2,7 +2,6 @@ package structure;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -115,17 +114,22 @@ public class Graph {
 	}
 	
 	/**
+	 * @return Returns the number of Nodes
+	 */
+	public int getNumberNodeType() {
+		return nodeList.size();
+	}
+	
+	/**
 	 * @param type The type of Nodes we will count
 	 * @return Returns the number of Nodes with the right type
 	 */
 	public int getNumberNodeType(NodeType type) {
-		int cpt = 0;
-		for (Node node: nodeList.values()) {
-			if (node.getType() == type) {
-				cpt++;
-			}
-		}
-		return cpt;
+		Long nbNodes = nodeList.values()
+							   .stream()
+							   .filter(node -> node.getType() == type)
+							   .count();
+		return nbNodes.intValue();
 	}
 	
 	/**
@@ -133,15 +137,12 @@ public class Graph {
 	 * @return Returns the number of Links with the right type
 	 */
 	public int getNumberLinkType(LinkType type) {
-		int cpt = 0;
-		for (Node node: nodeList.values()) {
-			for (Link link: node.getNodeLinks()) {
-				if (link.getType() == type) {
-					cpt++;
-				}
-			}
-		}
-		return cpt / 2;
+		Long nbLinks = nodeList.values()
+							   .stream()
+							   .flatMap(node -> node.getNodeLinks().stream())
+							   .filter(link -> link.getType() == type)
+							   .count();
+		return nbLinks.intValue() / 2;
 	}
 	
 }

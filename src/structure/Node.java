@@ -18,30 +18,11 @@ public class Node {
 	 * Creates a new Node
 	 * @param type The type of the Node
 	 * @param name The name of the Node
-	 * @throws LoadGraphException If <code>switchType(type)</code> throws a LoadGraphException
+	 * @throws LoadGraphException If <code>NodeType.typeOf(type)</code> throws a LoadGraphException
 	 */
 	public Node(char type, String name) throws LoadGraphException {
-		this.type = switchType(type);
+		this.type = NodeType.typeOf(type);
 		this.name = name;
-	}
-	
-	/**
-	 * Converts the character type in its corresponding <code>NodeType</code> constant
-	 * @param type The character type
-	 * @return Returns the corresponding <code>NodeType</code> constant
-	 * @throws LoadGraphException If the type is not valid
-	 */
-	public static NodeType switchType(char type) throws LoadGraphException {
-		switch (type) {
-			case 'V':
-				return NodeType.CITY;
-			case 'R':
-				return NodeType.RESTAURANT;
-			case 'L':
-				return NodeType.RECREATION;
-			default:
-				throw new LoadGraphException("Switch node type is invalid (should be V, R, or L)");
-		}
 	}
 	
 	/**
@@ -70,7 +51,7 @@ public class Node {
 	 */
 	public List<Node> getNeighbors() {
 		return linkList.stream()
-					   .map(Link::getDestination)
+					   .map(link -> link.getDestination())
 					   .collect(Collectors.toList());
 	}
 	
@@ -80,7 +61,7 @@ public class Node {
 	 */
 	public List<Node> getNeighbors(NodeType type) {
 		return linkList.stream()
-					   .map(Link::getDestination)
+					   .map(link -> link.getDestination())
 					   .filter(node -> node.getType() == type)
 					   .collect(Collectors.toList());
 	}

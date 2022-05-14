@@ -17,35 +17,16 @@ public class Link {
 	 * @param distance The distance of the Link
 	 * @param departure The Node that the Link starts from
 	 * @param destination The Node that the Link points to
-	 * @throws LoadGraphException If <code>switchType(type)</code> throws a LoadGraphException
+	 * @throws LoadGraphException If <code>LinkType.typeOf(type)</code> throws a LoadGraphException
 	 */
 	public Link(char type, int distance, Node departure, Node destination) throws LoadGraphException {
-		this.type = switchType(type);
+		this.type = LinkType.typeOf(type);
 		if (distance < 0) {
 			throw new LoadGraphException("Negative weighting is not authorized in the graph");
 		}
 		this.distance = distance;
 		this.departure = departure;
 		this.destination = destination;
-	}
-	
-	/**
-	 * Converts the character type in its corresponding <code>LinkType</code> constant
-	 * @param type The character type
-	 * @return Returns the corresponding <code>LinkType</code> constant
-	 * @throws LoadGraphException If the type is not valid
-	 */
-	public static LinkType switchType(char type) throws LoadGraphException {
-		switch (type) {
-			case 'A':
-				return LinkType.HIGHWAY;
-			case 'N':
-				return LinkType.NATIONAL;
-			case 'D':
-				return LinkType.DEPARTMENTAL;
-			default:
-				throw new LoadGraphException("Switch link type is invalid (should be H, N, or D)");
-		}
 	}
 	
 	/**

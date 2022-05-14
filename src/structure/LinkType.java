@@ -2,8 +2,29 @@ package structure;
 
 public enum LinkType {
 	
-	HIGHWAY,
-	NATIONAL,
-	DEPARTMENTAL
+	HIGHWAY('A'),
+	NATIONAL('N'),
+	DEPARTMENTAL('D');
+	
+	private char csvChar;
+	
+	LinkType(char csvChar) {
+		this.csvChar = csvChar;
+	}
+	
+	/**
+	 * Converts the character type in its corresponding <code>LinkType</code> constant
+	 * @param text The character type
+	 * @return Returns the corresponding <code>LinkType</code> constant
+	 * @throws LoadGraphException If the type is not valid
+	 */
+	public static LinkType typeOf(char text) throws LoadGraphException {
+		for (LinkType type: values()) {
+			if (type.csvChar == text) {
+				return type;
+			}
+		}
+		throw new LoadGraphException("Link type is invalid (should be A, N, or D)");
+	}
 	
 }
