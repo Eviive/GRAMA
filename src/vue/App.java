@@ -5,19 +5,29 @@
 package vue;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.JOptionPane;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
+import structure.Graph;
+import structure.LinkType;
+import structure.LoadGraphException;
+import structure.NodeType;
 
 /**
  *	
  * @author Lilian BAUDRY
  */
 public class App extends javax.swing.JFrame {
-
+	
+	private Graph graph;
+	private SpinnerNumberModel numberModel = new SpinnerNumberModel(0, 0, 0, 1);
+	
 	/**
 	 * Creates new form NewJFrame
 	 */
 	public App() {
 		initComponents();
+		jumpNumberSpinner.setModel(numberModel);
 	}
 
 	/**
@@ -30,6 +40,7 @@ public class App extends javax.swing.JFrame {
         restaurantComparisonGroup = new javax.swing.ButtonGroup();
         culturalComparisonGroup = new javax.swing.ButtonGroup();
         openComparisonGroup = new javax.swing.ButtonGroup();
+        graphFileChooser = new javax.swing.JFileChooser();
         counterPanel = new javax.swing.JPanel();
         cityCounterLabel = new javax.swing.JLabel();
         restaurantCounterLabel = new javax.swing.JLabel();
@@ -120,31 +131,36 @@ public class App extends javax.swing.JFrame {
         HelpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Graph maps analysis");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Graph Map Analysis");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setMinimumSize(new java.awt.Dimension(800, 480));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         counterPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         counterPanel.setPreferredSize(new java.awt.Dimension(720, 60));
         counterPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 50, 20));
 
-        cityCounterLabel.setText("Villes : 94");
+        cityCounterLabel.setText("Villes : 0");
         counterPanel.add(cityCounterLabel);
 
-        restaurantCounterLabel.setText("Restaurants : 21");
+        restaurantCounterLabel.setText("Restaurants : 0");
         counterPanel.add(restaurantCounterLabel);
 
-        recreationCounterLabel.setText("Loisirs : 4 ");
+        recreationCounterLabel.setText("Loisirs : 0");
         counterPanel.add(recreationCounterLabel);
 
-        departementalCounterLabel.setText("Departementales : 5");
+        departementalCounterLabel.setText("Départementales : 0");
         counterPanel.add(departementalCounterLabel);
 
-        nationalCounterLabel.setText("Nationales : 2");
+        nationalCounterLabel.setText("Nationales : 0");
         counterPanel.add(nationalCounterLabel);
 
-        highwayCounterLabel.setText("Autoroutes: 5");
+        highwayCounterLabel.setText("Autoroutes : 0");
         counterPanel.add(highwayCounterLabel);
 
         getContentPane().add(counterPanel, java.awt.BorderLayout.SOUTH);
@@ -165,15 +181,13 @@ public class App extends javax.swing.JFrame {
         placePanel.add(placeNameLabel);
 
         placeNameField.setEditable(false);
-        placeNameField.setText("IUT - Lyon 1");
         placePanel.add(placeNameField);
 
         placeCategoryLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        placeCategoryLabel.setText("Categorie");
+        placeCategoryLabel.setText("Catégorie");
         placePanel.add(placeCategoryLabel);
 
         placeCategoryField.setEditable(false);
-        placeCategoryField.setText("Loisir");
         placeCategoryField.setMaximumSize(new java.awt.Dimension(2147483647, 10));
         placePanel.add(placeCategoryField);
 
@@ -209,12 +223,22 @@ public class App extends javax.swing.JFrame {
         jumpLabel.setText("Nombre de sauts");
         jumpSelectorPanel.add(jumpLabel);
 
-        jumpNumberSlider.setMaximum(30);
-        jumpNumberSlider.setValue(10);
+        jumpNumberSlider.setMaximum(0);
+        jumpNumberSlider.setValue(0);
         jumpNumberSlider.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
+        jumpNumberSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jumpNumberSliderStateChanged(evt);
+            }
+        });
         jumpNumberSelectorPanel.add(jumpNumberSlider);
 
         jumpNumberSpinner.setToolTipText("");
+        jumpNumberSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jumpNumberSpinnerStateChanged(evt);
+            }
+        });
         jumpNumberSelectorPanel.add(jumpNumberSpinner);
 
         jumpSelectorPanel.add(jumpNumberSelectorPanel);
@@ -246,19 +270,17 @@ public class App extends javax.swing.JFrame {
         linkPanel.setLayout(new java.awt.GridLayout(0, 2, 0, 20));
 
         linkcategoryLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        linkcategoryLabel.setText("Categorie");
+        linkcategoryLabel.setText("Catégorie");
         linkPanel.add(linkcategoryLabel);
 
         linkCategoryField.setEditable(false);
-        linkCategoryField.setText("Autoroute");
         linkPanel.add(linkCategoryField);
 
         linkDistanceLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        linkDistanceLabel.setText("Kilometrage");
+        linkDistanceLabel.setText("Kilométrage");
         linkPanel.add(linkDistanceLabel);
 
         linkDistanceField.setEditable(false);
-        linkDistanceField.setText("16 km");
         linkDistanceField.setMaximumSize(new java.awt.Dimension(2147483647, 10));
         linkPanel.add(linkDistanceField);
 
@@ -304,22 +326,18 @@ public class App extends javax.swing.JFrame {
 
         linkDepartureNameField.setEditable(false);
         linkDepartureNameField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        linkDepartureNameField.setText("IUT - Lyon 1");
         relationPanel.add(linkDepartureNameField);
 
         linkArrivalNameField.setEditable(false);
         linkArrivalNameField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        linkArrivalNameField.setText("McDo");
         relationPanel.add(linkArrivalNameField);
 
         linkDepartureCategoryField.setEditable(false);
         linkDepartureCategoryField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        linkDepartureCategoryField.setText("Loisir");
         relationPanel.add(linkDepartureCategoryField);
 
         linkArrivalCategoryField.setEditable(false);
         linkArrivalCategoryField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        linkArrivalCategoryField.setText("Restaurant");
         relationPanel.add(linkArrivalCategoryField);
 
         linkDataPanel.add(relationPanel);
@@ -340,11 +358,7 @@ public class App extends javax.swing.JFrame {
         comparisonSelectorSecondCityLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         comparisonSelectorSecondCityLabel.setText("Ville n°2");
         comparisonPanel.add(comparisonSelectorSecondCityLabel);
-
-        comparisonSelectorFirstCityComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dijon" }));
         comparisonPanel.add(comparisonSelectorFirstCityComboBox);
-
-        comparisonSelectorSecondCityComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Lyon" }));
         comparisonPanel.add(comparisonSelectorSecondCityComboBox);
 
         comparisonDataPanel.add(comparisonPanel);
@@ -380,7 +394,7 @@ public class App extends javax.swing.JFrame {
         restaurantComparisonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 25, 5));
 
         restaurantComparisonGroup.add(firstCityRestaurantComparisonRadio);
-        firstCityRestaurantComparisonRadio.setSelected(true);
+        firstCityRestaurantComparisonRadio.setEnabled(false);
         restaurantComparisonPanel.add(firstCityRestaurantComparisonRadio);
 
         restaurantComparisonLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -410,7 +424,7 @@ public class App extends javax.swing.JFrame {
         recreationComparisonPanel.add(recreationComparisonLabel);
 
         culturalComparisonGroup.add(secondCityRecreationComparisonRadio);
-        secondCityRecreationComparisonRadio.setSelected(true);
+        secondCityRecreationComparisonRadio.setEnabled(false);
         recreationComparisonPanel.add(secondCityRecreationComparisonRadio);
 
         comparisonDataPanel.add(recreationComparisonPanel);
@@ -422,7 +436,7 @@ public class App extends javax.swing.JFrame {
         cityComparisonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 25, 5));
 
         openComparisonGroup.add(firstCityOpenComparisonRadio);
-        firstCityOpenComparisonRadio.setSelected(true);
+        firstCityOpenComparisonRadio.setEnabled(false);
         cityComparisonPanel.add(firstCityOpenComparisonRadio);
 
         cityComparisonLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -452,11 +466,7 @@ public class App extends javax.swing.JFrame {
         destinationItinaryLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         destinationItinaryLabel.setText("Destination");
         itinaryPanel.add(destinationItinaryLabel);
-
-        originItinaryComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Villeurbanne" }));
         itinaryPanel.add(originItinaryComboBox);
-
-        destinationItinaryComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "La part dieu" }));
         itinaryPanel.add(destinationItinaryComboBox);
 
         itineraryDataPanel.add(itinaryPanel);
@@ -521,7 +531,7 @@ public class App extends javax.swing.JFrame {
 
         itineraryDataPanel.add(submitPanel);
 
-        dataPanel.addTab("Itineraires", itineraryDataPanel);
+        dataPanel.addTab("Itinéraires", itineraryDataPanel);
 
         getContentPane().add(dataPanel, java.awt.BorderLayout.EAST);
 
@@ -539,9 +549,19 @@ public class App extends javax.swing.JFrame {
         fileMenu.setText("Fichier");
 
         openMenuItem.setText("Ouvrir");
+        openMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(openMenuItem);
 
         closeMenuItem.setText("Quitter");
+        closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(closeMenuItem);
 
         MenuBar.add(fileMenu);
@@ -549,6 +569,11 @@ public class App extends javax.swing.JFrame {
         HelpMenu.setText("?");
 
         aboutMenuItem.setText("A propos");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
         HelpMenu.add(aboutMenuItem);
 
         MenuBar.add(HelpMenu);
@@ -558,15 +583,65 @@ public class App extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+	
+	private void confirmClose() {
+		int retour = JOptionPane.showConfirmDialog(this, "Souhaitez-vous vraiment quitter l'application ?", "Attention", JOptionPane.WARNING_MESSAGE);
+		if (retour == JOptionPane.OK_OPTION) {
+			System.exit(0);
+		}
+	}
+	
+    private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
+        int retour = graphFileChooser.showOpenDialog(this);
+		if (retour == javax.swing.JFileChooser.APPROVE_OPTION) {
+			String fileName = graphFileChooser.getSelectedFile().getAbsolutePath();
+			try {
+				graph = new Graph(fileName);
+				cityCounterLabel.setText("Villes : " + Integer.toString(graph.getNumberNodeType(NodeType.CITY)));
+				restaurantCounterLabel.setText("Restaurants : " + Integer.toString(graph.getNumberNodeType(NodeType.RESTAURANT)));
+				recreationCounterLabel.setText("Loisirs : " + Integer.toString(graph.getNumberNodeType(NodeType.RECREATION)));
+				departementalCounterLabel.setText("Départmentales : " + Integer.toString(graph.getNumberLinkType(LinkType.DEPARTMENTAL)));
+				nationalCounterLabel.setText("Nationales : " + Integer.toString(graph.getNumberLinkType(LinkType.NATIONAL)));
+				highwayCounterLabel.setText("Autoroutes : " + Integer.toString(graph.getNumberLinkType(LinkType.HIGHWAY)));
+				int nbNodes = graph.getNumberNodeType() - 1;
+				jumpNumberSlider.setValue(0);
+				jumpNumberSlider.setMaximum(nbNodes);
+				numberModel.setValue(0);
+				numberModel.setMaximum(nbNodes);
+			} catch (LoadGraphException e) {
+				JOptionPane.showConfirmDialog(this, e.getMessage(), "Attention", JOptionPane.DEFAULT_OPTION);
+			}
+		}
+    }//GEN-LAST:event_openMenuItemActionPerformed
+
+    private void closeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMenuItemActionPerformed
+        confirmClose();
+    }//GEN-LAST:event_closeMenuItemActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        confirmClose();
+    }//GEN-LAST:event_formWindowClosing
+
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        JOptionPane.showConfirmDialog(this, "Graph Map Analysis - Application Java - Version 1.0", "A propos", JOptionPane.DEFAULT_OPTION);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
+
+    private void jumpNumberSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jumpNumberSliderStateChanged
+		jumpNumberSpinner.setValue(jumpNumberSlider.getValue());
+    }//GEN-LAST:event_jumpNumberSliderStateChanged
+
+    private void jumpNumberSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jumpNumberSpinnerStateChanged
+		jumpNumberSlider.setValue((int)jumpNumberSpinner.getValue());
+    }//GEN-LAST:event_jumpNumberSpinnerStateChanged
 
 	/**
 	 * @param args the command line arguments
 	 */
 	public static void main(String args[]) {
 		try {
-			UIManager.setLookAndFeel( new FlatLightLaf() );
-		} catch( Exception ex ) {
-			System.err.println( "Failed to initialize LaF" );
+			UIManager.setLookAndFeel(new FlatLightLaf());
+		} catch(Exception ex) {
+			System.err.println("Failed to initialize LaF");
 		}
 
 		/* Create and display the form */
@@ -607,6 +682,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JRadioButton firstCityOpenComparisonRadio;
     private javax.swing.JRadioButton firstCityRecreationComparisonRadio;
     private javax.swing.JRadioButton firstCityRestaurantComparisonRadio;
+    private javax.swing.JFileChooser graphFileChooser;
     private javax.swing.JLabel graphLabel;
     private javax.swing.JScrollPane graphPanel;
     private javax.swing.JLabel highwayCounterLabel;
