@@ -18,7 +18,7 @@ L:Green-7|D:6:Le-Peage-de-Rousillon|D:1:Burger King Salaise|N:2:Chanas
 V:Chanas|A:27:Vienne|N:2:Green-7|D:2:Burger King Salaise|D:5:Salaise-sur-Sanne|D:5:Au fil de l'Eau|A:4:Tain-l'Hermitage|D:8:Le-Peage-de-Rousillon|D:20:Annonay
 V:Tain-l'Hermitage|A:4:Chanas|A:37:Saint-Rambert-d'Albon
 R:Burger King Salaise|D:6:Le-Peage-de-Rousillon|D:1:Green-7|D:2:Chanas
-V:Salaise-sur-Sanne|D:5:Chanas|D:1:Royal d'Asie|D:21:Beaurepaire
+V:Salaise-sur-Sanne|D:5:Chanas|D:1:Royal d'Asie|D:21:Beaurepaire|D:28:Hauterives
 R:Au fil de l'Eau|D:5:Chanas|D:1:Saint-Rambert-d'Albon
 V:Saint-Rambert-d'Albon|D:1:Au fil de l'Eau|D:22:Hauterives|D:6:Anneyron|D:24:Beaurepaire|A:37:Tain-l'Hermitage|D:8:La tour d'Albon
 L:La tour d'Albon|D:2:Albon|D:8:Saint-Rambert-d'Albon|D:17:Hauterives
