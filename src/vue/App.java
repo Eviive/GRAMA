@@ -19,7 +19,7 @@ import structure.NodeType;
  */
 public class App extends javax.swing.JFrame {
 	
-	private Graph graph;
+	private Graph graph = new Graph();
 	private SpinnerNumberModel numberModel = new SpinnerNumberModel(0, 0, 0, 1);
 	
 	/**
@@ -596,13 +596,13 @@ public class App extends javax.swing.JFrame {
 		if (retour == javax.swing.JFileChooser.APPROVE_OPTION) {
 			String fileName = graphFileChooser.getSelectedFile().getAbsolutePath();
 			try {
-				graph = new Graph(fileName);
-				cityCounterLabel.setText("Villes : " + Integer.toString(graph.getNumberNodeType(NodeType.CITY)));
-				restaurantCounterLabel.setText("Restaurants : " + Integer.toString(graph.getNumberNodeType(NodeType.RESTAURANT)));
-				recreationCounterLabel.setText("Loisirs : " + Integer.toString(graph.getNumberNodeType(NodeType.RECREATION)));
-				departementalCounterLabel.setText("Départmentales : " + Integer.toString(graph.getNumberLinkType(LinkType.DEPARTMENTAL)));
-				nationalCounterLabel.setText("Nationales : " + Integer.toString(graph.getNumberLinkType(LinkType.NATIONAL)));
-				highwayCounterLabel.setText("Autoroutes : " + Integer.toString(graph.getNumberLinkType(LinkType.HIGHWAY)));
+				graph.load(fileName);
+				cityCounterLabel.setText("Villes : " + graph.getNumberNodeType(NodeType.CITY));
+				restaurantCounterLabel.setText("Restaurants : " + graph.getNumberNodeType(NodeType.RESTAURANT));
+				recreationCounterLabel.setText("Loisirs : " + graph.getNumberNodeType(NodeType.RECREATION));
+				departementalCounterLabel.setText("Départmentales : " + graph.getNumberLinkType(LinkType.DEPARTMENTAL));
+				nationalCounterLabel.setText("Nationales : " + graph.getNumberLinkType(LinkType.NATIONAL));
+				highwayCounterLabel.setText("Autoroutes : " + graph.getNumberLinkType(LinkType.HIGHWAY));
 				int nbNodes = graph.getNumberNodeType() - 1;
 				jumpNumberSlider.setValue(0);
 				jumpNumberSlider.setMaximum(nbNodes);

@@ -1,10 +1,11 @@
 package structure;
 
 /**
- * The class representing a Link
+ * The class representing a link
  * @author VAILLON Albert
+ * @version JDK 11.0.13
  */
-public class Link {
+public final class Link {
 	
 	private final LinkType type;
 	private final int distance;
@@ -30,28 +31,28 @@ public class Link {
 	}
 	
 	/**
-	 * @return Returns the type of the Link
+	 * @return Returns the type of this Link
 	 */
 	public LinkType getType() {
 		return type;
 	}
 	
 	/**
-	 * @return Returns the distance of the Link
+	 * @return Returns the distance of this Link
 	 */
 	public int getDistance() {
 		return distance;
 	}
 	
 	/**
-	 * @return Returns the departure of the Link
+	 * @return Returns the departure of this Link
 	 */
 	public Node getDeparture() {
 		return departure;
 	}
 	
 	/**
-	 * @return Returns the destination of the Link
+	 * @return Returns the destination of this Link
 	 */
 	public Node getDestination() {
 		return destination;

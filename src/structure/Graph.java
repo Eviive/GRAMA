@@ -7,30 +7,28 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * The class representing the Graph
+ * The class representing a graph
  * @author VAILLON Albert
+ * @version JDK 11.0.13
  */
-public class Graph {
+public final class Graph {
 	
-	private HashMap<String, Node> nodeList;
-	
-	public Graph(String fileName) throws LoadGraphException {
-		load(fileName);
-	}
+	private HashMap<String, Node> nodeMap;
 	
 	/**
 	 * Loads all the file's data in the structure
 	 * @param fileName The name of the file where the data is stored
+	 * @throws LoadGraphException If the file does not match the following pattern :<blockquote><code>nodeCategory:nodeName|linkCategory:linkDistance:linkDestination|...</code></blockquote>
 	 */
-	private void load(String fileName) throws LoadGraphException {
-		nodeList = new HashMap<>();
+	public void load(String fileName) throws LoadGraphException {
+		nodeMap = new HashMap<>();
 		try {
 			BufferedReader readGraph = new BufferedReader(new FileReader(fileName));	
-			// loads all the nodes into the nodeList ArrayList
+			// loads all the nodes into the nodeMap ArrayList
 			String row;
 			while ((row = readGraph.readLine()) != null) {
 				String node[] = row.split("\\|")[0].split(":");
-				getNodeList().put(node[1], new Node(node[0].charAt(0), node[1]));
+				getNodeMap().put(node[1], new Node(node[0].charAt(0), node[1]));
 			}
 			readGraph.close();
 
@@ -41,12 +39,12 @@ public class Graph {
 
 				// selects the node corresponding to the links
 				String[] departure = elements[0].split(":");
-				Node nodeDeparture = getNodeList().get(departure[1]);
+				Node nodeDeparture = getNodeMap().get(departure[1]);
 
 				// fills the neighborsList with the neighbors of the node
 				for (int i = 1; i < elements.length; i++) {
 					String element[] = elements[i].split(":");
-					Node destination = getNodeList().get(element[2]);
+					Node destination = getNodeMap().get(element[2]);
 					if (destination == null) {
 						throw new LoadGraphException("Cannot find the destination " + element[2] + " / " + nodeDeparture);
 					}
@@ -59,26 +57,67 @@ public class Graph {
 		} catch (Exception e) {
 			throw new LoadGraphException();
 		}
-		if (nodeList.isEmpty()) {
+		if (nodeMap.isEmpty()) {
 			throw new LoadGraphException();
 		}
 	}
 	
 	/**
-	 * @return Returns the list of all the Nodes from the Graph
+	 * @return Returns the <code>List</code> of all the <code>Nodes</code> of this <code>Graph</code>
 	 */
-	public HashMap<String, Node> getNodeList() {
-		return nodeList;
+	public HashMap<String, Node> getNodeMap() {
+		return nodeMap;
 	}
 	
 	/**
-	 * Displays the Graph in a format close to the source file's
+	 * @return Returns the <code>List</code> of all the <code>Links</code> of this <code>Graph</code>
+	 */
+	public List<Link> getLinks() {
+		return nodeMap.values()
+					  .stream()
+					  .flatMap(node -> node.getNodeLinks().stream())
+					  .distinct()
+					  .collect(Collectors.toList());
+	}
+	
+	/**
+	 * @return Returns the number of <code>Nodes</code> of this <code>Graph</code>
+	 */
+	public int getNumberNodeType() {
+		return nodeMap.size();
+	}
+	
+	/**
+	 * @param type The type of <code>Nodes</code> we will count
+	 * @return Returns the number of <code>Nodes</code> with the right type of this <code>Graph</code>
+	 */
+	public int getNumberNodeType(NodeType type) {
+		Long nbNodes = nodeMap.values()
+							  .stream()
+							  .filter(node -> node.getType() == type)
+							  .count();
+		return nbNodes.intValue();
+	}
+	
+	/**
+	 * @param type The type of <code>Links</code> we will count
+	 * @return Returns the number of <code>Links</code> with the right type of this <code>Graph</code>
+	 */
+	public int getNumberLinkType(LinkType type) {
+		Long nbLinks = getLinks().stream()
+								 .filter(link -> link.getType() == type)
+								 .count();
+		return nbLinks.intValue() / 2;
+	}
+	
+	/**
+	 * Displays this <code>Graph</code> in a format close to the source file's
 	 */
 	public void display() {
-		if (nodeList.isEmpty()) {
+		if (nodeMap.isEmpty()) {
 			System.out.println("The graph is empty");
 		} else {
-			for (Node node: nodeList.values()) {
+			for (Node node: nodeMap.values()) {
 				System.out.printf("%-50s",node);
 				
 				List<Link> nodeNeighbors = node.getNodeLinks();
@@ -91,17 +130,17 @@ public class Graph {
 	}
 	
 	/**
-	 * Displays all the Nodes with the right type
-	 * @param type The type of Nodes we will display
+	 * Displays all the <code>Nodes</code> with the right type of this <code>Graph</code>
+	 * @param type The type of <code>Nodes</code> we will display
 	 */
 	public void display(NodeType type) {
-		if (nodeList.isEmpty()) {
+		if (nodeMap.isEmpty()) {
 			System.out.println("The graph is empty");
 		} else {
-			List<Node> nodes = nodeList.values()
-									   .stream()
-									   .filter(node -> node.getType() == type)
-									   .collect(Collectors.toList());
+			List<Node> nodes = nodeMap.values()
+									  .stream()
+									  .filter(node -> node.getType() == type)
+									  .collect(Collectors.toList());
 			if (nodes.isEmpty()) {
 				System.out.println("There are no Nodes of type " + type);
 			} else {
@@ -111,38 +150,6 @@ public class Graph {
 				}
 			}
 		}
-	}
-	
-	/**
-	 * @return Returns the number of Nodes
-	 */
-	public int getNumberNodeType() {
-		return nodeList.size();
-	}
-	
-	/**
-	 * @param type The type of Nodes we will count
-	 * @return Returns the number of Nodes with the right type
-	 */
-	public int getNumberNodeType(NodeType type) {
-		Long nbNodes = nodeList.values()
-							   .stream()
-							   .filter(node -> node.getType() == type)
-							   .count();
-		return nbNodes.intValue();
-	}
-	
-	/**
-	 * @param type The type of Links we will count
-	 * @return Returns the number of Links with the right type
-	 */
-	public int getNumberLinkType(LinkType type) {
-		Long nbLinks = nodeList.values()
-							   .stream()
-							   .flatMap(node -> node.getNodeLinks().stream())
-							   .filter(link -> link.getType() == type)
-							   .count();
-		return nbLinks.intValue() / 2;
 	}
 	
 }

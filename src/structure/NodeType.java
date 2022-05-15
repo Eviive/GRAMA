@@ -1,5 +1,10 @@
 package structure;
 
+/**
+ * The enum representing a node's type
+ * @author VAILLON Albert
+ * @version JDK 11.0.13
+ */
 public enum NodeType {
 	
 	CITY('V'),

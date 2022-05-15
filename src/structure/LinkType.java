@@ -1,5 +1,10 @@
 package structure;
 
+/**
+ * The enum representing a link's type
+ * @author VAILLON Albert
+ * @version JDK 11.0.13
+ */
 public enum LinkType {
 	
 	HIGHWAY('A'),

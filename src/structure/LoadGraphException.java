@@ -1,6 +1,11 @@
 package structure;
 
-public class LoadGraphException extends Exception {
+/**
+ * An exception for when the graph's file isn't valid
+ * @author VAILLON Albert
+ * @version JDK 11.0.13
+ */
+public final class LoadGraphException extends Exception {
 	
 	public LoadGraphException() {
 		super("Fichier non valide");
