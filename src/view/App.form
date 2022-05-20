@@ -9,6 +9,11 @@
     <Component class="javax.swing.ButtonGroup" name="openComparisonGroup">
     </Component>
     <Component class="javax.swing.JFileChooser" name="graphFileChooser">
+      <Properties>
+        <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="new File(&quot;.&quot;)" type="code"/>
+        </Property>
+      </Properties>
     </Component>
     <Menu class="javax.swing.JMenuBar" name="MenuBar">
       <SubComponents>
@@ -293,6 +298,9 @@
                     </Component>
                     <Component class="javax.swing.JSpinner" name="jumpNumberSpinner">
                       <Properties>
+                        <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                          <Connection code="numberNodeModel" type="code"/>
+                        </Property>
                         <Property name="toolTipText" type="java.lang.String" value=""/>
                       </Properties>
                       <Events>
@@ -543,13 +551,23 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="comparisonSelectorFirstCityComboBox">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="firstCityListModel" type="code"/>
+                    </Property>
+                  </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Node&gt;"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="comparisonSelectorSecondCityComboBox">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="secondCityListModel" type="code"/>
+                    </Property>
+                  </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Node&gt;"/>
                   </AuxValues>
                 </Component>
               </SubComponents>
@@ -792,13 +810,23 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="originItinaryComboBox">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="firstNodeListModel" type="code"/>
+                    </Property>
+                  </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Node&gt;"/>
                   </AuxValues>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="destinationItinaryComboBox">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="secondNodeListModel" type="code"/>
+                    </Property>
+                  </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Node&gt;"/>
                   </AuxValues>
                 </Component>
               </SubComponents>
@@ -866,10 +894,10 @@
                 <Property name="verticalGap" type="int" value="20"/>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="restaurantItinaryLabel">
+                <Component class="javax.swing.JLabel" name="cityItinaryLabel">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="Restaurants"/>
+                    <Property name="text" type="java.lang.String" value="Villes"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="recreationItinaryLabel">
@@ -878,24 +906,33 @@
                     <Property name="text" type="java.lang.String" value="Loisirs"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="cityItinaryLabel">
+                <Component class="javax.swing.JLabel" name="restaurantItinaryLabel">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="Villes"/>
+                    <Property name="text" type="java.lang.String" value="Restaurants"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JSpinner" name="restaurantItinarySpinner">
+                <Component class="javax.swing.JSpinner" name="cityItinarySpinner">
                   <Properties>
+                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="numberCityModel" type="code"/>
+                    </Property>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JSpinner" name="recreationItinarySpinner">
                   <Properties>
+                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="numberRecreationModel" type="code"/>
+                    </Property>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JSpinner" name="cityItinarySpinner">
+                <Component class="javax.swing.JSpinner" name="restaurantItinarySpinner">
                   <Properties>
+                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="numberRestaurantModel" type="code"/>
+                    </Property>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                 </Component>

@@ -1,33 +1,38 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-package vue;
+package view;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import java.io.File;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import model.ComboModel;
 import structure.Graph;
 import structure.LinkType;
 import structure.LoadGraphException;
+import structure.Node;
 import structure.NodeType;
 
-/**
- *	
- * @author Lilian BAUDRY
- */
 public class App extends javax.swing.JFrame {
 	
 	private Graph graph = new Graph();
-	private SpinnerNumberModel numberModel = new SpinnerNumberModel(0, 0, 0, 1);
+	
+	private SpinnerNumberModel numberNodeModel = new SpinnerNumberModel(0, 0, 0, 1);
+	private SpinnerNumberModel numberRestaurantModel = new SpinnerNumberModel(0, 0, 0, 1);
+	private SpinnerNumberModel numberRecreationModel = new SpinnerNumberModel(0, 0, 0, 1);
+	private SpinnerNumberModel numberCityModel = new SpinnerNumberModel(0, 0, 0, 1);
+	
+	private ComboModel<Node> firstNodeListModel = new ComboModel<>();
+	private ComboModel<Node> secondNodeListModel = new ComboModel<>();
+	private ComboModel<Node> firstCityListModel = new ComboModel<>();
+	private ComboModel<Node> secondCityListModel = new ComboModel<>();
 	
 	/**
-	 * Creates new form NewJFrame
+	 * Creates new form App
 	 */
 	public App() {
 		initComponents();
-		jumpNumberSpinner.setModel(numberModel);
 	}
 
 	/**
@@ -114,12 +119,12 @@ public class App extends javax.swing.JFrame {
         stepSeparationLabel = new javax.swing.JLabel();
         stepSeparation = new javax.swing.JSeparator();
         planningItinaryPanel = new javax.swing.JPanel();
-        restaurantItinaryLabel = new javax.swing.JLabel();
-        recreationItinaryLabel = new javax.swing.JLabel();
         cityItinaryLabel = new javax.swing.JLabel();
-        restaurantItinarySpinner = new javax.swing.JSpinner();
-        recreationItinarySpinner = new javax.swing.JSpinner();
+        recreationItinaryLabel = new javax.swing.JLabel();
+        restaurantItinaryLabel = new javax.swing.JLabel();
         cityItinarySpinner = new javax.swing.JSpinner();
+        recreationItinarySpinner = new javax.swing.JSpinner();
+        restaurantItinarySpinner = new javax.swing.JSpinner();
         submitPanel = new javax.swing.JPanel();
         submitButton = new javax.swing.JButton();
         graphPanel = new javax.swing.JScrollPane();
@@ -130,6 +135,8 @@ public class App extends javax.swing.JFrame {
         closeMenuItem = new javax.swing.JMenuItem();
         HelpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
+
+        graphFileChooser.setCurrentDirectory(new File("."));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Graph Map Analysis");
@@ -224,7 +231,6 @@ public class App extends javax.swing.JFrame {
         jumpSelectorPanel.add(jumpLabel);
 
         jumpNumberSlider.setMaximum(0);
-        jumpNumberSlider.setValue(0);
         jumpNumberSlider.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
         jumpNumberSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -233,6 +239,7 @@ public class App extends javax.swing.JFrame {
         });
         jumpNumberSelectorPanel.add(jumpNumberSlider);
 
+        jumpNumberSpinner.setModel(numberNodeModel);
         jumpNumberSpinner.setToolTipText("");
         jumpNumberSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -358,7 +365,11 @@ public class App extends javax.swing.JFrame {
         comparisonSelectorSecondCityLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         comparisonSelectorSecondCityLabel.setText("Ville n°2");
         comparisonPanel.add(comparisonSelectorSecondCityLabel);
+
+        comparisonSelectorFirstCityComboBox.setModel(firstCityListModel);
         comparisonPanel.add(comparisonSelectorFirstCityComboBox);
+
+        comparisonSelectorSecondCityComboBox.setModel(secondCityListModel);
         comparisonPanel.add(comparisonSelectorSecondCityComboBox);
 
         comparisonDataPanel.add(comparisonPanel);
@@ -466,7 +477,11 @@ public class App extends javax.swing.JFrame {
         destinationItinaryLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         destinationItinaryLabel.setText("Destination");
         itinaryPanel.add(destinationItinaryLabel);
+
+        originItinaryComboBox.setModel(firstNodeListModel);
         itinaryPanel.add(originItinaryComboBox);
+
+        destinationItinaryComboBox.setModel(secondNodeListModel);
         itinaryPanel.add(destinationItinaryComboBox);
 
         itineraryDataPanel.add(itinaryPanel);
@@ -500,26 +515,29 @@ public class App extends javax.swing.JFrame {
         planningItinaryPanel.setMaximumSize(new java.awt.Dimension(32767, 100));
         planningItinaryPanel.setLayout(new java.awt.GridLayout(0, 3, 40, 20));
 
-        restaurantItinaryLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        restaurantItinaryLabel.setText("Restaurants");
-        planningItinaryPanel.add(restaurantItinaryLabel);
+        cityItinaryLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cityItinaryLabel.setText("Villes");
+        planningItinaryPanel.add(cityItinaryLabel);
 
         recreationItinaryLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         recreationItinaryLabel.setText("Loisirs");
         planningItinaryPanel.add(recreationItinaryLabel);
 
-        cityItinaryLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        cityItinaryLabel.setText("Villes");
-        planningItinaryPanel.add(cityItinaryLabel);
+        restaurantItinaryLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        restaurantItinaryLabel.setText("Restaurants");
+        planningItinaryPanel.add(restaurantItinaryLabel);
 
-        restaurantItinarySpinner.setToolTipText("");
-        planningItinaryPanel.add(restaurantItinarySpinner);
+        cityItinarySpinner.setModel(numberCityModel);
+        cityItinarySpinner.setToolTipText("");
+        planningItinaryPanel.add(cityItinarySpinner);
 
+        recreationItinarySpinner.setModel(numberRecreationModel);
         recreationItinarySpinner.setToolTipText("");
         planningItinaryPanel.add(recreationItinarySpinner);
 
-        cityItinarySpinner.setToolTipText("");
-        planningItinaryPanel.add(cityItinarySpinner);
+        restaurantItinarySpinner.setModel(numberRestaurantModel);
+        restaurantItinarySpinner.setToolTipText("");
+        planningItinaryPanel.add(restaurantItinarySpinner);
 
         itineraryDataPanel.add(planningItinaryPanel);
 
@@ -584,46 +602,61 @@ public class App extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 	
-	private void confirmClose() {
-		int retour = JOptionPane.showConfirmDialog(this, "Souhaitez-vous vraiment quitter l'application ?", "Attention", JOptionPane.WARNING_MESSAGE);
+	private void confirmExit() {
+		int retour = JOptionPane.showConfirmDialog(this, "Souhaitez-vous vraiment quitter l'application ?", "Attention", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 		if (retour == JOptionPane.OK_OPTION) {
 			System.exit(0);
 		}
 	}
 	
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
-        int retour = graphFileChooser.showOpenDialog(this);
+		int retour = graphFileChooser.showOpenDialog(this);
 		if (retour == javax.swing.JFileChooser.APPROVE_OPTION) {
 			String fileName = graphFileChooser.getSelectedFile().getAbsolutePath();
 			try {
 				graph.load(fileName);
-				cityCounterLabel.setText("Villes : " + graph.getNumberNodeType(NodeType.CITY));
-				restaurantCounterLabel.setText("Restaurants : " + graph.getNumberNodeType(NodeType.RESTAURANT));
-				recreationCounterLabel.setText("Loisirs : " + graph.getNumberNodeType(NodeType.RECREATION));
+				int nbCity = graph.getNumberNodeType(NodeType.CITY);
+				int nbRestaurant = graph.getNumberNodeType(NodeType.RESTAURANT);
+				int nbRecreation = graph.getNumberNodeType(NodeType.RECREATION);
+				cityCounterLabel.setText("Villes : " + nbCity);
+				restaurantCounterLabel.setText("Restaurants : " + nbRestaurant);
+				recreationCounterLabel.setText("Loisirs : " + nbRecreation);
 				departementalCounterLabel.setText("Départmentales : " + graph.getNumberLinkType(LinkType.DEPARTMENTAL));
 				nationalCounterLabel.setText("Nationales : " + graph.getNumberLinkType(LinkType.NATIONAL));
 				highwayCounterLabel.setText("Autoroutes : " + graph.getNumberLinkType(LinkType.HIGHWAY));
 				int nbNodes = graph.getNumberNodeType() - 1;
 				jumpNumberSlider.setValue(0);
 				jumpNumberSlider.setMaximum(nbNodes);
-				numberModel.setValue(0);
-				numberModel.setMaximum(nbNodes);
+				numberNodeModel.setValue(0);
+				numberNodeModel.setMaximum(nbNodes);
+				List<Node> cityNodes = graph.getNodes(NodeType.CITY);
+				firstCityListModel.addAll(cityNodes, 0);
+				secondCityListModel.addAll(cityNodes, 1);
+				List<Node> nodes = graph.getNodes();
+				firstNodeListModel.addAll(nodes, 0);
+				secondNodeListModel.addAll(nodes, 1);
+				numberRestaurantModel.setValue(0);
+				numberRestaurantModel.setMaximum(nbRestaurant);
+				numberRecreationModel.setValue(0);
+				numberRecreationModel.setMaximum(nbRecreation);
+				numberCityModel.setValue(0);
+				numberCityModel.setMaximum(nbCity);
 			} catch (LoadGraphException e) {
-				JOptionPane.showConfirmDialog(this, e.getMessage(), "Attention", JOptionPane.DEFAULT_OPTION);
+				JOptionPane.showConfirmDialog(this, e.getMessage(), "Erreur", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 			}
 		}
     }//GEN-LAST:event_openMenuItemActionPerformed
 
     private void closeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMenuItemActionPerformed
-        confirmClose();
+        confirmExit();
     }//GEN-LAST:event_closeMenuItemActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        confirmClose();
+        confirmExit();
     }//GEN-LAST:event_formWindowClosing
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-        JOptionPane.showConfirmDialog(this, "Graph Map Analysis - Application Java - Version 1.0", "A propos", JOptionPane.DEFAULT_OPTION);
+        JOptionPane.showConfirmDialog(this, "Graph Map Analysis - Application Java - Version 1.0", "A propos", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void jumpNumberSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jumpNumberSliderStateChanged
@@ -640,16 +673,12 @@ public class App extends javax.swing.JFrame {
 	public static void main(String args[]) {
 		try {
 			UIManager.setLookAndFeel(new FlatLightLaf());
-		} catch(Exception ex) {
+		} catch(UnsupportedLookAndFeelException e) {
 			System.err.println("Failed to initialize LaF");
 		}
 
 		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				new App().setVisible(true);
-			}
-		});
+		java.awt.EventQueue.invokeLater(() -> new App().setVisible(true));
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -665,15 +694,15 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JMenuItem closeMenuItem;
     private javax.swing.JPanel comparisonDataPanel;
     private javax.swing.JPanel comparisonPanel;
-    private javax.swing.JComboBox<String> comparisonSelectorFirstCityComboBox;
+    private javax.swing.JComboBox<Node> comparisonSelectorFirstCityComboBox;
     private javax.swing.JLabel comparisonSelectorFirstCityLabel;
-    private javax.swing.JComboBox<String> comparisonSelectorSecondCityComboBox;
+    private javax.swing.JComboBox<Node> comparisonSelectorSecondCityComboBox;
     private javax.swing.JLabel comparisonSelectorSecondCityLabel;
     private javax.swing.JPanel counterPanel;
     private javax.swing.ButtonGroup culturalComparisonGroup;
     private javax.swing.JTabbedPane dataPanel;
     private javax.swing.JLabel departementalCounterLabel;
-    private javax.swing.JComboBox<String> destinationItinaryComboBox;
+    private javax.swing.JComboBox<Node> destinationItinaryComboBox;
     private javax.swing.JLabel destinationItinaryLabel;
     private javax.swing.JSeparator evaluationSeparator;
     private javax.swing.JLabel evaluationSeparatorLabel;
@@ -712,7 +741,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JPanel neighborsSeparationPanel;
     private javax.swing.ButtonGroup openComparisonGroup;
     private javax.swing.JMenuItem openMenuItem;
-    private javax.swing.JComboBox<String> originItinaryComboBox;
+    private javax.swing.JComboBox<Node> originItinaryComboBox;
     private javax.swing.JLabel originItinaryLabel;
     private javax.swing.JTextField placeCategoryField;
     private javax.swing.JLabel placeCategoryLabel;
