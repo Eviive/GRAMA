@@ -2,6 +2,7 @@ package structure;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,28 +64,54 @@ public final class Graph {
 	}
 	
 	/**
-	 * @return Returns the <code>List</code> of all the <code>Nodes</code> of this <code>Graph</code>
+	 * @return Returns the <code>HashMap</code> of all the <code>Nodes</code> of this <code>Graph</code>
 	 */
 	public HashMap<String, Node> getNodeMap() {
 		return nodeMap;
 	}
 	
 	/**
+	 * @return Returns the <code>List</code> of all the <code>Nodes</code> of this <code>Graph</code>
+	 */
+	public List<Node> getNodes() {
+		return new ArrayList(nodeMap.values());
+	}
+	
+	/**
+	 * @param type The type of <code>Node</code> we want
+	 * @return Returns the <code>List</code> of all the <code>Nodes</code> with the right type of this <code>Graph</code>
+	 */
+	public List<Node> getNodes(NodeType type){
+		return getNodes().stream()
+						 .filter(node -> node.getType() == type)
+						 .collect(Collectors.toList());
+	}
+	
+	/**
 	 * @return Returns the <code>List</code> of all the <code>Links</code> of this <code>Graph</code>
 	 */
 	public List<Link> getLinks() {
-		return nodeMap.values()
-					  .stream()
-					  .flatMap(node -> node.getNodeLinks().stream())
-					  .distinct()
-					  .collect(Collectors.toList());
+		return getNodes().stream()
+						 .flatMap(node -> node.getNodeLinks().stream())
+						 .distinct()
+						 .collect(Collectors.toList());
+	}
+	
+	/**
+	 * @param type The type of <code>Links</code> we want
+	 * @return Returns the <code>List</code> of all the <code>Links</code> of this <code>Graph</code>
+	 */
+	public List<Link> getLinks(LinkType type) {
+		return getLinks().stream()
+						 .filter(link -> link.getType() == type)
+						 .collect(Collectors.toList());
 	}
 	
 	/**
 	 * @return Returns the number of <code>Nodes</code> of this <code>Graph</code>
 	 */
 	public int getNumberNodeType() {
-		return nodeMap.size();
+		return getNodes().size();
 	}
 	
 	/**
@@ -92,11 +119,14 @@ public final class Graph {
 	 * @return Returns the number of <code>Nodes</code> with the right type of this <code>Graph</code>
 	 */
 	public int getNumberNodeType(NodeType type) {
-		Long nbNodes = nodeMap.values()
-							  .stream()
-							  .filter(node -> node.getType() == type)
-							  .count();
-		return nbNodes.intValue();
+		return getNodes(type).size();
+	}
+	
+	/**
+	 * @return Returns the number of <code>Links</code> of this <code>Graph</code>
+	 */
+	public int getNumberLinkType() {
+		return getLinks().size() / 2;
 	}
 	
 	/**
@@ -104,10 +134,7 @@ public final class Graph {
 	 * @return Returns the number of <code>Links</code> with the right type of this <code>Graph</code>
 	 */
 	public int getNumberLinkType(LinkType type) {
-		Long nbLinks = getLinks().stream()
-								 .filter(link -> link.getType() == type)
-								 .count();
-		return nbLinks.intValue() / 2;
+		return getLinks(type).size();
 	}
 	
 	/**
@@ -117,11 +144,10 @@ public final class Graph {
 		if (nodeMap.isEmpty()) {
 			System.out.println("The graph is empty");
 		} else {
-			for (Node node: nodeMap.values()) {
+			for (Node node: getNodes()) {
 				System.out.printf("%-50s",node);
 				
-				List<Link> nodeNeighbors = node.getNodeLinks();
-				for (Link link: nodeNeighbors) {
+				for (Link link: node.getNodeLinks()) {
 					System.out.printf("%-90s",link);
 				}
 				System.out.println();
@@ -134,20 +160,13 @@ public final class Graph {
 	 * @param type The type of <code>Nodes</code> we will display
 	 */
 	public void display(NodeType type) {
-		if (nodeMap.isEmpty()) {
-			System.out.println("The graph is empty");
+		List<Node> nodes = getNodes(type);
+		if (nodes.isEmpty()) {
+			System.out.println("There are no Nodes of type " + type);
 		} else {
-			List<Node> nodes = nodeMap.values()
-									  .stream()
-									  .filter(node -> node.getType() == type)
-									  .collect(Collectors.toList());
-			if (nodes.isEmpty()) {
-				System.out.println("There are no Nodes of type " + type);
-			} else {
-				System.out.println("The Nodes of type " + type + " :");
-				for (Node node: nodes) {
-					System.out.println("\t- " + node);
-				}
+			System.out.println("The Nodes of type " + type + " :");
+			for (Node node: nodes) {
+				System.out.println("\t- " + node);
 			}
 		}
 	}

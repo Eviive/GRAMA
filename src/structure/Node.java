@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
  * @author VAILLON Albert
  * @version JDK 11.0.13
  */
-public final class Node {
+public final class Node implements Comparable<Node> {
 	
 	private final NodeType type;
 	private final String name;
@@ -126,7 +126,7 @@ public final class Node {
 	}
 	
 	/**
-	 * Compares this <code>Node</code> to the specified <code>Object</code>
+	 * Evaluates if this <code>Node</code> is equal to the specified <code>Object</code>
 	 * @param o The <code>Object</code> we want to compare to this <code>Node</code>
 	 * @return Returns <code>true</code> if this <code>Node</code> and the <code>Object o</code> are the same
 	 */
@@ -140,12 +140,22 @@ public final class Node {
 	}
 	
 	/**
+	 * Compares this <code>Node</code>'s name to the specified <code>Node</code>'s name
+	 * @param node The <code>Node</code> we want to compare to this <code>Node</code>
+	 * @return Returns the <code>String</code>'s <code>compareTo()</code> between the two names
+	 */
+	@Override
+	public int compareTo(Node node) {
+		return name.compareTo(node.getName());
+	}
+	
+	/**
 	 * Creates a <code>String</code> object representing this <code>Node</code>
 	 * @return Returns a <code>String</code> representation of this <code>Node</code>
 	 */
 	@Override
 	public String toString() {
-		return type + " | " + name;
+		return name;
 	}
 	
 }
