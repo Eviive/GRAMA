@@ -1,6 +1,7 @@
 package view;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import java.awt.event.ItemEvent;
 import java.io.File;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -18,11 +19,6 @@ public class App extends javax.swing.JFrame {
 	
 	private Graph graph = new Graph();
 	
-	private SpinnerNumberModel numberNodeModel = new SpinnerNumberModel(0, 0, 0, 1);
-	private SpinnerNumberModel numberRestaurantModel = new SpinnerNumberModel(0, 0, 0, 1);
-	private SpinnerNumberModel numberRecreationModel = new SpinnerNumberModel(0, 0, 0, 1);
-	private SpinnerNumberModel numberCityModel = new SpinnerNumberModel(0, 0, 0, 1);
-	
 	private ComboModel<Node> firstNodeListModel = new ComboModel<>();
 	private ComboModel<Node> secondNodeListModel = new ComboModel<>();
 	private ComboModel<Node> firstCityListModel = new ComboModel<>();
@@ -33,6 +29,7 @@ public class App extends javax.swing.JFrame {
 	 */
 	public App() {
 		initComponents();
+		jumpNumberSpinner.getModel();
 	}
 
 	/**
@@ -42,9 +39,6 @@ public class App extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        restaurantComparisonGroup = new javax.swing.ButtonGroup();
-        culturalComparisonGroup = new javax.swing.ButtonGroup();
-        openComparisonGroup = new javax.swing.ButtonGroup();
         graphFileChooser = new javax.swing.JFileChooser();
         counterPanel = new javax.swing.JPanel();
         cityCounterLabel = new javax.swing.JLabel();
@@ -239,7 +233,7 @@ public class App extends javax.swing.JFrame {
         });
         jumpNumberSelectorPanel.add(jumpNumberSlider);
 
-        jumpNumberSpinner.setModel(numberNodeModel);
+        jumpNumberSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 0, 1));
         jumpNumberSpinner.setToolTipText("");
         jumpNumberSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -367,9 +361,19 @@ public class App extends javax.swing.JFrame {
         comparisonPanel.add(comparisonSelectorSecondCityLabel);
 
         comparisonSelectorFirstCityComboBox.setModel(firstCityListModel);
+        comparisonSelectorFirstCityComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comparisonSelectorFirstCityComboBoxItemStateChanged(evt);
+            }
+        });
         comparisonPanel.add(comparisonSelectorFirstCityComboBox);
 
         comparisonSelectorSecondCityComboBox.setModel(secondCityListModel);
+        comparisonSelectorSecondCityComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comparisonSelectorSecondCityComboBoxItemStateChanged(evt);
+            }
+        });
         comparisonPanel.add(comparisonSelectorSecondCityComboBox);
 
         comparisonDataPanel.add(comparisonPanel);
@@ -404,7 +408,6 @@ public class App extends javax.swing.JFrame {
         restaurantComparisonPanel.setMinimumSize(new java.awt.Dimension(135, 50));
         restaurantComparisonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 25, 5));
 
-        restaurantComparisonGroup.add(firstCityRestaurantComparisonRadio);
         firstCityRestaurantComparisonRadio.setEnabled(false);
         restaurantComparisonPanel.add(firstCityRestaurantComparisonRadio);
 
@@ -413,7 +416,6 @@ public class App extends javax.swing.JFrame {
         restaurantComparisonLabel.setPreferredSize(new java.awt.Dimension(100, 16));
         restaurantComparisonPanel.add(restaurantComparisonLabel);
 
-        restaurantComparisonGroup.add(secondCityRestaurantComparisonRadio);
         secondCityRestaurantComparisonRadio.setEnabled(false);
         restaurantComparisonPanel.add(secondCityRestaurantComparisonRadio);
 
@@ -425,7 +427,6 @@ public class App extends javax.swing.JFrame {
         recreationComparisonPanel.setPreferredSize(new java.awt.Dimension(198, 50));
         recreationComparisonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 25, 5));
 
-        culturalComparisonGroup.add(firstCityRecreationComparisonRadio);
         firstCityRecreationComparisonRadio.setEnabled(false);
         recreationComparisonPanel.add(firstCityRecreationComparisonRadio);
 
@@ -434,7 +435,6 @@ public class App extends javax.swing.JFrame {
         recreationComparisonLabel.setPreferredSize(new java.awt.Dimension(100, 16));
         recreationComparisonPanel.add(recreationComparisonLabel);
 
-        culturalComparisonGroup.add(secondCityRecreationComparisonRadio);
         secondCityRecreationComparisonRadio.setEnabled(false);
         recreationComparisonPanel.add(secondCityRecreationComparisonRadio);
 
@@ -446,7 +446,6 @@ public class App extends javax.swing.JFrame {
         cityComparisonPanel.setPreferredSize(new java.awt.Dimension(198, 50));
         cityComparisonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 25, 5));
 
-        openComparisonGroup.add(firstCityOpenComparisonRadio);
         firstCityOpenComparisonRadio.setEnabled(false);
         cityComparisonPanel.add(firstCityOpenComparisonRadio);
 
@@ -455,7 +454,6 @@ public class App extends javax.swing.JFrame {
         cityComparisonLabel.setPreferredSize(new java.awt.Dimension(100, 16));
         cityComparisonPanel.add(cityComparisonLabel);
 
-        openComparisonGroup.add(secondCityOpenComparisonRadio);
         secondCityOpenComparisonRadio.setEnabled(false);
         cityComparisonPanel.add(secondCityOpenComparisonRadio);
 
@@ -527,15 +525,15 @@ public class App extends javax.swing.JFrame {
         restaurantItinaryLabel.setText("Restaurants");
         planningItinaryPanel.add(restaurantItinaryLabel);
 
-        cityItinarySpinner.setModel(numberCityModel);
+        cityItinarySpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 0, 1));
         cityItinarySpinner.setToolTipText("");
         planningItinaryPanel.add(cityItinarySpinner);
 
-        recreationItinarySpinner.setModel(numberRecreationModel);
+        recreationItinarySpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 0, 1));
         recreationItinarySpinner.setToolTipText("");
         planningItinaryPanel.add(recreationItinarySpinner);
 
-        restaurantItinarySpinner.setModel(numberRestaurantModel);
+        restaurantItinarySpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 0, 1));
         restaurantItinarySpinner.setToolTipText("");
         planningItinaryPanel.add(restaurantItinarySpinner);
 
@@ -609,38 +607,57 @@ public class App extends javax.swing.JFrame {
 		}
 	}
 	
+	private void cityComparison(ItemEvent e) {
+		if (e.getStateChange() == ItemEvent.DESELECTED) return;
+		
+		Node n1 = (Node)comparisonSelectorFirstCityComboBox.getSelectedItem();
+		Node n2 = (Node)comparisonSelectorSecondCityComboBox.getSelectedItem();
+		
+		if (n1 != null && n2 != null) {
+			int returnValue = n1.isMoreLinkedToType(n2, NodeType.RESTAURANT);
+			firstCityRestaurantComparisonRadio.setSelected(returnValue == 1);
+			secondCityRestaurantComparisonRadio.setSelected(returnValue == -1);
+			returnValue = n1.isMoreLinkedToType(n2, NodeType.RECREATION);
+			firstCityRecreationComparisonRadio.setSelected(returnValue == 1);
+			secondCityRecreationComparisonRadio.setSelected(returnValue == -1);
+			returnValue = n1.isMoreLinkedToType(n2, NodeType.CITY);
+			firstCityOpenComparisonRadio.setSelected(returnValue == 1);
+			secondCityOpenComparisonRadio.setSelected(returnValue == -1);
+		}
+	}
+	
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
 		int retour = graphFileChooser.showOpenDialog(this);
 		if (retour == javax.swing.JFileChooser.APPROVE_OPTION) {
 			String fileName = graphFileChooser.getSelectedFile().getAbsolutePath();
 			try {
 				graph.load(fileName);
-				int nbCity = graph.getNumberNodeType(NodeType.CITY);
-				int nbRestaurant = graph.getNumberNodeType(NodeType.RESTAURANT);
-				int nbRecreation = graph.getNumberNodeType(NodeType.RECREATION);
+				int nbCity = graph.getNumberNodes(NodeType.CITY);
+				int nbRestaurant = graph.getNumberNodes(NodeType.RESTAURANT);
+				int nbRecreation = graph.getNumberNodes(NodeType.RECREATION);
 				cityCounterLabel.setText("Villes : " + nbCity);
 				restaurantCounterLabel.setText("Restaurants : " + nbRestaurant);
 				recreationCounterLabel.setText("Loisirs : " + nbRecreation);
-				departementalCounterLabel.setText("Départmentales : " + graph.getNumberLinkType(LinkType.DEPARTMENTAL));
-				nationalCounterLabel.setText("Nationales : " + graph.getNumberLinkType(LinkType.NATIONAL));
-				highwayCounterLabel.setText("Autoroutes : " + graph.getNumberLinkType(LinkType.HIGHWAY));
-				int nbNodes = graph.getNumberNodeType() - 1;
+				departementalCounterLabel.setText("Départmentales : " + graph.getNumberLinks(LinkType.DEPARTMENTAL));
+				nationalCounterLabel.setText("Nationales : " + graph.getNumberLinks(LinkType.NATIONAL));
+				highwayCounterLabel.setText("Autoroutes : " + graph.getNumberLinks(LinkType.HIGHWAY));
+				int nbNodes = graph.getNumberNodes() - 1;
 				jumpNumberSlider.setValue(0);
 				jumpNumberSlider.setMaximum(nbNodes);
-				numberNodeModel.setValue(0);
-				numberNodeModel.setMaximum(nbNodes);
+				jumpNumberSpinner.setValue(0);
+				((SpinnerNumberModel)jumpNumberSpinner.getModel()).setMaximum(nbNodes);
 				List<Node> cityNodes = graph.getNodes(NodeType.CITY);
 				firstCityListModel.addAll(cityNodes, 0);
 				secondCityListModel.addAll(cityNodes, 1);
 				List<Node> nodes = graph.getNodes();
 				firstNodeListModel.addAll(nodes, 0);
 				secondNodeListModel.addAll(nodes, 1);
-				numberRestaurantModel.setValue(0);
-				numberRestaurantModel.setMaximum(nbRestaurant);
-				numberRecreationModel.setValue(0);
-				numberRecreationModel.setMaximum(nbRecreation);
-				numberCityModel.setValue(0);
-				numberCityModel.setMaximum(nbCity);
+				cityItinarySpinner.setValue(0);
+				((SpinnerNumberModel)cityItinarySpinner.getModel()).setMaximum(nbRestaurant);
+				recreationItinarySpinner.setValue(0);
+				((SpinnerNumberModel)recreationItinarySpinner.getModel()).setMaximum(nbRecreation);
+				restaurantItinarySpinner.setValue(0);
+				((SpinnerNumberModel)restaurantItinarySpinner.getModel()).setMaximum(nbCity);
 			} catch (LoadGraphException e) {
 				JOptionPane.showConfirmDialog(this, e.getMessage(), "Erreur", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 			}
@@ -666,6 +683,14 @@ public class App extends javax.swing.JFrame {
     private void jumpNumberSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jumpNumberSpinnerStateChanged
 		jumpNumberSlider.setValue((int)jumpNumberSpinner.getValue());
     }//GEN-LAST:event_jumpNumberSpinnerStateChanged
+
+    private void comparisonSelectorFirstCityComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comparisonSelectorFirstCityComboBoxItemStateChanged
+		cityComparison(evt);
+    }//GEN-LAST:event_comparisonSelectorFirstCityComboBoxItemStateChanged
+
+    private void comparisonSelectorSecondCityComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comparisonSelectorSecondCityComboBoxItemStateChanged
+		cityComparison(evt);
+    }//GEN-LAST:event_comparisonSelectorSecondCityComboBoxItemStateChanged
 
 	/**
 	 * @param args the command line arguments
@@ -699,7 +724,6 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JComboBox<Node> comparisonSelectorSecondCityComboBox;
     private javax.swing.JLabel comparisonSelectorSecondCityLabel;
     private javax.swing.JPanel counterPanel;
-    private javax.swing.ButtonGroup culturalComparisonGroup;
     private javax.swing.JTabbedPane dataPanel;
     private javax.swing.JLabel departementalCounterLabel;
     private javax.swing.JComboBox<Node> destinationItinaryComboBox;
@@ -739,7 +763,6 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JSeparator neighborsSeparation;
     private javax.swing.JLabel neighborsSeparationLabel;
     private javax.swing.JPanel neighborsSeparationPanel;
-    private javax.swing.ButtonGroup openComparisonGroup;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JComboBox<Node> originItinaryComboBox;
     private javax.swing.JLabel originItinaryLabel;
@@ -760,7 +783,6 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JPanel relationSeparationPanel;
     private javax.swing.JSeparator relationSeparator;
     private javax.swing.JLabel relationSeparatorLabel;
-    private javax.swing.ButtonGroup restaurantComparisonGroup;
     private javax.swing.JLabel restaurantComparisonLabel;
     private javax.swing.JPanel restaurantComparisonPanel;
     private javax.swing.JLabel restaurantCounterLabel;

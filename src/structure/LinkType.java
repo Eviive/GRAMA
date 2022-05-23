@@ -29,7 +29,7 @@ public enum LinkType {
 				return type;
 			}
 		}
-		throw new LoadGraphException("Link type is invalid (should be A, N, or D)");
+		throw new LoadGraphException("Le type de lien " + text + " n'est pas valide, les types autorisés sont A, N, ou D");
 	}
 	
 }

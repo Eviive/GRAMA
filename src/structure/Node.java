@@ -119,10 +119,15 @@ public final class Node implements Comparable<Node> {
 	 * @param type The type of <code>Nodes</code> we're counting
 	 * @return Returns <code>true</code> if this <code>Node</code> has the same number of two jumps neighbors of type <code>type</code> than the <code>target Node</code> or more
 	 */
-	public boolean isMoreLinkedToType(Node target, NodeType type) {
-		int nbNodeCities = getNeighbors(2, new ArrayList<>(), type).size();
-		int nbTargetCities = target.getNeighbors(2, new ArrayList<>(), type).size();
-		return nbNodeCities >= nbTargetCities;
+	public int isMoreLinkedToType(Node target, NodeType type) {
+		int nbNode = getNeighbors(2, new ArrayList<>(), type).size();
+		int nbTarget = target.getNeighbors(2, new ArrayList<>(), type).size();
+		if (nbNode > nbTarget)
+			return 1;
+		else if (nbNode < nbTarget)
+			return -1;
+		else
+			return 0;
 	}
 	
 	/**

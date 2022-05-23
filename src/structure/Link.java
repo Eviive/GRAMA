@@ -23,7 +23,7 @@ public final class Link {
 	public Link(char type, int distance, Node departure, Node destination) throws LoadGraphException {
 		this.type = LinkType.typeOf(type);
 		if (distance < 0) {
-			throw new LoadGraphException("Negative weighting is not authorized in the graph");
+			throw new LoadGraphException("Les valuations négatives ne sont pas autorisées dans le graphe");
 		}
 		this.distance = distance;
 		this.departure = departure;

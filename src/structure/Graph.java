@@ -47,7 +47,7 @@ public final class Graph {
 					String element[] = elements[i].split(":");
 					Node destination = getNodeMap().get(element[2]);
 					if (destination == null) {
-						throw new LoadGraphException("Cannot find the destination " + element[2] + " / " + nodeDeparture);
+						throw new LoadGraphException("La destination " + element[2] + " en partant de " + nodeDeparture + " n'a pas été trouvé");
 					}
 					nodeDeparture.addLink(new Link(element[0].charAt(0), Integer.parseInt(element[1]), nodeDeparture, destination));
 				}
@@ -110,7 +110,7 @@ public final class Graph {
 	/**
 	 * @return Returns the number of <code>Nodes</code> of this <code>Graph</code>
 	 */
-	public int getNumberNodeType() {
+	public int getNumberNodes() {
 		return getNodes().size();
 	}
 	
@@ -118,14 +118,14 @@ public final class Graph {
 	 * @param type The type of <code>Nodes</code> we will count
 	 * @return Returns the number of <code>Nodes</code> with the right type of this <code>Graph</code>
 	 */
-	public int getNumberNodeType(NodeType type) {
+	public int getNumberNodes(NodeType type) {
 		return getNodes(type).size();
 	}
 	
 	/**
 	 * @return Returns the number of <code>Links</code> of this <code>Graph</code>
 	 */
-	public int getNumberLinkType() {
+	public int getNumberLinks() {
 		return getLinks().size() / 2;
 	}
 	
@@ -133,8 +133,8 @@ public final class Graph {
 	 * @param type The type of <code>Links</code> we will count
 	 * @return Returns the number of <code>Links</code> with the right type of this <code>Graph</code>
 	 */
-	public int getNumberLinkType(LinkType type) {
-		return getLinks(type).size();
+	public int getNumberLinks(LinkType type) {
+		return getLinks(type).size() / 2;
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public final class Graph {
 	 */
 	public void display() {
 		if (nodeMap.isEmpty()) {
-			System.out.println("The graph is empty");
+			System.out.println("Le graphe est vide");
 		} else {
 			for (Node node: getNodes()) {
 				System.out.printf("%-50s",node);
@@ -162,9 +162,9 @@ public final class Graph {
 	public void display(NodeType type) {
 		List<Node> nodes = getNodes(type);
 		if (nodes.isEmpty()) {
-			System.out.println("There are no Nodes of type " + type);
+			System.out.println("Il n'y a pas de noeuds de type " + type);
 		} else {
-			System.out.println("The Nodes of type " + type + " :");
+			System.out.println("Les noeuds de type " + type + " :");
 			for (Node node: nodes) {
 				System.out.println("\t- " + node);
 			}

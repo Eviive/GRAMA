@@ -29,7 +29,7 @@ public enum NodeType {
 				return type;
 			}
 		}
-		throw new LoadGraphException("Node type is invalid (should be V, R, or L)");
+		throw new LoadGraphException("Le type de noeud " + text + " n'est pas valide, les types autorisés sont V, R, ou L");
 	}
 	
 }

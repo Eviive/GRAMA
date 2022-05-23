@@ -21,9 +21,9 @@ public class TestGraph {
 		
 		graph.display(NodeType.CITY);
 		
-		System.out.println("\n\nNumber of recreation centers : " + graph.getNumberNodeType(NodeType.RECREATION));
+		System.out.println("\n\nNumber of recreation centers : " + graph.getNumberNodes(NodeType.RECREATION));
 		
-		System.out.println("Number of highways : " + graph.getNumberLinkType(LinkType.HIGHWAY));
+		System.out.println("Number of highways : " + graph.getNumberLinks(LinkType.HIGHWAY));
 	}
 
 }
