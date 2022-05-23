@@ -54,17 +54,16 @@ public final class Node implements Comparable<Node> {
 	 * @return The list of paths to the same neighbor
 	 * @throws ItineraryException 
 	 */
-	public List<Link> getPaths(Node neighbor) throws ItineraryException{
-		
-		List<Link> Paths = linkList.stream()
+	public List<Link> getPaths(Node neighbor) throws ItineraryException {
+		List<Link> paths = linkList.stream()
 								   .filter(link -> link.getDestination() == neighbor)
 								   .collect(Collectors.toList());
 		
-		if (Paths.isEmpty())
+		if (paths.isEmpty())
 			throw new ItineraryException("Les noeuds ne sont pas reliés");
-	
-		return Paths;
-			
+		
+		return paths;
+		
 	}
 	
 	 /**
@@ -72,18 +71,16 @@ public final class Node implements Comparable<Node> {
 	 * @return The <code>shortest</code> path to a neighbor node
 	 * @throws ItineraryException
 	 */
-	public Link getShortestPath(Node neighbor) throws ItineraryException{
-		
+	public Link getShortestPath(Node neighbor) throws ItineraryException {
 		int distance = Integer.MAX_VALUE;
 		Link path = null;
 		
-		for (Link route : getPaths(neighbor)){
-			if(route.getDistance() < distance ){
+		for (Link route: getPaths(neighbor)) {
+			if (route.getDistance() < distance) {
 				distance = route.getDistance();
 				path = route;
 			}
 		}
-		
 		return path;
 	}
 	
@@ -105,6 +102,7 @@ public final class Node implements Comparable<Node> {
 		List<Node> neighbors = linkList.stream()
 									   .map(link -> link.getDestination())
 									   .collect(Collectors.toList());
+		neighbors.add(this);
 		
 		// if it's not the last jump (nbJumps == 0) then do getNeighbors() on all of them
 		if (nbJumps > 0) {
@@ -127,12 +125,12 @@ public final class Node implements Comparable<Node> {
 	/**
 	 * @param nbJumps The number of jumps we have to do
 	 * @param results The <code>List</code> in which the results will go
-	 * @param type The type of the <code>Nodes</code> we want to get
+	 * @param types The types of the <code>Node</code> we want to get
 	 * @return Returns the <code>List</code> of all the <code>Nodes</code> of type <code>type</code> you can go to by making <code>nbJumps</code> jumps or less from this <code>Node</code>
 	 */
-	public List<Node> getNeighbors(int nbJumps, List<Node> results, NodeType type) {
+	public List<Node> getNeighbors(int nbJumps, List<Node> results, List<NodeType> types) {
 		return getNeighbors(nbJumps, results).stream()
-											 .filter(node -> node.getType() == type)
+											 .filter(node -> types.contains(node.getType()))
 											 .collect(Collectors.toList());
 	}
 	
@@ -156,12 +154,14 @@ public final class Node implements Comparable<Node> {
 	/**
 	 * Tells us if this <code>Node</code> has more two jumps neighbors of type <code>type</code> than the <code>target Node</code>
 	 * @param target The targeted <code>Node</code>
-	 * @param type The type of <code>Nodes</code> we're counting
+	 * @param type The type of <code>Node</code> we're counting
 	 * @return Returns <code>true</code> if this <code>Node</code> has the same number of two jumps neighbors of type <code>type</code> than the <code>target Node</code> or more
 	 */
 	public int isMoreLinkedToType(Node target, NodeType type) {
-		int nbNode = getNeighbors(2, new ArrayList<>(), type).size();
-		int nbTarget = target.getNeighbors(2, new ArrayList<>(), type).size();
+		List<NodeType> types = new ArrayList<>();
+		types.add(type);
+		int nbNode = getNeighbors(2, new ArrayList<>(), types).size();
+		int nbTarget = target.getNeighbors(2, new ArrayList<>(), types).size();
 		if (nbNode > nbTarget)
 			return 1;
 		else if (nbNode < nbTarget)
@@ -191,7 +191,7 @@ public final class Node implements Comparable<Node> {
 	 */
 	@Override
 	public int compareTo(Node node) {
-		return name.compareTo(node.getName());
+		return name.compareTo(node.name);
 	}
 	
 	/**

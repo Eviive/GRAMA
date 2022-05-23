@@ -3,6 +3,7 @@ package view;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.event.ItemEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
@@ -10,11 +11,18 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import model.ComboModel;
 import structure.Graph;
+import structure.ItineraryException;
+import structure.Link;
 import structure.LinkType;
 import structure.LoadGraphException;
 import structure.Node;
 import structure.NodeType;
 
+/**
+ * The class representing the user interface
+ * @author VAILLON Albert
+ * @version JDK 11.0.13
+ */
 public class App extends javax.swing.JFrame {
 	
 	private Graph graph = new Graph();
@@ -29,7 +37,6 @@ public class App extends javax.swing.JFrame {
 	 */
 	public App() {
 		initComponents();
-		jumpNumberSpinner.getModel();
 	}
 
 	/**
@@ -107,7 +114,7 @@ public class App extends javax.swing.JFrame {
         itinaryPanel = new javax.swing.JPanel();
         originItinaryLabel = new javax.swing.JLabel();
         destinationItinaryLabel = new javax.swing.JLabel();
-        originItinaryComboBox = new javax.swing.JComboBox<>();
+        departureItinaryComboBox = new javax.swing.JComboBox<>();
         destinationItinaryComboBox = new javax.swing.JComboBox<>();
         stepSeparationPanel = new javax.swing.JPanel();
         stepSeparationLabel = new javax.swing.JLabel();
@@ -126,7 +133,7 @@ public class App extends javax.swing.JFrame {
         MenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
-        closeMenuItem = new javax.swing.JMenuItem();
+        exitMenuItem = new javax.swing.JMenuItem();
         HelpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -138,7 +145,7 @@ public class App extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(800, 480));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
+                App.this.windowClosing(evt);
             }
         });
 
@@ -182,6 +189,11 @@ public class App extends javax.swing.JFrame {
         placePanel.add(placeNameLabel);
 
         placeNameField.setEditable(false);
+        placeNameField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nodeSearchbar(evt);
+            }
+        });
         placePanel.add(placeNameField);
 
         placeCategoryLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -228,7 +240,7 @@ public class App extends javax.swing.JFrame {
         jumpNumberSlider.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
         jumpNumberSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jumpNumberSliderStateChanged(evt);
+                sliderValueChanged(evt);
             }
         });
         jumpNumberSelectorPanel.add(jumpNumberSlider);
@@ -237,7 +249,7 @@ public class App extends javax.swing.JFrame {
         jumpNumberSpinner.setToolTipText("");
         jumpNumberSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jumpNumberSpinnerStateChanged(evt);
+                spinnerValueChanged(evt);
             }
         });
         jumpNumberSelectorPanel.add(jumpNumberSpinner);
@@ -363,7 +375,7 @@ public class App extends javax.swing.JFrame {
         comparisonSelectorFirstCityComboBox.setModel(firstCityListModel);
         comparisonSelectorFirstCityComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comparisonSelectorFirstCityComboBoxItemStateChanged(evt);
+                comparisonFirstComboValueChanged(evt);
             }
         });
         comparisonPanel.add(comparisonSelectorFirstCityComboBox);
@@ -371,7 +383,7 @@ public class App extends javax.swing.JFrame {
         comparisonSelectorSecondCityComboBox.setModel(secondCityListModel);
         comparisonSelectorSecondCityComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comparisonSelectorSecondCityComboBoxItemStateChanged(evt);
+                comparisonSecondComboValueChanged(evt);
             }
         });
         comparisonPanel.add(comparisonSelectorSecondCityComboBox);
@@ -476,8 +488,8 @@ public class App extends javax.swing.JFrame {
         destinationItinaryLabel.setText("Destination");
         itinaryPanel.add(destinationItinaryLabel);
 
-        originItinaryComboBox.setModel(firstNodeListModel);
-        itinaryPanel.add(originItinaryComboBox);
+        departureItinaryComboBox.setModel(firstNodeListModel);
+        itinaryPanel.add(departureItinaryComboBox);
 
         destinationItinaryComboBox.setModel(secondNodeListModel);
         itinaryPanel.add(destinationItinaryComboBox);
@@ -543,6 +555,11 @@ public class App extends javax.swing.JFrame {
         submitPanel.setLayout(new javax.swing.BoxLayout(submitPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         submitButton.setText("Valider");
+        submitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                submitItinerary(evt);
+            }
+        });
         submitPanel.add(submitButton);
 
         itineraryDataPanel.add(submitPanel);
@@ -567,18 +584,18 @@ public class App extends javax.swing.JFrame {
         openMenuItem.setText("Ouvrir");
         openMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openMenuItemActionPerformed(evt);
+                graphOpening(evt);
             }
         });
         fileMenu.add(openMenuItem);
 
-        closeMenuItem.setText("Quitter");
-        closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        exitMenuItem.setText("Quitter");
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closeMenuItemActionPerformed(evt);
+                menuItemExit(evt);
             }
         });
-        fileMenu.add(closeMenuItem);
+        fileMenu.add(exitMenuItem);
 
         MenuBar.add(fileMenu);
 
@@ -587,7 +604,7 @@ public class App extends javax.swing.JFrame {
         aboutMenuItem.setText("A propos");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aboutMenuItemActionPerformed(evt);
+                menuItemAbout(evt);
             }
         });
         HelpMenu.add(aboutMenuItem);
@@ -607,6 +624,38 @@ public class App extends javax.swing.JFrame {
 		}
 	}
 	
+	private void displayNode(Node node) {
+		placeNameField.setText(node.getName());
+		placeCategoryField.setText(node.getType().toString());
+	}
+	
+	private void displayLink(Link link) {
+		linkCategoryField.setText(link.getType().toString());
+		linkDistanceField.setText(Integer.toString(link.getDistance()));
+		
+		Node departure = link.getDeparture();
+		linkDepartureNameField.setText(departure.getName());
+		linkDepartureCategoryField.setText(departure.getType().toString());
+		
+		Node destination = link.getDestination();
+		linkArrivalNameField.setText(destination.getName());
+		linkArrivalCategoryField.setText(destination.getType().toString());
+	}
+	
+	private void displayNeighbors(Node node, int nbJumps) {
+		List<NodeType> types = new ArrayList<>();
+		
+		if (recreationSelectorCheckBox.isSelected())
+			types.add(NodeType.RECREATION);
+		if (citySelectorCheckBox.isSelected())
+			types.add(NodeType.CITY);
+		if (restaurantSelectorCheckBox.isSelected())
+			types.add(NodeType.RESTAURANT);
+		
+		List<Node> neighbors = node.getNeighbors(nbJumps, new ArrayList<>(), types);
+		System.out.println(neighbors);
+	}
+	
 	private void cityComparison(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.DESELECTED) return;
 		
@@ -617,16 +666,18 @@ public class App extends javax.swing.JFrame {
 			int returnValue = n1.isMoreLinkedToType(n2, NodeType.RESTAURANT);
 			firstCityRestaurantComparisonRadio.setSelected(returnValue == 1);
 			secondCityRestaurantComparisonRadio.setSelected(returnValue == -1);
+			
 			returnValue = n1.isMoreLinkedToType(n2, NodeType.RECREATION);
 			firstCityRecreationComparisonRadio.setSelected(returnValue == 1);
 			secondCityRecreationComparisonRadio.setSelected(returnValue == -1);
+			
 			returnValue = n1.isMoreLinkedToType(n2, NodeType.CITY);
 			firstCityOpenComparisonRadio.setSelected(returnValue == 1);
 			secondCityOpenComparisonRadio.setSelected(returnValue == -1);
 		}
 	}
 	
-    private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
+    private void graphOpening(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphOpening
 		int retour = graphFileChooser.showOpenDialog(this);
 		if (retour == javax.swing.JFileChooser.APPROVE_OPTION) {
 			String fileName = graphFileChooser.getSelectedFile().getAbsolutePath();
@@ -658,39 +709,71 @@ public class App extends javax.swing.JFrame {
 				((SpinnerNumberModel)recreationItinarySpinner.getModel()).setMaximum(nbRecreation);
 				restaurantItinarySpinner.setValue(0);
 				((SpinnerNumberModel)restaurantItinarySpinner.getModel()).setMaximum(nbCity);
+				placeNameField.setEditable(true);
 			} catch (LoadGraphException e) {
 				JOptionPane.showConfirmDialog(this, e.getMessage(), "Erreur", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 			}
 		}
-    }//GEN-LAST:event_openMenuItemActionPerformed
+    }//GEN-LAST:event_graphOpening
 
-    private void closeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMenuItemActionPerformed
+    private void menuItemExit(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemExit
         confirmExit();
-    }//GEN-LAST:event_closeMenuItemActionPerformed
+    }//GEN-LAST:event_menuItemExit
 
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+    private void windowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_windowClosing
         confirmExit();
-    }//GEN-LAST:event_formWindowClosing
+    }//GEN-LAST:event_windowClosing
 
-    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+    private void menuItemAbout(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAbout
         JOptionPane.showConfirmDialog(this, "Graph Map Analysis - Application Java - Version 1.0", "A propos", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_aboutMenuItemActionPerformed
+    }//GEN-LAST:event_menuItemAbout
 
-    private void jumpNumberSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jumpNumberSliderStateChanged
+    private void sliderValueChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderValueChanged
 		jumpNumberSpinner.setValue(jumpNumberSlider.getValue());
-    }//GEN-LAST:event_jumpNumberSliderStateChanged
+    }//GEN-LAST:event_sliderValueChanged
 
-    private void jumpNumberSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jumpNumberSpinnerStateChanged
+    private void spinnerValueChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinnerValueChanged
 		jumpNumberSlider.setValue((int)jumpNumberSpinner.getValue());
-    }//GEN-LAST:event_jumpNumberSpinnerStateChanged
+    }//GEN-LAST:event_spinnerValueChanged
 
-    private void comparisonSelectorFirstCityComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comparisonSelectorFirstCityComboBoxItemStateChanged
+    private void comparisonFirstComboValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comparisonFirstComboValueChanged
 		cityComparison(evt);
-    }//GEN-LAST:event_comparisonSelectorFirstCityComboBoxItemStateChanged
+    }//GEN-LAST:event_comparisonFirstComboValueChanged
 
-    private void comparisonSelectorSecondCityComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comparisonSelectorSecondCityComboBoxItemStateChanged
+    private void comparisonSecondComboValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comparisonSecondComboValueChanged
 		cityComparison(evt);
-    }//GEN-LAST:event_comparisonSelectorSecondCityComboBoxItemStateChanged
+    }//GEN-LAST:event_comparisonSecondComboValueChanged
+
+    private void submitItinerary(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitItinerary
+		Node departure = (Node)departureItinaryComboBox.getSelectedItem();
+		Node arrival = (Node)destinationItinaryComboBox.getSelectedItem();
+		
+		if (departure != null && arrival != null) {
+			try {
+				List<Link> itinerary = graph.getShortestItinerary(departure, arrival);
+				
+				System.out.print(departure);
+				if (!itinerary.isEmpty()) {
+					for (Link link: itinerary) {
+						System.out.print("  ->  " + link.getDestination());
+					}
+				}
+				System.out.println("        Distance total : " + graph.getDistancePath(itinerary) + "km");
+				
+			} catch (ItineraryException e) {
+				JOptionPane.showConfirmDialog(this, e.getMessage(), "Erreur", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			}
+		}
+    }//GEN-LAST:event_submitItinerary
+
+    private void nodeSearchbar(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeSearchbar
+		Node search = graph.getNode(placeNameField.getText());
+		if (search != null) {
+			displayNode(search);
+			displayNeighbors(search, jumpNumberSlider.getValue());
+			displayLink(search.getNodeLinks().get(0)); // for testing purposes
+		}
+    }//GEN-LAST:event_nodeSearchbar
 
 	/**
 	 * @param args the command line arguments
@@ -716,7 +799,6 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel cityItinaryLabel;
     private javax.swing.JSpinner cityItinarySpinner;
     private javax.swing.JCheckBox citySelectorCheckBox;
-    private javax.swing.JMenuItem closeMenuItem;
     private javax.swing.JPanel comparisonDataPanel;
     private javax.swing.JPanel comparisonPanel;
     private javax.swing.JComboBox<Node> comparisonSelectorFirstCityComboBox;
@@ -726,11 +808,13 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JPanel counterPanel;
     private javax.swing.JTabbedPane dataPanel;
     private javax.swing.JLabel departementalCounterLabel;
+    private javax.swing.JComboBox<Node> departureItinaryComboBox;
     private javax.swing.JComboBox<Node> destinationItinaryComboBox;
     private javax.swing.JLabel destinationItinaryLabel;
     private javax.swing.JSeparator evaluationSeparator;
     private javax.swing.JLabel evaluationSeparatorLabel;
     private javax.swing.JPanel evaluationSeparatorPanel;
+    private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JRadioButton firstCityOpenComparisonRadio;
     private javax.swing.JRadioButton firstCityRecreationComparisonRadio;
@@ -764,7 +848,6 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel neighborsSeparationLabel;
     private javax.swing.JPanel neighborsSeparationPanel;
     private javax.swing.JMenuItem openMenuItem;
-    private javax.swing.JComboBox<Node> originItinaryComboBox;
     private javax.swing.JLabel originItinaryLabel;
     private javax.swing.JTextField placeCategoryField;
     private javax.swing.JLabel placeCategoryLabel;
