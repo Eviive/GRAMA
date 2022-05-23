@@ -7,14 +7,14 @@ package structure;
  */
 public enum LinkType {
 	
-	HIGHWAY('A'),
-	NATIONAL('N'),
-	DEPARTMENTAL('D');
+	HIGHWAY("Autoroute"),
+	NATIONAL("National"),
+	DEPARTMENTAL("Départemental");
 	
-	private char csvChar;
+	private String name;
 	
-	LinkType(char csvChar) {
-		this.csvChar = csvChar;
+	LinkType(String name) {
+		this.name = name;
 	}
 	
 	/**
@@ -25,11 +25,16 @@ public enum LinkType {
 	 */
 	public static LinkType typeOf(char text) throws LoadGraphException {
 		for (LinkType type: values()) {
-			if (type.csvChar == text) {
+			if (type.name.charAt(0) == text) {
 				return type;
 			}
 		}
 		throw new LoadGraphException("Le type de lien " + text + " n'est pas valide, les types autorisés sont A, N, ou D");
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 	
 }

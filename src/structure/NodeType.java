@@ -7,14 +7,14 @@ package structure;
  */
 public enum NodeType {
 	
-	CITY('V'),
-	RESTAURANT('R'),
-	RECREATION('L');
+	CITY("Ville"),
+	RESTAURANT("Restaurant"),
+	RECREATION("Loisir");
 	
-	private char csvChar;
+	private String name;
 	
-	NodeType(char csvChar) {
-		this.csvChar = csvChar;
+	NodeType(String name) {
+		this.name = name;
 	}
 	
 	/**
@@ -25,11 +25,16 @@ public enum NodeType {
 	 */
 	public static NodeType typeOf(char text) throws LoadGraphException {
 		for (NodeType type: values()) {
-			if (type.csvChar == text) {
+			if (type.name.charAt(0) == text) {
 				return type;
 			}
 		}
 		throw new LoadGraphException("Le type de noeud " + text + " n'est pas valide, les types autorisés sont V, R, ou L");
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 	
 }
