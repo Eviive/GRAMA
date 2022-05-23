@@ -28,24 +28,23 @@ public class TestGraph {
 		
 		System.out.println("\n\nNumber of recreation centers : " + graph.getNumberNodes(NodeType.RECREATION));
 		
-		System.out.println("Number of highways : " + graph.getNumberLinkType(LinkType.HIGHWAY));
+		System.out.println("Number of highways : " + graph.getNumberLinks(LinkType.HIGHWAY));
 		
 		Node albon = graph.getNode("Albon");
 		Node portDesAlpes = graph.getNode("Porte des Alpes");
 		
-		if (albon != null && portDesAlpes!= null){
-			try{
+		if (albon != null && portDesAlpes != null) {
+			try {
 				List<Link> shortestPath = graph.getShortestItinerary(portDesAlpes,albon);
 				System.out.printf("\nThe shortest distance between Albon and Porte des Alpes is %d km \n",graph.getDistancePath(shortestPath));
-				for (Link e : shortestPath){
-					System.out.println("\t" + e.getDeparture()+ " -> " + e.getDestination());
+				for (Link link: shortestPath) {
+					System.out.println("\t" + link.getDeparture()+ " -> " + link.getDestination());
 				}
 				
-			}catch (ItineraryException e){
+			} catch (ItineraryException e) {
 				System.err.println(e.getMessage());
 			}
 		}
-		
 	}
 
 }

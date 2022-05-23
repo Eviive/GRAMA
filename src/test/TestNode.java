@@ -1,6 +1,7 @@
 package test;
 
 import java.util.ArrayList;
+import java.util.List;
 import structure.Graph;
 import structure.ItineraryException;
 import structure.LoadGraphException;
@@ -23,25 +24,29 @@ public class TestNode {
 		Node lyon = graph.getNode("Lyon");
 		Node vienne = graph.getNode("Vienne");
 		
-		if (chanas != null ) {
+		if (chanas != null) {
 			System.out.println("Chanas' neighbors : " + chanas.getNeighbors(1, new ArrayList<>()) + "\n");
-			System.out.println("Chanas' restaurant neighbors : " + chanas.getNeighbors(2, new ArrayList<>(), NodeType.RESTAURANT) + "\n");
 			
-			try{
+			List<NodeType> types = new ArrayList<>();
+			types.add(NodeType.RESTAURANT);
+			System.out.println("Chanas' restaurant neighbors : " + chanas.getNeighbors(2, new ArrayList<>(), types) + "\n");
+			
+			try {
 				System.out.println("Chanas is " + chanas.getShortestPath(graph.getNode("Annonay")).getDistance() + " km from Annonay");
-			}catch(ItineraryException e){
+			} catch (ItineraryException e) {
 				System.err.println(e.getMessage());
 			}
 			
-			if (lyon != null){
+			if (lyon != null) {
 				System.out.println("Lyon is at two jumps from Chanas : " + lyon.isTwoDistance(chanas));
 				System.out.println("Lyon is connected to more two jump cities : " + lyon.isMoreLinkedToType(chanas, NodeType.CITY));
 			}
 			
-			try{
-				if (vienne != null)
-					System.out.printf("List of routes between Lyon and Vienne : %s\n",lyon.getPaths(vienne));
-			}catch(ItineraryException e){
+			try {
+				if (lyon != null && vienne != null)
+					System.out.printf("List of routes between Lyon and Vienne : %s\n", lyon.getPaths(vienne));
+				
+			} catch (ItineraryException e) {
 				System.err.println(e.getMessage());
 			}
 

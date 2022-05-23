@@ -170,8 +170,7 @@ public final class Graph {
 	}
 	
 	/**
-	 * The dijkstra shortest path resolution algorithm
-	 * 
+	 * The Dijkstra shortest path resolution algorithm
 	 * @param departure The starting node
 	 * @param arrival	The arrival node
 	 * @return A list of link representing the shortest path between 2 places

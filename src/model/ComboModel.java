@@ -6,6 +6,12 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 
+/**
+ * The class representing a graph
+ * @author VAILLON Albert
+ * @version JDK 11.0.13
+ * @param <E> The type of object of the model
+ */
 public class ComboModel<E extends Comparable> extends AbstractListModel<E> implements ComboBoxModel<E> {
 	
 	private List<E> items = new ArrayList<>();
