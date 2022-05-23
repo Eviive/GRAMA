@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 /**
  * The class representing a node
  * @author VAILLON Albert
+ * @author BAUDRY Lilian
  * @version JDK 11.0.13
  */
 public final class Node implements Comparable<Node> {
@@ -45,6 +46,45 @@ public final class Node implements Comparable<Node> {
 	 */
 	public List<Link> getNodeLinks() {
 		return linkList;
+	}
+	
+	
+	/**
+	 * @param neighbor A neighbor of this node
+	 * @return The list of paths to the same neighbor
+	 * @throws ItineraryException 
+	 */
+	public List<Link> getPaths(Node neighbor) throws ItineraryException{
+		
+		List<Link> Paths = linkList.stream()
+								   .filter(link -> link.getDestination() == neighbor)
+								   .collect(Collectors.toList());
+		
+		if (Paths.isEmpty())
+			throw new ItineraryException("Les noeuds ne sont pas reliés");
+	
+		return Paths;
+			
+	}
+	
+	 /**
+	 * @param neighbor A neighbor of this node
+	 * @return The <code>shortest</code> path to a neighbor node
+	 * @throws ItineraryException
+	 */
+	public Link getShortestPath(Node neighbor) throws ItineraryException{
+		
+		int distance = Integer.MAX_VALUE;
+		Link path = null;
+		
+		for (Link route : getPaths(neighbor)){
+			if(route.getDistance() < distance ){
+				distance = route.getDistance();
+				path = route;
+			}
+		}
+		
+		return path;
 	}
 	
 	/**

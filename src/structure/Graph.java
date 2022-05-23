@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 /**
  * The class representing a graph
  * @author VAILLON Albert
+ * @author BAUDRY Lilian
  * @version JDK 11.0.13
  */
 public final class Graph {
@@ -68,6 +69,14 @@ public final class Graph {
 	 */
 	public HashMap<String, Node> getNodeMap() {
 		return nodeMap;
+	}
+	
+	/**
+	 * @param name The <code>key</code> of the node hashmap
+	 * @return Returns the <code>Node</code> corresponding to the <code>String</code> of the <code>Graph</code>
+	 */
+	public Node getNode(String name){
+		return nodeMap.get(name);
 	}
 	
 	/**
@@ -135,6 +144,102 @@ public final class Graph {
 	 */
 	public int getNumberLinks(LinkType type) {
 		return getLinks(type).size() / 2;
+	}
+
+	/**
+	 * @param path A list of link representing a path
+	 * @return The total distance in kilometer
+	 * @throws ItineraryException 
+	 */
+	public int getDistancePath(List<Link> path) throws ItineraryException{
+		
+		int distance = 0;
+		
+		if (path.isEmpty())
+			return distance;
+		
+		distance += path.get(0).getDistance();
+		
+		for (int i = 1 ; i < path.size() ; i++){
+			if (path.get(i-1).getDestination()!=path.get(i).getDeparture())
+				throw new ItineraryException("Chemin invalide");
+			distance += path.get(i).getDistance();
+		}
+		
+		return distance;
+	}
+	
+	/**
+	 * The dijkstra shortest path resolution algorithm
+	 * 
+	 * @param departure The starting node
+	 * @param arrival	The arrival node
+	 * @return A list of link representing the shortest path between 2 places
+	 * @throws ItineraryException 
+	 */
+	public List<Link> getShortestItinerary(Node departure, Node arrival) throws ItineraryException{
+		
+		List<Node> notProcess = new ArrayList<>();
+		List<Integer> distances = new ArrayList<>();
+		
+		List<Node> nodes = getNodes();
+		Link previousLink[] = new Link[nodes.size()];
+		
+		// Dijkstra Initialization
+		for (Node place : nodeMap.values()){
+			notProcess.add(place);
+			
+			if (place == departure)
+				distances.add(0);
+			else
+				distances.add(Integer.MAX_VALUE);
+		}
+		
+		// Search until the path is found or inaccessible
+		while (!notProcess.isEmpty() || notProcess.contains(arrival) ){
+			
+			// Definition of the nearest node index
+			int indexMin = 0;
+			for (int i = 0 ; i < distances.size() ; i++){
+				if (distances.get(i) < distances.get(indexMin)){
+					indexMin = i;
+				}
+			}
+			
+			// Treatment of neighbors not yet treated
+			int distance = distances.remove(indexMin);
+			Node processing = notProcess.remove(indexMin);
+			
+			for (Node node : processing.getNeighbors(1, new ArrayList<>())){
+				if (notProcess.contains(node)){
+					int indice = notProcess.indexOf(node);
+					
+					// Updates of the shortest distances
+					if (distance + processing.getShortestPath(node).getDistance() < distances.get(indice)){
+						distances.set(indice, distance + processing.getShortestPath(node).getDistance());
+						previousLink[nodes.indexOf(node)] = processing.getShortestPath(node);
+					}
+				}
+			}
+		}
+		
+		// Path construction
+		List<Link> path = new ArrayList<>();
+		
+		Node dest = arrival;
+		while (dest != departure){ 
+			
+			int indice = nodes.indexOf(dest);
+			Link step = previousLink[indice];
+			
+			if (step == null)
+				throw new ItineraryException("Ce noeud est inaccessible !");
+			
+			path.add(0, step);
+			dest = step.getDeparture();
+		}
+		
+		return path;
 	}
 	
 	/**
