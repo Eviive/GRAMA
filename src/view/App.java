@@ -750,7 +750,10 @@ public class App extends javax.swing.JFrame {
 		
 		if (departure != null && arrival != null) {
 			try {
-				List<Link> itinerary = graph.getShortestItinerary(departure, arrival);
+				List<Link> itinerary = graph.getShortestItinerary(departure, arrival, 
+						(Integer) restaurantItinarySpinner.getValue(), 
+						(Integer) cityItinarySpinner.getValue(), 
+						(Integer) recreationItinarySpinner.getValue());
 				
 				System.out.print(departure);
 				if (!itinerary.isEmpty()) {
