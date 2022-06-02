@@ -1,5 +1,7 @@
 package structure;
 
+import java.awt.Color;
+
 /**
  * The enum representing a link's type
  * @author VAILLON Albert
@@ -7,14 +9,16 @@ package structure;
  */
 public enum LinkType {
 	
-	HIGHWAY("Autoroute"),
-	NATIONAL("National"),
-	DEPARTMENTAL("Départemental");
+	HIGHWAY("Autoroute",new Color(220,20,20)),
+	NATIONAL("National",new Color(19, 217, 15)),
+	DEPARTMENTAL("Départemental",new Color(20,20,220));
 	
 	private String name;
+	private Color color;
 	
-	LinkType(String name) {
+	LinkType(String name, Color color) {
 		this.name = name;
+		this.color = color;
 	}
 	
 	/**
@@ -30,6 +34,10 @@ public enum LinkType {
 			}
 		}
 		throw new LoadGraphException("Le type de lien " + text + " n'est pas valide, les types autorisés sont A, N, ou D");
+	}
+	
+	public Color getColor(){
+		return color;
 	}
 	
 	@Override

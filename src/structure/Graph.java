@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  */
 public final class Graph {
 	
-	private HashMap<String, Node> nodeMap;
+	private HashMap<String, Node> nodeMap = new HashMap<>();
 	
 	/**
 	 * Loads all the file's data in the structure
@@ -23,7 +23,7 @@ public final class Graph {
 	 * @throws LoadGraphException If the file does not match the following pattern :<blockquote><code>nodeCategory:nodeName|linkCategory:linkDistance:linkDestination|...</code></blockquote>
 	 */
 	public void load(String fileName) throws LoadGraphException {
-		nodeMap = new HashMap<>();
+		nodeMap.clear();
 		try {
 			BufferedReader readGraph = new BufferedReader(new FileReader(fileName));	
 			// loads all the nodes into the nodeMap ArrayList

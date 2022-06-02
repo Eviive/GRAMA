@@ -1,5 +1,7 @@
 package structure;
 
+import java.awt.Color;
+
 /**
  * The enum representing a node's type
  * @author VAILLON Albert
@@ -7,14 +9,16 @@ package structure;
  */
 public enum NodeType {
 	
-	CITY("Ville"),
-	RESTAURANT("Restaurant"),
-	RECREATION("Loisir");
+	CITY("Ville",new Color(220,20,20)),
+	RESTAURANT("Restaurant",new Color(20,20,220)),
+	RECREATION("Loisir",new Color(20,220,20));
 	
 	private String name;
+	private Color color;
 	
-	NodeType(String name) {
+	NodeType(String name , Color color) {
 		this.name = name;
+		this.color = color;
 	}
 	
 	/**
@@ -30,6 +34,10 @@ public enum NodeType {
 			}
 		}
 		throw new LoadGraphException("Le type de noeud " + text + " n'est pas valide, les types autorisés sont V, R, ou L");
+	}
+	
+	public Color getColor(){
+		return color;
 	}
 	
 	@Override
