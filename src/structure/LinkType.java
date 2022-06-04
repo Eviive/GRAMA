@@ -5,6 +5,7 @@ import java.awt.Color;
 /**
  * The enum representing a link's type
  * @author VAILLON Albert
+ * @author BAUDRY Lilian
  * @version JDK 11.0.13
  */
 public enum LinkType {
@@ -34,6 +35,10 @@ public enum LinkType {
 			}
 		}
 		throw new LoadGraphException("Le type de lien " + text + " n'est pas valide, les types autorisés sont A, N, ou D");
+	}
+
+	public char getCharID() {
+		return name.charAt(0);
 	}
 	
 	public Color getColor(){

@@ -20,6 +20,7 @@ import structure.NodeType;
 
 /**
  * The class representing the user interface
+ * @author BAUDRY Lilian
  * @author VAILLON Albert
  * @version JDK 11.0.13
  */
@@ -42,7 +43,12 @@ public class App extends javax.swing.JFrame {
 	public void initGraphUI(){
 		
 		canvas.initNodes(graph.getNodes());
-		canvas.setNodes(graph.getNodes());
+		canvas.setDisplayNodes(graph.getNodes());
+		try {
+			canvas.setDisplayLinks(graph.getShortestItinerary(graph.getNode("Albon"), graph.getNode("Chanas")));
+		} catch (ItineraryException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	/**
