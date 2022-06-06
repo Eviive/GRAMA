@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  */
 public final class Graph {
 	
-	private HashMap<String, Node> nodeMap;
+	private HashMap<String, Node> nodeMap = new HashMap<>();
 	
 	/**
 	 * Loads all the file's data in the structure
@@ -23,7 +23,7 @@ public final class Graph {
 	 * @throws LoadGraphException If the file does not match the following pattern :<blockquote><code>nodeCategory:nodeName|linkCategory:linkDistance:linkDestination|...</code></blockquote>
 	 */
 	public void load(String fileName) throws LoadGraphException {
-		nodeMap = new HashMap<>();
+		nodeMap.clear();
 		try {
 			BufferedReader readGraph = new BufferedReader(new FileReader(fileName));	
 			// loads all the nodes into the nodeMap ArrayList
@@ -102,6 +102,11 @@ public final class Graph {
 	public List<Link> getLinks() {
 		return getNodes().stream()
 						 .flatMap(node -> node.getNodeLinks().stream())
+						 .collect(Collectors.toList());
+	}
+	
+	public List<Link> getDistinctLinks() {
+		return getLinks().stream()
 						 .distinct()
 						 .collect(Collectors.toList());
 	}
@@ -114,6 +119,12 @@ public final class Graph {
 		return getLinks().stream()
 						 .filter(link -> link.getType() == type)
 						 .collect(Collectors.toList());
+	}
+	
+	public List<Link> getDistinctLinks(LinkType type) {
+		return getLinks(type).stream()
+							 .distinct()
+							 .collect(Collectors.toList());
 	}
 	
 	/**
@@ -135,7 +146,7 @@ public final class Graph {
 	 * @return Returns the number of <code>Links</code> of this <code>Graph</code>
 	 */
 	public int getNumberLinks() {
-		return getLinks().size() / 2;
+		return getDistinctLinks().size();
 	}
 	
 	/**
@@ -143,7 +154,7 @@ public final class Graph {
 	 * @return Returns the number of <code>Links</code> with the right type of this <code>Graph</code>
 	 */
 	public int getNumberLinks(LinkType type) {
-		return getLinks(type).size() / 2;
+		return getDistinctLinks(type).size();
 	}
 
 	/**

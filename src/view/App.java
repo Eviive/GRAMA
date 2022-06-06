@@ -20,6 +20,7 @@ import structure.NodeType;
 
 /**
  * The class representing the user interface
+ * @author BAUDRY Lilian
  * @author VAILLON Albert
  * @version JDK 11.0.13
  */
@@ -37,6 +38,17 @@ public class App extends javax.swing.JFrame {
 	 */
 	public App() {
 		initComponents();
+	}
+	
+	public void initGraphUI(){
+		
+		canvas.initNodes(graph.getNodes());
+		canvas.setDisplayNodes(graph.getNodes());
+		try {
+			canvas.setDisplayLinks(graph.getShortestItinerary(graph.getNode("Albon"), graph.getNode("Chanas")));
+		} catch (ItineraryException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	/**
@@ -128,8 +140,7 @@ public class App extends javax.swing.JFrame {
         restaurantItinarySpinner = new javax.swing.JSpinner();
         submitPanel = new javax.swing.JPanel();
         submitButton = new javax.swing.JButton();
-        graphPanel = new javax.swing.JScrollPane();
-        graphLabel = new javax.swing.JLabel();
+        canvas = new view.Canvas();
         MenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -143,6 +154,7 @@ public class App extends javax.swing.JFrame {
         setTitle("Graph Map Analysis");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setMinimumSize(new java.awt.Dimension(800, 480));
+        setPreferredSize(new java.awt.Dimension(1366, 787));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 App.this.windowClosing(evt);
@@ -568,16 +580,20 @@ public class App extends javax.swing.JFrame {
 
         getContentPane().add(dataPanel, java.awt.BorderLayout.EAST);
 
-        graphPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        graphPanel.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        graphPanel.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        graphPanel.setPreferredSize(new java.awt.Dimension(500, 424));
+        canvas.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        graphLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        graphLabel.setText("GRAPHE");
-        graphPanel.setViewportView(graphLabel);
+        javax.swing.GroupLayout canvasLayout = new javax.swing.GroupLayout(canvas);
+        canvas.setLayout(canvasLayout);
+        canvasLayout.setHorizontalGroup(
+            canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 686, Short.MAX_VALUE)
+        );
+        canvasLayout.setVerticalGroup(
+            canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 478, Short.MAX_VALUE)
+        );
 
-        getContentPane().add(graphPanel, java.awt.BorderLayout.CENTER);
+        getContentPane().add(canvas, java.awt.BorderLayout.CENTER);
 
         fileMenu.setText("Fichier");
 
@@ -710,6 +726,7 @@ public class App extends javax.swing.JFrame {
 				restaurantItinarySpinner.setValue(0);
 				((SpinnerNumberModel)restaurantItinarySpinner.getModel()).setMaximum(nbCity);
 				placeNameField.setEditable(true);
+				initGraphUI();
 			} catch (LoadGraphException e) {
 				JOptionPane.showConfirmDialog(this, e.getMessage(), "Erreur", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 			}
@@ -793,6 +810,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JMenu HelpMenu;
     private javax.swing.JMenuBar MenuBar;
     private javax.swing.JMenuItem aboutMenuItem;
+    private view.Canvas canvas;
     private javax.swing.JLabel cityComparisonLabel;
     private javax.swing.JPanel cityComparisonPanel;
     private javax.swing.JLabel cityCounterLabel;
@@ -820,8 +838,6 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JRadioButton firstCityRecreationComparisonRadio;
     private javax.swing.JRadioButton firstCityRestaurantComparisonRadio;
     private javax.swing.JFileChooser graphFileChooser;
-    private javax.swing.JLabel graphLabel;
-    private javax.swing.JScrollPane graphPanel;
     private javax.swing.JLabel highwayCounterLabel;
     private javax.swing.JPanel itinaryPanel;
     private javax.swing.JPanel itineraryDataPanel;

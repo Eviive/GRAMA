@@ -1,8 +1,11 @@
 package structure;
 
+import java.util.Objects;
+
 /**
  * The class representing a link
  * @author VAILLON Albert
+ * @author BAUDRY Lilian
  * @version JDK 11.0.13
  */
 public final class Link {
@@ -59,8 +62,20 @@ public final class Link {
 	}
 	
 	@Override
+	public int hashCode(){
+		return Objects.hash(type,distance);
+	}
+	
+	@Override
 	public String toString() {
 		return type + " | " + distance + " (" + departure.getName() + " <=> " + destination.getName() + ")";
 	}
 	
+	@Override
+	public boolean equals(Object o){
+		if (!(o instanceof Link))
+			return false;
+		Link e = (Link)o;
+		return type == e.type && distance == e.distance && (departure == e.departure || departure == e.destination);
+	}
 }
