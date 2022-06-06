@@ -1,4 +1,4 @@
-package structure;
+package grama.model;
 
 import java.awt.Color;
 import java.io.File;

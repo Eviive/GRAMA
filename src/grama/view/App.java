@@ -1,4 +1,4 @@
-package view;
+package grama.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.event.ItemEvent;
@@ -9,14 +9,14 @@ import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import model.ComboModel;
-import structure.Graph;
-import structure.ItineraryException;
-import structure.Link;
-import structure.LinkType;
-import structure.LoadGraphException;
-import structure.Node;
-import structure.NodeType;
+import swing.model.ComboModel;
+import grama.model.Graph;
+import grama.model.ItineraryException;
+import grama.model.Link;
+import grama.model.LinkType;
+import grama.model.LoadGraphException;
+import grama.model.Node;
+import grama.model.NodeType;
 
 /**
  * The class representing the user interface
@@ -140,7 +140,7 @@ public class App extends javax.swing.JFrame {
         restaurantItinarySpinner = new javax.swing.JSpinner();
         submitPanel = new javax.swing.JPanel();
         submitButton = new javax.swing.JButton();
-        canvas = new view.Canvas();
+        canvas = new grama.view.Canvas();
         MenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -634,8 +634,8 @@ public class App extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 	
 	private void confirmExit() {
-		int retour = JOptionPane.showConfirmDialog(this, "Souhaitez-vous vraiment quitter l'application ?", "Attention", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-		if (retour == JOptionPane.OK_OPTION) {
+		int returnValue = JOptionPane.showConfirmDialog(this, "Souhaitez-vous vraiment quitter l'application ?", "Attention", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		if (returnValue == JOptionPane.OK_OPTION) {
 			System.exit(0);
 		}
 	}
@@ -810,7 +810,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JMenu HelpMenu;
     private javax.swing.JMenuBar MenuBar;
     private javax.swing.JMenuItem aboutMenuItem;
-    private view.Canvas canvas;
+    private grama.view.Canvas canvas;
     private javax.swing.JLabel cityComparisonLabel;
     private javax.swing.JPanel cityComparisonPanel;
     private javax.swing.JLabel cityCounterLabel;

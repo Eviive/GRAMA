@@ -1,4 +1,4 @@
-package model;
+package swing.model;
 
 import java.util.ArrayList;
 import java.util.Collections;

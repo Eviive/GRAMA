@@ -1,7 +1,7 @@
 /*
 
  */
-package view;
+package grama.view;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-import structure.Link;
-import structure.Node;
+import grama.model.Link;
+import grama.model.Node;
 
 /**
  * @author BAUDRY Lilian

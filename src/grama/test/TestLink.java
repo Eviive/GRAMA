@@ -1,8 +1,8 @@
-package test;
+package grama.test;
 
-import structure.Graph;
-import structure.Link;
-import structure.LoadGraphException;
+import grama.model.Graph;
+import grama.model.Link;
+import grama.model.LoadGraphException;
 
 /**
  * Test class for Link

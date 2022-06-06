@@ -1,4 +1,4 @@
-package structure;
+package grama.model;
 
 /**
  * An exception for when the itinerary isn't valid
