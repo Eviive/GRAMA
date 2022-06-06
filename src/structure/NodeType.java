@@ -1,6 +1,7 @@
 package structure;
 
 import java.awt.Color;
+import java.io.File;
 
 /**
  * The enum representing a node's type
@@ -9,16 +10,18 @@ import java.awt.Color;
  */
 public enum NodeType {
 	
-	CITY("Ville",new Color(220,20,20)),
-	RESTAURANT("Restaurant",new Color(20,20,220)),
-	RECREATION("Loisir",new Color(20,220,20));
+	CITY("Ville",new Color(220,20,20),new File("./src/view/city.png")),
+	RESTAURANT("Restaurant",new Color(20,20,220),new File("./src/view/restaurant.png")),
+	RECREATION("Loisir",new Color(20,220,20),new File("./src/view/recreation.png"));
 	
 	private String name;
 	private Color color;
+	private File imageFile;
 	
-	NodeType(String name , Color color) {
+	NodeType(String name, Color color, File imageFile) {
 		this.name = name;
 		this.color = color;
+		this.imageFile = imageFile;
 	}
 	
 	/**
@@ -38,6 +41,10 @@ public enum NodeType {
 	
 	public Color getColor(){
 		return color;
+	}
+	
+	public File getImageFile(){
+		return imageFile;
 	}
 	
 	@Override

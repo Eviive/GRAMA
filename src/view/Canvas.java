@@ -10,11 +10,14 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import static java.lang.Math.PI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import structure.Link;
 import structure.Node;
@@ -104,15 +107,23 @@ public class Canvas extends JPanel {
 	}
 	
 	public void drawNode(Node node){
+
 		Point coords = positions.get(node.getName());
-			
 		graphic.setColor(node.getType().getColor());
 		
 		if (node == hover)
 			graphic.fillOval(coords.x-7,coords.y-7, 14, 14);
 		else
 			graphic.fillOval(coords.x-5,coords.y-5, 10, 10);
-
+		
+		try {
+			BufferedImage image = ImageIO.read(node.getType().getImageFile());
+			graphic.drawImage(image, coords.x, coords.y, 20 , 20, null);
+			
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+		
 		graphic.setColor(Color.BLACK);
 		graphic.drawString(node.getName(), coords.x - graphic.getFontMetrics().getDescent()*node.getName().length(), coords.y-10);
 	}
