@@ -15,7 +15,7 @@ import grama.model.Node;
  */
 public class ItineraryComparatorDistance implements Comparator<Node> {
 
-	HashMap<Node, Integer> map = null;
+	private HashMap<Node, Integer> map = null;
 	
 	public ItineraryComparatorDistance(HashMap map) {
 		this.map = map;

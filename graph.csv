@@ -1,30 +1,30 @@
-R:Food Society Part-Dieu|D:0:La-Part-Dieu|D:2:Lyon|D:9:Venissieux
-L:La-Part-Dieu|D:0:Food Society Part-Dieu|D:2:Lyon|D:0:Bento Mania|D:3:Villeurbanne
+R:Food Society|D:0:La-Part-Dieu|D:2:Lyon|D:9:Venissieux
+L:La-Part-Dieu|D:0:Food Society|D:2:Lyon|D:0:Bento Mania|D:3:Villeurbanne
 V:Villeurbanne|D:3:La-Part-Dieu|D:3:Bento Mania|D:6:Bron|D:9:Porte des Alpes|N:7:KFC Bron
 V:Oullins|A:7:Lyon|A:14:Venissieux
-V:Lyon|D:2:Food Society Part-Dieu|D:2:La-Part-Dieu|A:7:Oullins|D:2:Bento Mania|D:8:Bron|A:33:Vienne|A:16:Venissieux
+V:Lyon|D:2:Food Society|D:2:La-Part-Dieu|A:7:Oullins|D:2:Bento Mania|D:8:Bron|A:33:Vienne|A:16:Venissieux
 R:Bento Mania|D:2:Lyon|D:0:La-Part-Dieu|D:3:Villeurbanne|D:7:Bron
-V:Venissieux|D:9:Food Society Part-Dieu|A:16:Lyon|A:14:Oullins|A:28:Vienne|A:21:Chasse-sur-Rhone
+V:Venissieux|D:9:Food Society|A:16:Lyon|A:14:Oullins|A:28:Vienne|A:21:Chasse-sur-Rhone
 V:Bron|D:8:Lyon|D:7:Bento Mania|D:6:Villeurbanne|D:2:KFC Bron|D:2:Porte des Alpes
 R:KFC Bron|D:0:Porte des Alpes|D:2:Bron|N:7:Villeurbanne
-V:Vienne|A:28:Venissieux|A:33:Lyon|A:27:Chanas|A:11:Chasse-sur-Rhone|A:10:Centre Commercial Chasse|D:13:Saint-Clair-du-Rhone
+V:Vienne|A:28:Venissieux|A:33:Lyon|A:27:Chanas|A:11:Chasse-sur-Rhone|A:10:Magasin Chasse|D:13:Saint-Clair
 L:Porte des Alpes|D:2:Bron|D:9:Villeurbanne|D:0:KFC Bron
-L:Centre Commercial Chasse|A:10:Vienne|D:2:Chasse-sur-Rhone
-V:Chasse-sur-Rhone|A:21:Venissieux|D:2:Centre Commercial Chasse|A:11:Vienne
-V:Saint-Clair-du-Rhone|D:13:Vienne|N:11:Le-Peage-de-Rousillon
-V:Le-Peage-de-Rousillon|N:11:Saint-Clair-du-Rhone|D:6:Burger King Salaise|D:6:Green-7|D:22:Annonay|D:8:Chanas
-V:Annonay|D:22:Le-Peage-de-Rousillon|D:20:Chanas
-L:Green-7|D:6:Le-Peage-de-Rousillon|D:1:Burger King Salaise|N:2:Chanas
-V:Chanas|A:27:Vienne|N:2:Green-7|D:2:Burger King Salaise|D:5:Salaise-sur-Sanne|D:5:Au fil de l'Eau|A:4:Tain-l'Hermitage|D:8:Le-Peage-de-Rousillon|D:20:Annonay
-V:Tain-l'Hermitage|A:4:Chanas|A:37:Saint-Rambert-d'Albon
-R:Burger King Salaise|D:6:Le-Peage-de-Rousillon|D:1:Green-7|D:2:Chanas
+L:Magasin Chasse|A:10:Vienne|D:2:Chasse-sur-Rhone
+V:Chasse-sur-Rhone|A:21:Venissieux|D:2:Magasin Chasse|A:11:Vienne
+V:Saint-Clair|D:13:Vienne|N:11:Péage-Roussillon
+V:Péage-Roussillon|N:11:Saint-Clair|D:6:Burger King|D:6:Green-7|D:22:Annonay|D:8:Chanas
+V:Annonay|D:22:Péage-Roussillon|D:20:Chanas
+L:Green-7|D:6:Péage-Roussillon|D:1:Burger King|N:2:Chanas
+V:Chanas|A:27:Vienne|N:2:Green-7|D:2:Burger King|D:5:Salaise-sur-Sanne|D:5:Au fil de l'Eau|A:4:Tain-l'Hermitage|D:8:Péage-Roussillon|D:20:Annonay
+V:Tain-l'Hermitage|A:4:Chanas|A:37:Saint-Rambert
+R:Burger King|D:6:Péage-Roussillon|D:1:Green-7|D:2:Chanas
 V:Salaise-sur-Sanne|D:5:Chanas|D:1:Royal d'Asie|D:21:Beaurepaire|D:28:Hauterives
-R:Au fil de l'Eau|D:5:Chanas|D:1:Saint-Rambert-d'Albon
-V:Saint-Rambert-d'Albon|D:1:Au fil de l'Eau|D:22:Hauterives|D:6:Anneyron|D:24:Beaurepaire|A:37:Tain-l'Hermitage|D:8:La tour d'Albon
-L:La tour d'Albon|D:2:Albon|D:8:Saint-Rambert-d'Albon|D:17:Hauterives
+R:Au fil de l'Eau|D:5:Chanas|D:1:Saint-Rambert
+V:Saint-Rambert|D:1:Au fil de l'Eau|D:22:Hauterives|D:6:Anneyron|D:24:Beaurepaire|A:37:Tain-l'Hermitage|D:8:La tour d'Albon
+L:La tour d'Albon|D:2:Albon|D:8:Saint-Rambert|D:17:Hauterives
 V:Albon|D:2:La tour d'Albon
-V:Hauterives|D:17:La tour d'Albon|D:28:Salaise-sur-Sanne|D:22:Saint-Rambert-d'Albon|D:15:Anneyron|D:11:Beaurepaire|D:1:Le palais idéal du Facteur Cheval
-L:Le palais idéal du Facteur Cheval|D:1:Hauterives|D:15:Anneyron
+V:Hauterives|D:17:La tour d'Albon|D:28:Salaise-sur-Sanne|D:22:Saint-Rambert|D:15:Anneyron|D:11:Beaurepaire|D:1:Palais idéal
+L:Palais idéal|D:1:Hauterives|D:15:Anneyron
 R:Royal d'Asie|D:1:Salaise-sur-Sanne
-V:Anneyron|D:15:Hauterives|D:15:Le palais idéal du Facteur Cheval|D:17:Beaurepaire|D:6:Saint-Rambert-d'Albon
-V:Beaurepaire|D:24:Saint-Rambert-d'Albon|D:21:Salaise-sur-Sanne|D:17:Anneyron|D:11:Hauterives
+V:Anneyron|D:15:Hauterives|D:15:Palais idéal|D:17:Beaurepaire|D:6:Saint-Rambert
+V:Beaurepaire|D:24:Saint-Rambert|D:21:Salaise-sur-Sanne|D:17:Anneyron|D:11:Hauterives
