@@ -1,5 +1,6 @@
 package grama.model;
 
+import comparator.ItineraryComparatorDistance;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -250,6 +251,164 @@ public final class Graph {
 		}
 		
 		return path;
+	}
+	
+	/**
+	 * 
+	 * @param departure The starting point of the itinerary
+	 * @param arrival The end point of the itinerary
+	 * @param restaurants The number of restaurants that we must have in the itinerary
+	 * @param cities The number of cities that we must have in the itinerary
+	 * @param recreations The number of recreations that we must have in the itinerary
+	 * @return
+	 * @throws ItineraryException 
+	 */
+	public List<Link> getShortestItinerary(Node departure, Node arrival, int restaurants, int cities, int recreations) throws ItineraryException{
+		List<Link> initialPath = getShortestItinerary(departure, arrival);
+		if(restaurants==0&&cities==0&&recreations==0){ //on verifie si les valeurs ne sont pas egal a 0
+			return initialPath;
+		}
+		List<Node> initialNodePath = new ArrayList<>();// le chemin en node
+		List<Node> checked = new ArrayList<>(); // noeud verifie
+		List<Node> unchecked = new ArrayList<>(); //noeud pas verifie
+		HashMap<Node, Node> nodeNearFromInitialNode = new HashMap<>();//sert a savoir quel nouveau node est proche du quel
+		HashMap<Node, Integer> distanceOfTheCheckedNode = new HashMap<>();//sert a savoir quel est la distance de ces noeuds lesp lus proche du chemin
+		int restaurantsNumber = restaurants;
+		int citiesNumber = cities;
+		int recreationsNumber = recreations;
+		
+		//on regarde si le chemin le plus court ne contient pas ce que l'utilisateur cherche deja
+		for(Link l : initialPath){
+			Node n = l.getDeparture();
+			NodeType type = n.getType();
+			if(type==NodeType.RECREATION && recreationsNumber>0){
+				checked.add(n);
+				nodeNearFromInitialNode.put(n, n);
+				distanceOfTheCheckedNode.put(n, 0);
+				recreationsNumber--;
+			} else if(type==NodeType.CITY && citiesNumber>0){
+				checked.add(n);
+				nodeNearFromInitialNode.put(n, n);
+				distanceOfTheCheckedNode.put(n, 0);
+				citiesNumber--;
+			}else if(type==NodeType.RESTAURANT && restaurantsNumber>0){
+				checked.add(n);
+				nodeNearFromInitialNode.put(n, n);
+				distanceOfTheCheckedNode.put(n, 0);
+				restaurantsNumber--;
+			}
+			if(restaurantsNumber==0&&citiesNumber==0&&recreationsNumber==0){
+				return initialPath;
+			}
+			initialNodePath.add(n);
+		}//fin des verifications 
+		
+		//INITIALISATION
+		for(Node n :this.getNodes()){
+			if(!checked.contains(n)){
+				NodeType type = n.getType();
+				if(type==NodeType.CITY && citiesNumber>0)
+					unchecked.add(n);
+				if(type==NodeType.RESTAURANT && restaurantsNumber>0)
+					unchecked.add(n);
+				if(type==NodeType.RECREATION && recreationsNumber>0)
+					unchecked.add(n);
+			}
+			
+		}
+		//FIN initalisation
+		System.out.println("unchecked : " + unchecked.size());
+		
+		int distance = Integer.MAX_VALUE;
+		for(Node unCheckedNode : unchecked){
+			Node nearest = unCheckedNode;
+			for(Node node : initialNodePath){
+				List<Link> itinerary = this.getShortestItinerary(node, unCheckedNode);
+				if(itinerary.size()<distance){
+					nearest=node;
+					if(distance==1)
+						break;
+				}
+			}
+			nodeNearFromInitialNode.put(unCheckedNode, nearest);
+			distanceOfTheCheckedNode.put(unCheckedNode, distance);
+			checked.add(unCheckedNode);
+			//unchecked.remove(unCheckedNode);
+		}
+		unchecked = null; // on supprime la liste
+		checked.sort(new ItineraryComparatorDistance(distanceOfTheCheckedNode));// on trie les plus proche
+		List<Node> steps = new ArrayList<>();
+		restaurantsNumber = restaurants;
+		citiesNumber = cities;
+		recreationsNumber = recreations;
+		for(Node n : checked){ // on met les noeuds les plus proche dans une liste et on enleve tout les autres
+			NodeType type = n.getType();
+			if(type==NodeType.RECREATION && recreationsNumber>0){
+				steps.add(n);
+				recreationsNumber--;
+			} else if(type==NodeType.CITY && citiesNumber>0){
+				steps.add(n);
+				citiesNumber--;
+			}else if(type==NodeType.RESTAURANT && restaurantsNumber>0){
+				steps.add(n);
+				restaurantsNumber--;
+			}
+		}
+		steps = getNodeListByNearest(steps, nodeNearFromInitialNode, initialNodePath);//list des noeuds trie par distance et par le noeud le plus proche
+		
+		if(steps.isEmpty())
+			throw new ItineraryException("Erreur tri");
+		List<Link> finalList = new ArrayList<>();
+		for(int i = 0; i < steps.size(); i++){
+			Node n = steps.get(i);
+			if(i==0){
+				if(nodeNearFromInitialNode.get(n).equals(initialNodePath.get(0))){
+					finalList.addAll(getShortestItinerary(initialNodePath.get(0),n));
+				}else{
+					finalList.addAll(getShortestItinerary(initialNodePath.get(0),nodeNearFromInitialNode.get(n)));
+					if(!nodeNearFromInitialNode.get(n).equals(n)){
+						finalList.addAll(getShortestItinerary(nodeNearFromInitialNode.get(n),n));
+					}
+				}
+			}else{
+				Node previousNode = steps.get(i-1);
+				finalList.addAll(getShortestItinerary(previousNode, nodeNearFromInitialNode.get(n)));
+				
+				if(!nodeNearFromInitialNode.get(n).equals(n)){
+					finalList.addAll(getShortestItinerary(nodeNearFromInitialNode.get(n),n));
+				}
+				
+				if(i==steps.size()-1){
+					finalList.addAll(getShortestItinerary(n, initialNodePath.get(initialNodePath.size()-1)));
+					finalList.addAll(getShortestItinerary(initialNodePath.get(initialNodePath.size()-1), arrival));
+				}
+			}
+		}
+		
+		return finalList;
+	}
+	/**
+	 * Sort a list of node by the nearest node from a itinerary (only for the getShortestItinerary function)
+	 * @param list The list of sorted Node by distance
+	 * @param map The map of wich Node is near of 
+	 * @param path
+	 * @return 
+	 */
+	private List<Node> getNodeListByNearest(List<Node> list, HashMap<Node, Node> map, List<Node> path){
+		List<Node> sortedList = new ArrayList<>();
+		for(Node n : path){
+			Node nearest = null;
+			for(Node node : list){
+				if(map.get(node)==n){
+					nearest=node;
+					break;
+				}
+			}
+			if(nearest!=null){
+				sortedList.add(nearest);
+			}
+		}
+		return sortedList;
 	}
 	
 	/**
