@@ -9,7 +9,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import static java.lang.Math.PI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +24,12 @@ import grama.model.Node;
  */
 public class Canvas extends JPanel {
 	
-	Graphics2D graphic;
+	private Graphics2D graphic;
 	
 	private List<Node> nodesList = new ArrayList<>();
 	private List<Node> nodesDisplay = new ArrayList<>();
 	private List<Link> linksDisplay = new ArrayList<>();
-	private Map<String , Point> positions = new HashMap<>();
+	private Map<String, Point> positions = new HashMap<>();
 	
 	private Object hover = null;
 	
@@ -38,7 +37,6 @@ public class Canvas extends JPanel {
 		addMouseMotionListener(new MouseAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				
 				Object PreviousHover = hover;
 				
 				hover = getNode(e.getPoint());
@@ -46,23 +44,14 @@ public class Canvas extends JPanel {
 					hover = getLink(e.getPoint());
 				
 				if (PreviousHover != hover){
-					PreviousHover = hover;
 					repaint();
 				}
-			}
-		});
-		
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				System.out.println(hover);
 			}
 		});
 	}
 	
 	@Override
 	public void paint(Graphics g){
-		
 		graphic = (Graphics2D)g;
 		super.paint(graphic);
 		
@@ -74,37 +63,34 @@ public class Canvas extends JPanel {
 		
 		for(Node node : nodesDisplay){
 			drawNode(node);
-		}	
+		}
 	}
 	
 	public void drawLink(Link link){
 		Point coords = positions.get(link.getDeparture().getName());
 
-		if (nodesDisplay.contains(link.getDestination())){
+		if (nodesDisplay.contains(link.getDeparture()) && nodesDisplay.contains(link.getDestination())) {
 			Point destination = positions.get(link.getDestination().getName());
 			graphic.setColor(link.getType().getColor());
 			graphic.drawLine(coords.x, coords.y, destination.x, destination.y);
-
+			
 			Point center = new Point((coords.x + destination.x)/2 , (coords.y + destination.y)/2);
 			if (link == hover)
-				graphic.setFont(new Font("sans serif",Font.BOLD,12));
+				graphic.setFont(new Font("sans serif", Font.BOLD,12));
 			else
-				graphic.setFont(new Font("sans serif",Font.PLAIN,12));
+				graphic.setFont(new Font("sans serif", Font.PLAIN,12));
 			
 			graphic.setColor(Color.BLACK);
-			String info = String.format("%c : %d", link.getType().getCharID(), link.getDistance());
+			String info = String.format("%d", link.getDistance());
 			graphic.drawString(info, center.x - graphic.getFontMetrics().getDescent()*info.length()/2, center.y-10);
 			
 			if (link == hover)
-				graphic.setFont(new Font("sans serif",Font.PLAIN,12));
-
-		}else{
-			System.err.println("Warning: Destination node not displayed!");
+				graphic.setFont(new Font("sans serif", Font.PLAIN,12));
+			
 		}
 	}
 	
 	public void drawNode(Node node){
-
 		Point coords = positions.get(node.getName());
 		graphic.setColor(node.getType().getColor());
 		
@@ -139,7 +125,7 @@ public class Canvas extends JPanel {
 		for(Link link : linksDisplay){
 			
 			Point departure = positions.get(link.getDeparture().getName());
-			Point destination = positions.get(link.getDestination().getName());;
+			Point destination = positions.get(link.getDestination().getName());
 			
 			Point center = new Point((departure.x + destination.x)/2 , (departure.y + destination.y)/2);
 			if (Point.distance(pos.x, pos.y, center.x, center.y) < 30){
@@ -157,7 +143,7 @@ public class Canvas extends JPanel {
 	public void setNodesLocation(){
 		double angle;
 		for (int i = 0 ; i<nodesList.size() ; i++){
-			angle = PI * 2 / nodesList.size() * i ;
+			angle = Math.PI * 2 / nodesList.size() * i ;
 			positions.put(nodesList.get(i).getName() , CirclePosition(angle));
 		}
 	}
@@ -177,6 +163,12 @@ public class Canvas extends JPanel {
 		return new Point(x,y);
 	}
 	
+	public void setDisplay(List<Node> nodes, List<Link> links) {
+		nodesDisplay = nodes;
+		linksDisplay = links;
+		repaint();
+	}
+	
 	public void setDisplayNodes(List<Node> nodes){
 		nodesDisplay = nodes;
 		repaint();
@@ -184,6 +176,18 @@ public class Canvas extends JPanel {
 	
 	public void setDisplayLinks(List<Link> links){
 		linksDisplay = links;
+		repaint();
+	}
+
+	public Object getHover() {
+		return hover;
+	}
+	
+	public void reset() {
+		nodesList.clear();
+		nodesDisplay.clear();
+		linksDisplay.clear();
+		positions.clear();
 		repaint();
 	}
 	

@@ -66,6 +66,13 @@ public final class Graph {
 	}
 	
 	/**
+	 * Clears all the existing data of the graph
+	 */
+	public void reset() {
+		nodeMap.clear();
+	}
+	
+	/**
 	 * @return Returns the <code>HashMap</code> of all the <code>Nodes</code> of this <code>Graph</code>
 	 */
 	public HashMap<String, Node> getNodeMap() {

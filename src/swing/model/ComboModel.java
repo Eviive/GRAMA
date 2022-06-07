@@ -43,11 +43,10 @@ public class ComboModel<E extends Comparable> extends AbstractListModel<E> imple
 		fireContentsChanged(this, 0, getSize() - 1);
 	}
 	
-	public void addAll(List<E> newItems, int selected) {
+	public void addAll(List<E> newItems) {
 		items.clear();
 		Collections.sort(newItems);
 		items.addAll(newItems);
-		setSelectedIndex(selected);
 		fireContentsChanged(this, 0, getSize() - 1);
 	}
 	

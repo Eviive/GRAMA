@@ -17,6 +17,9 @@ import grama.model.LinkType;
 import grama.model.LoadGraphException;
 import grama.model.Node;
 import grama.model.NodeType;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * The class representing the user interface
@@ -26,29 +29,51 @@ import grama.model.NodeType;
  */
 public class App extends javax.swing.JFrame {
 	
-	private Graph graph = new Graph();
+	private final Graph graph = new Graph();
 	
-	private ComboModel<Node> firstNodeListModel = new ComboModel<>();
-	private ComboModel<Node> secondNodeListModel = new ComboModel<>();
-	private ComboModel<Node> firstCityListModel = new ComboModel<>();
-	private ComboModel<Node> secondCityListModel = new ComboModel<>();
+	private boolean firstChecked = false;
+	private final ComboModel<Node> firstNodeListModel = new ComboModel<>();
+	private final ComboModel<Node> secondNodeListModel = new ComboModel<>();
+	private final ComboModel<Node> firstCityListModel = new ComboModel<>();
+	private final ComboModel<Node> secondCityListModel = new ComboModel<>();
 	
 	/**
 	 * Creates new form App
 	 */
 	public App() {
 		initComponents();
+		
+		canvas.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				Object clickedElement = canvas.getHover();
+				
+				if (clickedElement instanceof Node) {
+					displayNode((Node)clickedElement);
+					if (!firstChecked) {
+						firstNodeListModel.setSelectedItem(clickedElement);
+						if (((Node)clickedElement).getType() == NodeType.CITY) {
+							firstCityListModel.setSelectedItem(clickedElement);
+						}
+					} else {
+						secondNodeListModel.setSelectedItem(clickedElement);
+						if (((Node)clickedElement).getType() == NodeType.CITY) {
+							secondCityListModel.setSelectedItem(clickedElement);
+						}
+					}
+					firstChecked = !firstChecked;
+				
+				} else if (clickedElement instanceof Link) {
+					displayLink((Link)clickedElement);
+				}
+			}
+		});
 	}
 	
 	public void initGraphUI(){
-		
 		canvas.initNodes(graph.getNodes());
 		canvas.setDisplayNodes(graph.getNodes());
-		try {
-			canvas.setDisplayLinks(graph.getShortestItinerary(graph.getNode("Albon"), graph.getNode("Chanas")));
-		} catch (ItineraryException e) {
-			System.err.println(e.getMessage());
-		}
+		canvas.setDisplayLinks(graph.getDistinctLinks());
 	}
 
 	/**
@@ -85,6 +110,7 @@ public class App extends javax.swing.JFrame {
         recreationSelectorCheckBox = new javax.swing.JCheckBox();
         citySelectorCheckBox = new javax.swing.JCheckBox();
         restaurantSelectorCheckBox = new javax.swing.JCheckBox();
+        submitNeighborsButton = new javax.swing.JButton();
         linkDataPanel = new javax.swing.JPanel();
         linkPanel = new javax.swing.JPanel();
         linkcategoryLabel = new javax.swing.JLabel();
@@ -139,11 +165,13 @@ public class App extends javax.swing.JFrame {
         recreationItinarySpinner = new javax.swing.JSpinner();
         restaurantItinarySpinner = new javax.swing.JSpinner();
         submitPanel = new javax.swing.JPanel();
-        submitButton = new javax.swing.JButton();
+        submitItineraryButton = new javax.swing.JButton();
         canvas = new grama.view.Canvas();
         MenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jSeparatorMenuItems = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
         HelpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -153,8 +181,8 @@ public class App extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Graph Map Analysis");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        setMinimumSize(new java.awt.Dimension(800, 480));
-        setPreferredSize(new java.awt.Dimension(1366, 787));
+        setMinimumSize(new java.awt.Dimension(750, 400));
+        setPreferredSize(new java.awt.Dimension(1275, 850));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 App.this.windowClosing(evt);
@@ -272,17 +300,28 @@ public class App extends javax.swing.JFrame {
 
         recreationSelectorCheckBox.setSelected(true);
         recreationSelectorCheckBox.setText("Loisirs");
+        recreationSelectorCheckBox.setEnabled(false);
         jumpCategorySelectorPanel.add(recreationSelectorCheckBox);
 
         citySelectorCheckBox.setSelected(true);
         citySelectorCheckBox.setText("Villes");
+        citySelectorCheckBox.setEnabled(false);
         jumpCategorySelectorPanel.add(citySelectorCheckBox);
 
         restaurantSelectorCheckBox.setSelected(true);
         restaurantSelectorCheckBox.setText("Restaurants");
+        restaurantSelectorCheckBox.setEnabled(false);
         jumpCategorySelectorPanel.add(restaurantSelectorCheckBox);
 
         jumpSelectorPanel.add(jumpCategorySelectorPanel);
+
+        submitNeighborsButton.setText("Valider");
+        submitNeighborsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                submitNeighbors(evt);
+            }
+        });
+        jumpSelectorPanel.add(submitNeighborsButton);
 
         placeDataPanel.add(jumpSelectorPanel);
 
@@ -566,13 +605,13 @@ public class App extends javax.swing.JFrame {
         submitPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 0, 20, 0));
         submitPanel.setLayout(new javax.swing.BoxLayout(submitPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        submitButton.setText("Valider");
-        submitButton.addActionListener(new java.awt.event.ActionListener() {
+        submitItineraryButton.setText("Valider");
+        submitItineraryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 submitItinerary(evt);
             }
         });
-        submitPanel.add(submitButton);
+        submitPanel.add(submitItineraryButton);
 
         itineraryDataPanel.add(submitPanel);
 
@@ -595,8 +634,10 @@ public class App extends javax.swing.JFrame {
 
         getContentPane().add(canvas, java.awt.BorderLayout.CENTER);
 
+        fileMenu.setMnemonic(KeyEvent.VK_F);
         fileMenu.setText("Fichier");
 
+        openMenuItem.setMnemonic(KeyEvent.VK_O);
         openMenuItem.setText("Ouvrir");
         openMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -605,6 +646,17 @@ public class App extends javax.swing.JFrame {
         });
         fileMenu.add(openMenuItem);
 
+        jMenuItem1.setMnemonic(KeyEvent.VK_F);
+        jMenuItem1.setText("Fermer");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemFermer(evt);
+            }
+        });
+        fileMenu.add(jMenuItem1);
+        fileMenu.add(jSeparatorMenuItems);
+
+        exitMenuItem.setMnemonic(KeyEvent.VK_Q);
         exitMenuItem.setText("Quitter");
         exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -615,8 +667,10 @@ public class App extends javax.swing.JFrame {
 
         MenuBar.add(fileMenu);
 
+        HelpMenu.setMnemonic(KeyEvent.VK_COMMA);
         HelpMenu.setText("?");
 
+        aboutMenuItem.setMnemonic(KeyEvent.VK_A);
         aboutMenuItem.setText("A propos");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -668,8 +722,7 @@ public class App extends javax.swing.JFrame {
 		if (restaurantSelectorCheckBox.isSelected())
 			types.add(NodeType.RESTAURANT);
 		
-		List<Node> neighbors = node.getNeighbors(nbJumps, new ArrayList<>(), types);
-		System.out.println(neighbors);
+		canvas.setDisplay(node.getNeighbors(nbJumps, new ArrayList<>(), types), graph.getDistinctLinks());
 	}
 	
 	private void cityComparison(ItemEvent e) {
@@ -694,8 +747,8 @@ public class App extends javax.swing.JFrame {
 	}
 	
     private void graphOpening(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphOpening
-		int retour = graphFileChooser.showOpenDialog(this);
-		if (retour == javax.swing.JFileChooser.APPROVE_OPTION) {
+		int returnValue = graphFileChooser.showOpenDialog(this);
+		if (returnValue == javax.swing.JFileChooser.APPROVE_OPTION) {
 			String fileName = graphFileChooser.getSelectedFile().getAbsolutePath();
 			try {
 				graph.load(fileName);
@@ -714,17 +767,20 @@ public class App extends javax.swing.JFrame {
 				jumpNumberSpinner.setValue(0);
 				((SpinnerNumberModel)jumpNumberSpinner.getModel()).setMaximum(nbNodes);
 				List<Node> cityNodes = graph.getNodes(NodeType.CITY);
-				firstCityListModel.addAll(cityNodes, 0);
-				secondCityListModel.addAll(cityNodes, 1);
+				firstCityListModel.addAll(cityNodes);
+				secondCityListModel.addAll(cityNodes);
 				List<Node> nodes = graph.getNodes();
-				firstNodeListModel.addAll(nodes, 0);
-				secondNodeListModel.addAll(nodes, 1);
+				firstNodeListModel.addAll(nodes);
+				secondNodeListModel.addAll(nodes);
 				cityItinarySpinner.setValue(0);
 				((SpinnerNumberModel)cityItinarySpinner.getModel()).setMaximum(nbRestaurant);
 				recreationItinarySpinner.setValue(0);
 				((SpinnerNumberModel)recreationItinarySpinner.getModel()).setMaximum(nbRecreation);
 				restaurantItinarySpinner.setValue(0);
 				((SpinnerNumberModel)restaurantItinarySpinner.getModel()).setMaximum(nbCity);
+				recreationSelectorCheckBox.setEnabled(true);
+				citySelectorCheckBox.setEnabled(true);
+				restaurantSelectorCheckBox.setEnabled(true);
 				placeNameField.setEditable(true);
 				initGraphUI();
 			} catch (LoadGraphException e) {
@@ -768,17 +824,11 @@ public class App extends javax.swing.JFrame {
 		if (departure != null && arrival != null) {
 			try {
 				List<Link> itinerary = graph.getShortestItinerary(departure, arrival, 
-						(Integer) restaurantItinarySpinner.getValue(), 
-						(Integer) cityItinarySpinner.getValue(), 
-						(Integer) recreationItinarySpinner.getValue());
+						(Integer)restaurantItinarySpinner.getValue(), 
+						(Integer)cityItinarySpinner.getValue(), 
+						(Integer)recreationItinarySpinner.getValue());
 				
-				System.out.print(departure);
-				if (!itinerary.isEmpty()) {
-					for (Link link: itinerary) {
-						System.out.print("  ->  " + link.getDestination());
-					}
-				}
-				System.out.println("        Distance total : " + graph.getDistancePath(itinerary) + "km");
+				canvas.setDisplayLinks(itinerary);
 				
 			} catch (ItineraryException e) {
 				JOptionPane.showConfirmDialog(this, e.getMessage(), "Erreur", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
@@ -790,10 +840,23 @@ public class App extends javax.swing.JFrame {
 		Node search = graph.getNode(placeNameField.getText());
 		if (search != null) {
 			displayNode(search);
-			displayNeighbors(search, jumpNumberSlider.getValue());
-			displayLink(search.getNodeLinks().get(0)); // for testing purposes
 		}
+		jumpNumberSpinner.setValue(0);
+		jumpNumberSlider.setValue(0);
     }//GEN-LAST:event_nodeSearchbar
+
+    private void submitNeighbors(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitNeighbors
+		Node researchedNode = graph.getNode(placeNameField.getText());
+		int nbNeighbors = jumpNumberSlider.getValue();
+		if (researchedNode != null && nbNeighbors > 0) {
+			displayNeighbors(researchedNode, nbNeighbors);
+		}
+    }//GEN-LAST:event_submitNeighbors
+
+    private void menuItemFermer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemFermer
+		graph.reset();
+		canvas.reset();
+    }//GEN-LAST:event_menuItemFermer
 
 	/**
 	 * @param args the command line arguments
@@ -844,6 +907,8 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel highwayCounterLabel;
     private javax.swing.JPanel itinaryPanel;
     private javax.swing.JPanel itineraryDataPanel;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JPopupMenu.Separator jSeparatorMenuItems;
     private javax.swing.JPanel jumpCategorySelectorPanel;
     private javax.swing.JLabel jumpLabel;
     private javax.swing.JPanel jumpNumberSelectorPanel;
@@ -897,7 +962,8 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JSeparator stepSeparation;
     private javax.swing.JLabel stepSeparationLabel;
     private javax.swing.JPanel stepSeparationPanel;
-    private javax.swing.JButton submitButton;
+    private javax.swing.JButton submitItineraryButton;
+    private javax.swing.JButton submitNeighborsButton;
     private javax.swing.JPanel submitPanel;
     // End of variables declaration//GEN-END:variables
 }
