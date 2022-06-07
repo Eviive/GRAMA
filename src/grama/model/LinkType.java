@@ -10,9 +10,9 @@ import java.awt.Color;
  */
 public enum LinkType {
 	
-	HIGHWAY("Autoroute",new Color(220,20,20)),
-	NATIONAL("National",new Color(19, 217, 15)),
-	DEPARTMENTAL("Départemental",new Color(20,20,220));
+	HIGHWAY("Autoroute", new Color(220,20,20)),
+	NATIONAL("National", new Color(19, 217, 15)),
+	DEPARTMENTAL("Départemental", new Color(20,20,220));
 	
 	private String name;
 	private Color color;

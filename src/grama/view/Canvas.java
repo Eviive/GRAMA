@@ -1,6 +1,3 @@
-/*
-
- */
 package grama.view;
 
 import java.awt.Color;
