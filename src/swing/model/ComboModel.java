@@ -50,4 +50,9 @@ public class ComboModel<E extends Comparable> extends AbstractListModel<E> imple
 		fireContentsChanged(this, 0, getSize() - 1);
 	}
 	
+	public void reset() {
+		selection = null;
+		items.clear();
+	}
+	
 }

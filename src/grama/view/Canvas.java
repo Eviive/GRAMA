@@ -61,7 +61,7 @@ public class Canvas extends JPanel {
 			drawLink(link);
 		}
 		
-		for(Node node : nodesDisplay){
+		for(Node node : nodesDisplay) {
 			drawNode(node);
 		}
 	}
@@ -81,7 +81,7 @@ public class Canvas extends JPanel {
 				graphic.setFont(new Font("sans serif", Font.PLAIN,12));
 			
 			graphic.setColor(Color.BLACK);
-			String info = String.format("%d", link.getDistance());
+			String info = Integer.toString(link.getDistance());
 			graphic.drawString(info, center.x - graphic.getFontMetrics().getDescent()*info.length()/2, center.y-10);
 			
 			if (link == hover)
@@ -114,7 +114,7 @@ public class Canvas extends JPanel {
 	public Node getNode(Point pos){
 		for(Node node : nodesDisplay){
 			Point coords = positions.get(node.getName());
-			if (Point.distance(pos.x, pos.y, coords.x, coords.y) < 20){
+			if (coords.distance(pos.x, pos.y) < 20){
 				return node;
 			}
 		}
@@ -128,7 +128,7 @@ public class Canvas extends JPanel {
 			Point destination = positions.get(link.getDestination().getName());
 			
 			Point center = new Point((departure.x + destination.x)/2 , (departure.y + destination.y)/2);
-			if (Point.distance(pos.x, pos.y, center.x, center.y) < 30){
+			if (center.distance(pos.x, pos.y) < 30){
 				return link;
 			}
 		}

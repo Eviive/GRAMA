@@ -10,9 +10,9 @@ import java.io.File;
  */
 public enum NodeType {
 	
-	CITY("Ville",new Color(220,20,20), new File("./src/grama/view/city.png")),
-	RESTAURANT("Restaurant",new Color(20,20,220), new File("./src/grama/view/restaurant.png")),
-	RECREATION("Loisir",new Color(20,220,20), new File("./src/grama/view/recreation.png"));
+	CITY("Ville", new Color(220,20,20), new File("./src/grama/view/city.png")),
+	RESTAURANT("Restaurant", new Color(20,20,220), new File("./src/grama/view/restaurant.png")),
+	RECREATION("Loisir", new Color(20,220,20), new File("./src/grama/view/recreation.png"));
 	
 	private String name;
 	private Color color;

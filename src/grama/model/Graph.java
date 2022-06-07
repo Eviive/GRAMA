@@ -394,6 +394,7 @@ public final class Graph {
 		
 		return finalList;
 	}
+	
 	/**
 	 * Sort a list of node by the nearest node from a itinerary (only for the getShortestItinerary function)
 	 * @param list The list of sorted Node by distance
