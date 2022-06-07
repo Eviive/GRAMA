@@ -7,7 +7,7 @@ package comparator;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import structure.Node;
+import grama.model.Node;
 
 /**
  *
