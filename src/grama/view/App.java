@@ -45,7 +45,7 @@ public class App extends javax.swing.JFrame {
 		canvas.initNodes(graph.getNodes());
 		canvas.setDisplayNodes(graph.getNodes());
 		try {
-			canvas.setDisplayLinks(graph.getShortestItinerary(graph.getNode("Albon"), graph.getNode("Chanas")));
+			canvas.setDisplayLinks(graph.getShortestItinerary(graph.getNode("Albon"), graph.getNode("Chanas"),2,2,2));
 		} catch (ItineraryException e) {
 			System.err.println(e.getMessage());
 		}

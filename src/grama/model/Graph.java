@@ -254,6 +254,92 @@ public final class Graph {
 	}
 	
 	/**
+	 * The Dijkstra shortest path resolution algorithm with treated node parameter
+	 * @param departure The starting node
+	 * @param arrival	The arrival node
+	 * @param treated The list of treated node
+	 * @return A list of link representing the shortest path between 2 places
+	 * @throws ItineraryException 
+	 */
+	public List<Link> getShortestItinerary(Node departure, Node arrival,List<Node> treated) throws ItineraryException{
+		System.out.println("entree fonction treated");
+		List<Node> notProcess = new ArrayList<>();
+		List<Integer> distances = new ArrayList<>();
+		
+		List<Node> nodes = getNodes();
+		Link previousLink[] = new Link[nodes.size()];
+		
+		//if(treated.contains(departure))
+		//	treated.remove(departure);
+		
+		// Dijkstra Initialization
+		for (Node place : nodeMap.values()){
+			if(!treated.contains(place)){
+				notProcess.add(place);
+			
+				if (place == departure)
+					distances.add(0);
+				else
+					distances.add(Integer.MAX_VALUE);
+			}
+			
+		}
+		
+		// Search until the path is found or inaccessible
+		while (!notProcess.isEmpty() || notProcess.contains(arrival) ){
+			
+			// Definition of the nearest node index
+			int indexMin = 0;
+			for (int i = 0 ; i < distances.size() ; i++){
+				if (distances.get(i) < distances.get(indexMin)){
+					indexMin = i;
+				}
+			}
+			
+			// Treatment of neighbors not yet treated
+			int distance = distances.remove(indexMin);
+			Node processing = notProcess.remove(indexMin);
+			
+			
+			for (Node node : processing.getNeighbors(1, new ArrayList<>())){
+				if (notProcess.contains(node)){
+					int indice = notProcess.indexOf(node);
+					
+					// Updates of the shortest distances
+					if (distance + processing.getShortestPath(node).getDistance() < distances.get(indice)){
+						distances.set(indice, distance + processing.getShortestPath(node).getDistance());
+						previousLink[nodes.indexOf(node)] = processing.getShortestPath(node);
+					}
+				}
+			}
+		}
+		
+		// Path construction
+		List<Link> path = new ArrayList<>();
+		
+		Node dest = arrival;
+		while (dest != departure){ 
+			
+			int indice = nodes.indexOf(dest);
+			Link step = previousLink[indice];
+			
+			if (step == null){
+				System.out.println("arret sur : " + departure.getName() + " vers " + arrival.getName());
+				for(Node caca : treated){
+					System.out.println("Noeud traite : " +caca.getName());
+				}
+				throw new ItineraryException("Ce noeud est inaccessible !");
+			}
+				
+			
+			path.add(0, step);
+			dest = step.getDeparture();
+		}
+		
+		return path;
+	}
+	
+	/**
 	 * 
 	 * @param departure The starting point of the itinerary
 	 * @param arrival The end point of the itinerary
@@ -285,17 +371,17 @@ public final class Graph {
 				checked.add(n);
 				nodeNearFromInitialNode.put(n, n);
 				distanceOfTheCheckedNode.put(n, 0);
-				recreationsNumber--;
+				//recreationsNumber--;
 			} else if(type==NodeType.CITY && citiesNumber>0){
 				checked.add(n);
 				nodeNearFromInitialNode.put(n, n);
 				distanceOfTheCheckedNode.put(n, 0);
-				citiesNumber--;
+				//citiesNumber--;
 			}else if(type==NodeType.RESTAURANT && restaurantsNumber>0){
 				checked.add(n);
 				nodeNearFromInitialNode.put(n, n);
 				distanceOfTheCheckedNode.put(n, 0);
-				restaurantsNumber--;
+				//restaurantsNumber--;
 			}
 			if(restaurantsNumber==0&&citiesNumber==0&&recreationsNumber==0){
 				return initialPath;
@@ -341,6 +427,7 @@ public final class Graph {
 		restaurantsNumber = restaurants;
 		citiesNumber = cities;
 		recreationsNumber = recreations;
+		System.out.println("nombre resto, ville, loisir" +restaurantsNumber+" " +citiesNumber+" " +recreationsNumber);
 		for(Node n : checked){ // on met les noeuds les plus proche dans une liste et on enleve tout les autres
 			NodeType type = n.getType();
 			if(type==NodeType.RECREATION && recreationsNumber>0){
@@ -354,38 +441,93 @@ public final class Graph {
 				restaurantsNumber--;
 			}
 		}
+		System.out.println("nombre resto, ville, loisir" +restaurantsNumber+" " +citiesNumber+" " +recreationsNumber);
 		steps = getNodeListByNearest(steps, nodeNearFromInitialNode, initialNodePath);//list des noeuds trie par distance et par le noeud le plus proche
 		
-		if(steps.isEmpty())
+		if(steps.isEmpty()) //////////////////////////////////////////////////ON COMMENCE A FAIRE LCHEMIN
 			throw new ItineraryException("Erreur tri");
 		List<Link> finalList = new ArrayList<>();
+		List<Node> treated = new ArrayList<>();
 		for(int i = 0; i < steps.size(); i++){
 			Node n = steps.get(i);
+			System.out.println(i+"/"+steps.size());
+			if(!treated.contains(n))
 			if(i==0){
-				if(nodeNearFromInitialNode.get(n).equals(initialNodePath.get(0))){
+				System.out.println(initialNodePath.get(0).getName()+"/"+n.getName());
+				if(nodeNearFromInitialNode.get(n).equals(initialNodePath.get(0)) && !initialNodePath.get(0).equals(n)){
+					System.out.println("passe 2");
 					finalList.addAll(getShortestItinerary(initialNodePath.get(0),n));
-				}else{
+				}else if(!initialNodePath.get(0).equals(nodeNearFromInitialNode.get(n))){
 					finalList.addAll(getShortestItinerary(initialNodePath.get(0),nodeNearFromInitialNode.get(n)));
 					if(!nodeNearFromInitialNode.get(n).equals(n)){
+						System.out.println("passe");
 						finalList.addAll(getShortestItinerary(nodeNearFromInitialNode.get(n),n));
 					}
 				}
+				addTreatedNode(treated, getNodesFromLinkList(finalList));
+				if(i==steps.size()-1){
+					System.out.println("n : " + n.getName() +", initalNodePathDernier : " + initialNodePath.get(initialNodePath.size()-1).getName());
+					if(initialNodePath.get(initialNodePath.size()-1).equals(arrival)){
+						finalList.addAll(getShortestItinerary(n, initialNodePath.get(initialNodePath.size()-1),treated));
+						finalList.addAll(getShortestItinerary(initialNodePath.get(initialNodePath.size()-1), arrival));
+					}else{
+						finalList.addAll(getShortestItinerary(treated.get(treated.size()-1), arrival));
+					}
+					
+					System.out.println("arrive");
+				}
+				if(treated.contains(departure))
+					System.out.println("YES");
+				else
+					treated.add(departure);
 			}else{
+				if(finalList.isEmpty())
+					treated.clear();
+				System.out.println("else sur " + n.getName());
 				Node previousNode = steps.get(i-1);
-				finalList.addAll(getShortestItinerary(previousNode, nodeNearFromInitialNode.get(n)));
-				
+				System.out.println("le plus proche " + nodeNearFromInitialNode.get(n).getName());
+				finalList.addAll(getShortestItinerary(previousNode, nodeNearFromInitialNode.get(n),treated));
+				System.out.println("ajout 1");
+				addTreatedNode(treated, getNodesFromLinkList(finalList));
 				if(!nodeNearFromInitialNode.get(n).equals(n)){
-					finalList.addAll(getShortestItinerary(nodeNearFromInitialNode.get(n),n));
+					System.out.println("ajout if");
+					finalList.addAll(getShortestItinerary(nodeNearFromInitialNode.get(n),n,treated));
+					addTreatedNode(treated, getNodesFromLinkList(finalList));
 				}
 				
 				if(i==steps.size()-1){
-					finalList.addAll(getShortestItinerary(n, initialNodePath.get(initialNodePath.size()-1)));
-					finalList.addAll(getShortestItinerary(initialNodePath.get(initialNodePath.size()-1), arrival));
+					System.out.println("ajout if fin");
+					finalList.addAll(getShortestItinerary(n, initialNodePath.get(initialNodePath.size()-1),treated));
+					finalList.addAll(getShortestItinerary(initialNodePath.get(initialNodePath.size()-1), arrival, treated));
+					System.out.println("arrive");
 				}
 			}
+			addTreatedNode(treated, getNodesFromLinkList(finalList));
 		}
 		
 		return finalList;
+	}
+	
+	private void addTreatedNode(List<Node> treatedList, List<Node> list){
+		for(Node n : list){
+			treatedList.add(n);
+		}
+	}
+	
+	/**
+	 * Transform a list of link into a list of node
+	 * @param list
+	 * @return nodeList
+	 */
+	private List<Node> getNodesFromLinkList(List<Link> list){
+		List<Node> nodes = new ArrayList<>();
+		for(Link l : list){
+			nodes.add(l.getDeparture());
+		}
+		/*if(!list.isEmpty()){
+			nodes.add(list.get(list.size()-1).getDestination());
+		}*/
+		return nodes;
 	}
 	/**
 	 * Sort a list of node by the nearest node from a itinerary (only for the getShortestItinerary function)
