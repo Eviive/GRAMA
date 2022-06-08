@@ -1,6 +1,7 @@
 package grama.model;
 
 import grama.comparator.ItineraryComparatorDistance;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public final class Graph {
 			String row;
 			while ((row = readGraph.readLine()) != null) {
 				String node[] = row.split("\\|")[0].split(":");
-				getNodeMap().put(node[1], new Node(node[0].charAt(0), node[1]));
+				getNodeMap().put(node[1], new Node(node[0].charAt(0), node[1], Double.valueOf(node[2]),Double.valueOf(node[3])));
 			}
 			readGraph.close();
 

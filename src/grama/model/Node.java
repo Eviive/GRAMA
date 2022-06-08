@@ -16,15 +16,28 @@ public final class Node implements Comparable<Node> {
 	private final String name;
 	private final List<Link> linkList = new ArrayList<>();
 	
+	private final double ratioX;
+	private final double ratioY;
+	
 	/**
 	 * Creates a new <code>Node</code>
 	 * @param type The type of the <code>Node</code>
 	 * @param name The name of the <code>Node</code>
 	 * @throws LoadGraphException If <code>NodeType.typeOf(type)</code> throws a <code>LoadGraphException</code>
 	 */
-	public Node(char type, String name) throws LoadGraphException {
+	public Node(char type, String name, double ratioX, double ratioY ) throws LoadGraphException {
 		this.type = NodeType.typeOf(type);
 		this.name = name;
+		this.ratioX = ratioX;
+		this.ratioY = ratioY;
+	}
+
+	public double getRatioX() {
+		return ratioX;
+	}
+
+	public double getRatioY() {
+		return ratioY;
 	}
 	
 	/**
