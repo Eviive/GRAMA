@@ -52,11 +52,13 @@ public class App extends javax.swing.JFrame {
 					displayNode((Node)clickedElement);
 					if (!firstChecked) {
 						firstNodeListModel.setSelectedItem(clickedElement);
+						canvas.addSelected(0, (Node)clickedElement);
 						if (((Node)clickedElement).getType() == NodeType.CITY) {
 							firstCityListModel.setSelectedItem(clickedElement);
 						}
 					} else {
 						secondNodeListModel.setSelectedItem(clickedElement);
+						canvas.addSelected(1, (Node)clickedElement);
 						if (((Node)clickedElement).getType() == NodeType.CITY) {
 							secondCityListModel.setSelectedItem(clickedElement);
 						}
@@ -170,7 +172,8 @@ public class App extends javax.swing.JFrame {
         MenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        refreshMenuItem = new javax.swing.JMenuItem();
+        closeMenuItem = new javax.swing.JMenuItem();
         jSeparatorMenuItems = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
         HelpMenu = new javax.swing.JMenu();
@@ -637,6 +640,7 @@ public class App extends javax.swing.JFrame {
         fileMenu.setMnemonic(KeyEvent.VK_F);
         fileMenu.setText("Fichier");
 
+        openMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         openMenuItem.setMnemonic(KeyEvent.VK_O);
         openMenuItem.setText("Ouvrir");
         openMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -646,14 +650,24 @@ public class App extends javax.swing.JFrame {
         });
         fileMenu.add(openMenuItem);
 
-        jMenuItem1.setMnemonic(KeyEvent.VK_F);
-        jMenuItem1.setText("Fermer");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        refreshMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        refreshMenuItem.setText("Réinitialiser");
+        refreshMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemFermer(evt);
+                menuItemRefresh(evt);
             }
         });
-        fileMenu.add(jMenuItem1);
+        fileMenu.add(refreshMenuItem);
+
+        closeMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        closeMenuItem.setMnemonic(KeyEvent.VK_F);
+        closeMenuItem.setText("Fermer");
+        closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemClose(evt);
+            }
+        });
+        fileMenu.add(closeMenuItem);
         fileMenu.add(jSeparatorMenuItems);
 
         exitMenuItem.setMnemonic(KeyEvent.VK_Q);
@@ -693,6 +707,7 @@ public class App extends javax.swing.JFrame {
 		restaurantSelectorCheckBox.setEnabled(state);
 		placeNameField.setEditable(state);
 		placeNameField.setText("");
+		placeCategoryField.setText("");
 	}
 	
 	private void resetValueSpinner() {
@@ -711,16 +726,16 @@ public class App extends javax.swing.JFrame {
 		
 		if (n1 != null && n2 != null) {
 			int returnValue = n1.isMoreLinkedToType(n2, NodeType.RESTAURANT);
-			firstCityRestaurantComparisonRadio.setSelected(returnValue == 1);
-			secondCityRestaurantComparisonRadio.setSelected(returnValue == -1);
+			firstCityRestaurantComparisonRadio.setSelected(returnValue >= 0);
+			secondCityRestaurantComparisonRadio.setSelected(returnValue <= 0);
 			
 			returnValue = n1.isMoreLinkedToType(n2, NodeType.RECREATION);
-			firstCityRecreationComparisonRadio.setSelected(returnValue == 1);
-			secondCityRecreationComparisonRadio.setSelected(returnValue == -1);
+			firstCityRecreationComparisonRadio.setSelected(returnValue >= 0);
+			secondCityRecreationComparisonRadio.setSelected(returnValue <= 0);
 			
 			returnValue = n1.isMoreLinkedToType(n2, NodeType.CITY);
-			firstCityOpenComparisonRadio.setSelected(returnValue == 1);
-			secondCityOpenComparisonRadio.setSelected(returnValue == -1);
+			firstCityOpenComparisonRadio.setSelected(returnValue >= 0);
+			secondCityOpenComparisonRadio.setSelected(returnValue <= 0);
 		}
 	}
 	
@@ -798,9 +813,9 @@ public class App extends javax.swing.JFrame {
 				resetValueSpinner();
 				jumpNumberSlider.setMaximum(nbNodes);
 				((SpinnerNumberModel)jumpNumberSpinner.getModel()).setMaximum(nbNodes);
-				((SpinnerNumberModel)cityItinarySpinner.getModel()).setMaximum(nbRestaurant);
+				((SpinnerNumberModel)cityItinarySpinner.getModel()).setMaximum(nbCity);
 				((SpinnerNumberModel)recreationItinarySpinner.getModel()).setMaximum(nbRecreation);
-				((SpinnerNumberModel)restaurantItinarySpinner.getModel()).setMaximum(nbCity);
+				((SpinnerNumberModel)restaurantItinarySpinner.getModel()).setMaximum(nbRestaurant);
 				
 				enablePanels(true);
 				initGraphUI();
@@ -872,7 +887,7 @@ public class App extends javax.swing.JFrame {
 		}
     }//GEN-LAST:event_submitNeighbors
 
-    private void menuItemFermer(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemFermer
+    private void menuItemClose(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemClose
 		enablePanels(false);
 		canvas.reset();
 		graph.reset();
@@ -888,7 +903,12 @@ public class App extends javax.swing.JFrame {
 		((SpinnerNumberModel)cityItinarySpinner.getModel()).setMaximum(0);
 		((SpinnerNumberModel)recreationItinarySpinner.getModel()).setMaximum(0);
 		((SpinnerNumberModel)restaurantItinarySpinner.getModel()).setMaximum(0);
-    }//GEN-LAST:event_menuItemFermer
+    }//GEN-LAST:event_menuItemClose
+
+    private void menuItemRefresh(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRefresh
+		canvas.resetSelected();
+		canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
+    }//GEN-LAST:event_menuItemRefresh
 
 	/**
 	 * @param args the command line arguments
@@ -915,6 +935,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel cityItinaryLabel;
     private javax.swing.JSpinner cityItinarySpinner;
     private javax.swing.JCheckBox citySelectorCheckBox;
+    private javax.swing.JMenuItem closeMenuItem;
     private javax.swing.JPanel comparisonDataPanel;
     private javax.swing.JPanel comparisonPanel;
     private javax.swing.JComboBox<Node> comparisonSelectorFirstCityComboBox;
@@ -939,7 +960,6 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel highwayCounterLabel;
     private javax.swing.JPanel itinaryPanel;
     private javax.swing.JPanel itineraryDataPanel;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparatorMenuItems;
     private javax.swing.JPanel jumpCategorySelectorPanel;
     private javax.swing.JLabel jumpLabel;
@@ -978,6 +998,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel recreationItinaryLabel;
     private javax.swing.JSpinner recreationItinarySpinner;
     private javax.swing.JCheckBox recreationSelectorCheckBox;
+    private javax.swing.JMenuItem refreshMenuItem;
     private javax.swing.JPanel relationPanel;
     private javax.swing.JPanel relationSeparationPanel;
     private javax.swing.JSeparator relationSeparator;

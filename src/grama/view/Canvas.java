@@ -32,8 +32,9 @@ public class Canvas extends JPanel {
 	private Map<String, Point> positions = new HashMap<>();
 	
 	private Object hover = null;
+	private Node[] selected = new Node[2];
 	
-	public Canvas(){
+	public Canvas() {
 		addMouseMotionListener(new MouseAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
@@ -57,11 +58,11 @@ public class Canvas extends JPanel {
 		
 		setNodesLocation();
 		
-		for(Link link : linksDisplay){
+		for(Link link: linksDisplay) {
 			drawLink(link);
 		}
 		
-		for(Node node : nodesDisplay) {
+		for(Node node: nodesDisplay) {
 			drawNode(node);
 		}
 	}
@@ -76,17 +77,16 @@ public class Canvas extends JPanel {
 			
 			Point center = new Point((coords.x + destination.x)/2 , (coords.y + destination.y)/2);
 			if (link == hover)
-				graphic.setFont(new Font("sans serif", Font.BOLD,12));
+				graphic.setFont(new Font("sans serif", Font.BOLD, 12));
 			else
-				graphic.setFont(new Font("sans serif", Font.PLAIN,12));
+				graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
 			
 			graphic.setColor(Color.BLACK);
 			String info = Integer.toString(link.getDistance());
 			graphic.drawString(info, center.x - graphic.getFontMetrics().getDescent()*info.length()/2, center.y-10);
 			
 			if (link == hover)
-				graphic.setFont(new Font("sans serif", Font.PLAIN,12));
-			
+				graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
 		}
 	}
 	
@@ -94,21 +94,27 @@ public class Canvas extends JPanel {
 		Point coords = positions.get(node.getName());
 		graphic.setColor(node.getType().getColor());
 		
-		if (node == hover)
-			graphic.fillOval(coords.x-7,coords.y-7, 14, 14);
-		else
-			graphic.fillOval(coords.x-5,coords.y-5, 10, 10);
-		
 		try {
 			BufferedImage image = ImageIO.read(node.getType().getImageFile());
-			graphic.drawImage(image, coords.x, coords.y, 20 , 20, null);
+			if (node == hover)
+				graphic.drawImage(image, coords.x - 20, coords.y - 20, 40, 40, null);
+			else
+				graphic.drawImage(image, coords.x - 15, coords.y - 15, 30, 30, null);
 			
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
 		
 		graphic.setColor(Color.BLACK);
-		graphic.drawString(node.getName(), coords.x - graphic.getFontMetrics().getDescent()*node.getName().length(), coords.y-10);
+		if (selected[0] == node || selected[1] == node) {
+			if (node == hover)
+				graphic.drawOval(coords.x - 20,coords.y - 20, 40, 40);
+			else
+				graphic.drawOval(coords.x - 15,coords.y - 15, 30, 30);
+		}
+		
+		graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
+		graphic.drawString(node.getName(), coords.x - graphic.getFontMetrics().getDescent()*node.getName().length(), coords.y-15);
 	}
 	
 	public Node getNode(Point pos){
@@ -188,6 +194,17 @@ public class Canvas extends JPanel {
 		nodesDisplay.clear();
 		linksDisplay.clear();
 		positions.clear();
+		resetSelected();
+		repaint();
+	}
+	
+	public void resetSelected() {
+		selected[0] = null;
+		selected[1] = null;
+	}
+	
+	public void addSelected(int i, Node node) {
+		selected[i] = node;
 		repaint();
 	}
 	
