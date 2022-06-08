@@ -1,7 +1,6 @@
 package grama.model;
 
 import grama.comparator.ItineraryComparatorDistance;
-import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
