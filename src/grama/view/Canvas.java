@@ -7,13 +7,10 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import grama.model.Link;
 import grama.model.Node;
@@ -49,7 +46,7 @@ public class Canvas extends JPanel {
 			}
 		});
 	}
-	
+			
 	@Override
 	public void paint(Graphics g){
 		graphic = (Graphics2D)g;
@@ -99,13 +96,7 @@ public class Canvas extends JPanel {
 		else
 			graphic.fillOval(coords.x-5,coords.y-5, 10, 10);
 		
-		try {
-			BufferedImage image = ImageIO.read(node.getType().getImageFile());
-			graphic.drawImage(image, coords.x, coords.y, 20 , 20, null);
-			
-		} catch (IOException e) {
-			System.err.println(e.getMessage());
-		}
+		graphic.drawImage(node.getType().getImage(), coords.x, coords.y, 20 , 20, null);
 		
 		graphic.setColor(Color.BLACK);
 		graphic.drawString(node.getName(), coords.x - graphic.getFontMetrics().getDescent()*node.getName().length(), coords.y-10);
@@ -141,26 +132,10 @@ public class Canvas extends JPanel {
 	}
 	
 	public void setNodesLocation(){
-		double angle;
-		for (int i = 0 ; i<nodesList.size() ; i++){
-			angle = Math.PI * 2 / nodesList.size() * i ;
-			positions.put(nodesList.get(i).getName() , CirclePosition(angle));
+		for (Node node : nodesList){
+			Point center = new Point( (int)(getWidth() * node.getRatioX()) , (int)(getHeight() * node.getRatioY()));
+			positions.put(node.getName(), center);
 		}
-	}
-	
-	public Point CirclePosition(double theta) {
-		
-		Double scaleFactor;
-		
-		if (getWidth()>getHeight())
-			scaleFactor = getHeight()/2.2;
-		else
-			scaleFactor = getWidth()/2.2;
-		
-		int x = (int) (getWidth()/2 + scaleFactor * Math.cos(theta));
-		int y = (int) (getHeight()/2 + scaleFactor * Math.sin(theta));
-		
-		return new Point(x,y);
 	}
 	
 	public void setDisplay(List<Node> nodes, List<Link> links) {
