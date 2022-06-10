@@ -272,7 +272,7 @@ public final class Graph {
 		int countRestaurants=this.getNodes(NodeType.RESTAURANT).size();
 		int countRecreations=this.getNodes(NodeType.RECREATION).size();
 		int countCities = this.getNodes(NodeType.CITY).size();//count the number of each type
-		if(restaurants>countRestaurants || cities>countCities||recreations>countRecreations)//throw exception if the number are too high
+		if(restaurants>countRestaurants || cities>countCities || recreations>countRecreations)//throw exception if the number are too high
 			throw new ItineraryException("Chiffre trop grand.");
 		int restaurantsNumber = restaurants;
 		int citiesNumber = cities;
