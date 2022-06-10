@@ -10,10 +10,11 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JPanel;
 import grama.model.Link;
+import grama.model.LinkType;
 import grama.model.Node;
+import grama.model.NodeType;
 
 /**
  * @author BAUDRY Lilian
@@ -24,9 +25,14 @@ public class Canvas extends JPanel {
 	private Graphics2D graphic;
 	
 	private List<Node> nodesList = new ArrayList<>();
+	
 	private List<Node> nodesDisplay = new ArrayList<>();
+	private List<NodeType> nodesType = new ArrayList<>();
+	
 	private List<Link> linksDisplay = new ArrayList<>();
-	private Map<String, Point> positions = new HashMap<>();
+	private List<LinkType> linksType = new ArrayList<>();
+	
+	private HashMap<String, Point> positions = new HashMap<>();
 	
 	private Object hover = null;
 	private Node[] selected = new Node[2];
@@ -67,7 +73,7 @@ public class Canvas extends JPanel {
 	public void drawLink(Link link){
 		Point coords = positions.get(link.getDeparture().getName());
 
-		if (nodesDisplay.contains(link.getDeparture()) && nodesDisplay.contains(link.getDestination())) {
+		if (linksType.contains(link.getType()) && nodesDisplay.contains(link.getDeparture()) && nodesDisplay.contains(link.getDestination())) {
 			Point destination = positions.get(link.getDestination().getName());
 			
 			graphic.setColor(link.getType().getColor());
@@ -86,6 +92,8 @@ public class Canvas extends JPanel {
 	}
 	
 	public void drawNode(Node node){
+		if (!nodesType.contains(node.getType())) return;
+		
 		Point coords = positions.get(node.getName());
 		
 		graphic.setColor(Color.BLACK);
@@ -178,6 +186,14 @@ public class Canvas extends JPanel {
 	public void addSelected(int i, Node node) {
 		selected[i] = node;
 		repaint();
+	}
+
+	public void setNodesType(List<NodeType> nodesType) {
+		this.nodesType = nodesType;
+	}
+
+	public void setLinksType(List<LinkType> linksType) {
+		this.linksType = linksType;
 	}
 	
 }

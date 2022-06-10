@@ -38,11 +38,19 @@ public class App extends javax.swing.JFrame {
 	private final ComboModel<Node> firstCityListModel = new ComboModel<>();
 	private final ComboModel<Node> secondCityListModel = new ComboModel<>();
 	
+	private final ComboModel<Link> linksModel = new ComboModel<>();
+	
+	private List<NodeType> nodesFilter = new ArrayList<>(List.of(NodeType.values()));
+	private List<LinkType> linksFilter = new ArrayList<>(List.of(LinkType.values()));
+	
 	/**
 	 * Creates new form App
 	 */
 	public App() {
 		initComponents();
+		
+		canvas.setNodesType(nodesFilter);
+		canvas.setLinksType(linksFilter);
 		
 		canvas.addMouseListener(new MouseAdapter() {
 			@Override
@@ -76,12 +84,6 @@ public class App extends javax.swing.JFrame {
 				}
 			}
 		});
-	}
-	
-	public void initGraphUI(){
-		canvas.initNodes(graph.getNodes());
-		canvas.setDisplayNodes(graph.getNodes());
-		canvas.setDisplayLinks(graph.getDistinctLinks());
 	}
 	
 	/**
@@ -120,6 +122,8 @@ public class App extends javax.swing.JFrame {
         restaurantSelectorCheckBox = new javax.swing.JCheckBox();
         submitNeighborsButton = new javax.swing.JButton();
         linkDataPanel = new javax.swing.JPanel();
+        linksSelectionPanel = new javax.swing.JPanel();
+        linksComboBox = new javax.swing.JComboBox<>();
         linkPanel = new javax.swing.JPanel();
         linkcategoryLabel = new javax.swing.JLabel();
         linkCategoryField = new javax.swing.JTextField();
@@ -183,6 +187,14 @@ public class App extends javax.swing.JFrame {
         closeMenuItem = new javax.swing.JMenuItem();
         jSeparatorMenuItems = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
+        optionsMenu = new javax.swing.JMenu();
+        cityMenuItem = new javax.swing.JCheckBoxMenuItem();
+        recreationMenuItem = new javax.swing.JCheckBoxMenuItem();
+        restaurantMenuItem = new javax.swing.JCheckBoxMenuItem();
+        optionsSeparator = new javax.swing.JPopupMenu.Separator();
+        departmentalMenuItem = new javax.swing.JCheckBoxMenuItem();
+        nationalMenuItem = new javax.swing.JCheckBoxMenuItem();
+        highwayMenuItem = new javax.swing.JCheckBoxMenuItem();
         HelpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -338,6 +350,15 @@ public class App extends javax.swing.JFrame {
         dataPanel.addTab("Emplacement", placeDataPanel);
 
         linkDataPanel.setLayout(new javax.swing.BoxLayout(linkDataPanel, javax.swing.BoxLayout.PAGE_AXIS));
+
+        linksSelectionPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        linksSelectionPanel.setMaximumSize(new java.awt.Dimension(32767, 70));
+
+        linksComboBox.setModel(linksModel);
+        linksComboBox.setPreferredSize(new java.awt.Dimension(250, 22));
+        linksSelectionPanel.add(linksComboBox);
+
+        linkDataPanel.add(linksSelectionPanel);
 
         linkPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 5, 20, 40));
         linkPanel.setMaximumSize(new java.awt.Dimension(32767, 105));
@@ -672,6 +693,7 @@ public class App extends javax.swing.JFrame {
         fileMenu.add(openMenuItem);
 
         refreshMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        refreshMenuItem.setMnemonic(KeyEvent.VK_R);
         refreshMenuItem.setText("Réinitialiser");
         refreshMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -702,6 +724,65 @@ public class App extends javax.swing.JFrame {
 
         MenuBar.add(fileMenu);
 
+        optionsMenu.setText("Options");
+
+        cityMenuItem.setSelected(true);
+        cityMenuItem.setText("Villes");
+        cityMenuItem.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cityMenuItemValueChanged(evt);
+            }
+        });
+        optionsMenu.add(cityMenuItem);
+
+        recreationMenuItem.setSelected(true);
+        recreationMenuItem.setText("Loisirs");
+        recreationMenuItem.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                recreationMenuItemValueChanged(evt);
+            }
+        });
+        optionsMenu.add(recreationMenuItem);
+
+        restaurantMenuItem.setSelected(true);
+        restaurantMenuItem.setText("Restaurants");
+        restaurantMenuItem.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                restaurantMenuItemValueChanged(evt);
+            }
+        });
+        optionsMenu.add(restaurantMenuItem);
+        optionsMenu.add(optionsSeparator);
+
+        departmentalMenuItem.setSelected(true);
+        departmentalMenuItem.setText(" Départementales");
+        departmentalMenuItem.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                departmentalMenuItemValueChanged(evt);
+            }
+        });
+        optionsMenu.add(departmentalMenuItem);
+
+        nationalMenuItem.setSelected(true);
+        nationalMenuItem.setText("Nationales");
+        nationalMenuItem.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                nationalMenuItemValueChanged(evt);
+            }
+        });
+        optionsMenu.add(nationalMenuItem);
+
+        highwayMenuItem.setSelected(true);
+        highwayMenuItem.setText("Autoroutes");
+        highwayMenuItem.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                highwayMenuItemValueChanged(evt);
+            }
+        });
+        optionsMenu.add(highwayMenuItem);
+
+        MenuBar.add(optionsMenu);
+
         HelpMenu.setMnemonic(KeyEvent.VK_COMMA);
         HelpMenu.setText("?");
 
@@ -722,7 +803,14 @@ public class App extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 	
+	private void initGraphUI(){
+		canvas.initNodes(graph.getNodes());
+		canvas.setDisplayNodes(graph.getNodes());
+		canvas.setDisplayLinks(graph.getDistinctLinks());
+	}
+	
 	private void enablePanels(boolean state) {
+		resetFilters();
 		dataPanel.setSelectedIndex(0);
 		citySelectorCheckBox.setEnabled(state);
 		recreationSelectorCheckBox.setEnabled(state);
@@ -807,6 +895,35 @@ public class App extends javax.swing.JFrame {
 		canvas.setDisplay(neighborsList, graph.getDistinctLinks());
 	}
 	
+	private void filterElements(ItemEvent evt, LinkType type) {
+		if (evt.getStateChange() == ItemEvent.SELECTED) {
+			if (!linksFilter.contains(type))
+				linksFilter.add(type);
+		} else {
+			linksFilter.remove(type);
+		}
+		canvas.repaint();
+	}
+	
+	private void filterElements(ItemEvent evt, NodeType type) {
+		if (evt.getStateChange() == ItemEvent.SELECTED) {
+			if (!nodesFilter.contains(type))
+				nodesFilter.add(type);
+		} else {
+			nodesFilter.remove(type);
+		}
+		canvas.repaint();
+	}
+	
+	private void resetFilters() {
+		cityMenuItem.setSelected(true);
+		recreationMenuItem.setSelected(true);
+		restaurantMenuItem.setSelected(true);
+		departmentalMenuItem.setSelected(true);
+		nationalMenuItem.setSelected(true);
+		highwayMenuItem.setSelected(true);
+	}
+	
 	private void confirmExit() {
 		int returnValue = JOptionPane.showConfirmDialog(this, "Souhaitez-vous vraiment quitter l'application ?", "Attention", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 		if (returnValue == JOptionPane.OK_OPTION) {
@@ -827,6 +944,8 @@ public class App extends javax.swing.JFrame {
 				List<Node> nodes = graph.getNodes();
 				firstNodeListModel.addAll(nodes);
 				secondNodeListModel.addAll(nodes);
+				
+				linksModel.addAll(graph.getDistinctLinks());
 				
 				int nbNodes = nodes.size() - 1;
 				resetValueSpinner();
@@ -926,6 +1045,7 @@ public class App extends javax.swing.JFrame {
 		secondCityListModel.reset();
 		firstNodeListModel.reset();
 		secondNodeListModel.reset();
+		linksModel.reset();
 		
 		resetValueSpinner();
 		jumpNumberSlider.setMaximum(0);
@@ -936,6 +1056,7 @@ public class App extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItemClose
 
     private void menuItemRefresh(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRefresh
+		resetFilters();
 		canvas.resetSelected();
 		canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
 		dataPanel.setSelectedIndex(0);
@@ -953,6 +1074,30 @@ public class App extends javax.swing.JFrame {
 		canvas.addSelected(1, selectedNode);
     }//GEN-LAST:event_itinerarySecondComboValueChanged
 
+    private void departmentalMenuItemValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_departmentalMenuItemValueChanged
+		filterElements(evt, LinkType.DEPARTMENTAL);
+    }//GEN-LAST:event_departmentalMenuItemValueChanged
+
+    private void nationalMenuItemValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_nationalMenuItemValueChanged
+		filterElements(evt, LinkType.NATIONAL);
+    }//GEN-LAST:event_nationalMenuItemValueChanged
+
+    private void highwayMenuItemValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_highwayMenuItemValueChanged
+		filterElements(evt, LinkType.HIGHWAY);
+    }//GEN-LAST:event_highwayMenuItemValueChanged
+	
+    private void cityMenuItemValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cityMenuItemValueChanged
+		filterElements(evt, NodeType.CITY);
+    }//GEN-LAST:event_cityMenuItemValueChanged
+
+    private void recreationMenuItemValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_recreationMenuItemValueChanged
+		filterElements(evt, NodeType.RECREATION);
+    }//GEN-LAST:event_recreationMenuItemValueChanged
+
+    private void restaurantMenuItemValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_restaurantMenuItemValueChanged
+		filterElements(evt, NodeType.RESTAURANT);
+    }//GEN-LAST:event_restaurantMenuItemValueChanged
+	
 	/**
 	 * @param args the command line arguments
 	 */
@@ -977,6 +1122,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel cityCounterLabel;
     private javax.swing.JLabel cityItineraryLabel;
     private javax.swing.JSpinner cityItinerarySpinner;
+    private javax.swing.JCheckBoxMenuItem cityMenuItem;
     private javax.swing.JCheckBox citySelectorCheckBox;
     private javax.swing.JMenuItem closeMenuItem;
     private javax.swing.JPanel comparisonDataPanel;
@@ -988,6 +1134,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JPanel counterPanel;
     private javax.swing.JTabbedPane dataPanel;
     private javax.swing.JLabel departementalCounterLabel;
+    private javax.swing.JCheckBoxMenuItem departmentalMenuItem;
     private javax.swing.JComboBox<Node> departureItineraryComboBox;
     private javax.swing.JComboBox<Node> destinationItineraryComboBox;
     private javax.swing.JLabel destinationItineraryLabel;
@@ -1001,6 +1148,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JRadioButton firstCityRestaurantComparisonRadio;
     private javax.swing.JFileChooser graphFileChooser;
     private javax.swing.JLabel highwayCounterLabel;
+    private javax.swing.JCheckBoxMenuItem highwayMenuItem;
     private javax.swing.JPanel itineraryDataPanel;
     private javax.swing.JLabel itineraryDistanceResult;
     private javax.swing.JPanel itineraryPanel;
@@ -1023,11 +1171,16 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel linkDistanceLabel;
     private javax.swing.JPanel linkPanel;
     private javax.swing.JLabel linkcategoryLabel;
+    private javax.swing.JComboBox<Link> linksComboBox;
+    private javax.swing.JPanel linksSelectionPanel;
     private javax.swing.JLabel nationalCounterLabel;
+    private javax.swing.JCheckBoxMenuItem nationalMenuItem;
     private javax.swing.JSeparator neighborsSeparation;
     private javax.swing.JLabel neighborsSeparationLabel;
     private javax.swing.JPanel neighborsSeparationPanel;
     private javax.swing.JMenuItem openMenuItem;
+    private javax.swing.JMenu optionsMenu;
+    private javax.swing.JPopupMenu.Separator optionsSeparator;
     private javax.swing.JLabel originItineraryLabel;
     private javax.swing.JTextField placeCategoryField;
     private javax.swing.JLabel placeCategoryLabel;
@@ -1041,6 +1194,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel recreationCounterLabel;
     private javax.swing.JLabel recreationItineraryLabel;
     private javax.swing.JSpinner recreationItinerarySpinner;
+    private javax.swing.JCheckBoxMenuItem recreationMenuItem;
     private javax.swing.JCheckBox recreationSelectorCheckBox;
     private javax.swing.JMenuItem refreshMenuItem;
     private javax.swing.JPanel relationPanel;
@@ -1052,6 +1206,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel restaurantCounterLabel;
     private javax.swing.JLabel restaurantItineraryLabel;
     private javax.swing.JSpinner restaurantItinerarySpinner;
+    private javax.swing.JCheckBoxMenuItem restaurantMenuItem;
     private javax.swing.JCheckBox restaurantSelectorCheckBox;
     private javax.swing.JRadioButton secondCityOpenComparisonRadio;
     private javax.swing.JRadioButton secondCityRecreationComparisonRadio;

@@ -8,7 +8,7 @@ import java.util.Objects;
  * @author BAUDRY Lilian
  * @version JDK 11.0.13
  */
-public final class Link {
+public final class Link implements Comparable<Link> {
 	
 	private final LinkType type;
 	private final int distance;
@@ -68,7 +68,7 @@ public final class Link {
 	
 	@Override
 	public String toString() {
-		return type + " | " + distance + " (" + departure.getName() + " <=> " + destination.getName() + ")";
+		return type.getCharID() + " (" + distance + " km) " + departure.getName() + " <-> " + destination.getName();
 	}
 	
 	@Override
@@ -78,4 +78,10 @@ public final class Link {
 		Link e = (Link)o;
 		return type == e.type && distance == e.distance && (departure == e.departure || departure == e.destination);
 	}
+	
+	@Override
+	public int compareTo(Link link) {
+		return toString().compareTo(link.toString());
+	}
+	
 }
