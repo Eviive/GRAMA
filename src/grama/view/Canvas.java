@@ -48,7 +48,7 @@ public class Canvas extends JPanel {
 				if (hover == null)
 					hover = getLink(e.getPoint());
 				
-				if (PreviousHover != hover){
+				if (PreviousHover != hover) {
 					repaint();
 				}
 			}
@@ -62,24 +62,24 @@ public class Canvas extends JPanel {
 		
 		setNodesLocation();
 		
-		for(Link link: linksDisplay) {
-			drawLink(link);
+		for (Link link: linksDisplay) {
+			if (linksType.contains(link.getType()))
+				drawLink(link);
 		}
 		
-		for(Node node: nodesDisplay) {
-			drawNode(node);
+		for (Node node: nodesDisplay) {
+			if (nodesType.contains(node.getType()))
+				drawNode(node);
 		}
 	}
 	
-	public void drawLink(Link link){
-		if (!linksType.contains(link.getType())) return;
-		
+	public void drawLink(Link link) {		
 		Point coords = positions.get(link.getDeparture().getName());
 
 		Point destination = positions.get(link.getDestination().getName());
 		graphic.setColor(link.getType().getColor());
 
-		graphic.setStroke(new BasicStroke(2));
+		graphic.setStroke(new BasicStroke(1.5F));
 		graphic.drawLine(coords.x, coords.y, destination.x, destination.y);
 		graphic.setStroke(new BasicStroke(1));
 
@@ -95,27 +95,31 @@ public class Canvas extends JPanel {
 
 		if (link == hover)
 			graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
-		
 	}
 	
-	public void drawNode(Node node){
-		if (!nodesType.contains(node.getType())) return;
-		
+	public void drawNode(Node node) {
 		Point coords = positions.get(node.getName());
-		graphic.setColor(node.getType().getColor());
+		
+		
+		graphic.setColor(new Color(248, 244, 244));
+		graphic.fillOval(coords.x - 15,coords.y - 15, 30, 30);
+		
+		graphic.setColor(Color.BLACK);
+		if (selected[0] == node || selected[1] == node) {
+			if (node == hover) {
+				graphic.setColor(new Color(248, 244, 244));
+				graphic.fillOval(coords.x - 20,coords.y - 20, 40, 40);
+				graphic.setColor(Color.BLACK);
+				graphic.drawOval(coords.x - 20,coords.y - 20, 40, 40);
+			} else {
+				graphic.drawOval(coords.x - 15,coords.y - 15, 30, 30);
+			}
+		}
 		
 		if (node == hover)
 			graphic.drawImage(node.getType().getImage(), coords.x - 20, coords.y - 20, 40, 40, null);
 		else
 			graphic.drawImage(node.getType().getImage(), coords.x - 15, coords.y - 15, 30, 30, null);
-		
-		graphic.setColor(Color.BLACK);
-		if (selected[0] == node || selected[1] == node) {
-			if (node == hover)
-				graphic.drawOval(coords.x - 20,coords.y - 20, 40, 40);
-			else
-				graphic.drawOval(coords.x - 15,coords.y - 15, 30, 30);
-		}
 		
 		graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
 		graphic.drawString(node.getName(), coords.x - graphic.getFontMetrics().getDescent()*node.getName().length(), coords.y-15);
@@ -151,8 +155,8 @@ public class Canvas extends JPanel {
 	}
 	
 	public void setNodesLocation(){
-		for (Node node : nodesList){
-			Point center = new Point( (int)(getWidth() * node.getRatioX()) , (int)(getHeight() * node.getRatioY()));
+		for (Node node : nodesList) {
+			Point center = new Point((int)(getWidth() * node.getRatioX()) , (int)(getHeight() * node.getRatioY()));
 			positions.put(node.getName(), center);
 		}
 	}
@@ -172,17 +176,41 @@ public class Canvas extends JPanel {
 		linksDisplay = links;
 		repaint();
 	}
+	
+	public void setNodesType(List<NodeType> nodesType) {
+		this.nodesType = nodesType;
+	}
+
+	public void setLinksType(List<LinkType> linksType) {
+		this.linksType = linksType;
+	}
 
 	public Object getHover() {
 		return hover;
 	}
 	
 	public void reset() {
+		resetSelected();
 		nodesList.clear();
 		nodesDisplay.clear();
 		linksDisplay.clear();
 		positions.clear();
-		resetSelected();
+		repaint();
+	}
+	
+	public Node getSelected(int i) {
+		return selected[i];
+	}
+	
+	public void addSelected(int i, Node node) {
+		selected[i] = node;
+		repaint();
+	}
+	
+	public void removeSelected(Node node) {
+		for (int i = 0; i < selected.length; i++)
+			if (node.equals(selected[i]))
+				selected[i] = null;
 		repaint();
 	}
 	
@@ -191,17 +219,11 @@ public class Canvas extends JPanel {
 		selected[1] = null;
 	}
 	
-	public void addSelected(int i, Node node) {
-		selected[i] = node;
-		repaint();
-	}
-
-	public void setNodesType(List<NodeType> nodesType) {
-		this.nodesType = nodesType;
-	}
-
-	public void setLinksType(List<LinkType> linksType) {
-		this.linksType = linksType;
+	public boolean isSelected(Node node) {
+		for (Node item: selected)
+			if (node.equals(item))
+				return true;
+		return false;
 	}
 	
 }

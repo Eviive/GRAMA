@@ -21,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JComboBox;
+import javax.swing.JTabbedPane;
 
 /**
  * The class representing the user interface
@@ -58,28 +59,51 @@ public class App extends javax.swing.JFrame {
 				Object clickedElement = canvas.getHover();
 				
 				if (clickedElement instanceof Node) {
-					displayNode((Node)clickedElement);
-					if (!firstChecked) {
-						firstNodeListModel.setSelectedItem(clickedElement);
-						canvas.addSelected(0, (Node)clickedElement);
-						if (((Node)clickedElement).getType() == NodeType.CITY) {
-							firstCityListModel.setSelectedItem(clickedElement);
+					Node clickedNode = (Node)clickedElement;
+					displayNode(clickedNode);
+					if (!canvas.isSelected(clickedNode)) {
+						if (dataPanel.getSelectedIndex() == 0) {
+							canvas.resetSelected();
+							canvas.addSelected(0, clickedNode);
+						} else {
+							if (!firstChecked) {
+								firstNodeListModel.setSelectedItem(clickedNode);
+								if (dataPanel.getSelectedIndex() == 0)
+									canvas.addSelected(0, clickedNode);
+								if (clickedNode.getType() == NodeType.CITY) {
+									firstCityListModel.setSelectedItem(clickedNode);
+								}
+							} else {
+								secondNodeListModel.setSelectedItem(clickedNode);
+								if (dataPanel.getSelectedIndex() == 0)
+									canvas.addSelected(1, clickedNode);
+								if (clickedNode.getType() == NodeType.CITY) {
+									secondCityListModel.setSelectedItem(clickedNode);
+								}
+							}
 						}
+						firstChecked = !firstChecked;
 					} else {
-						secondNodeListModel.setSelectedItem(clickedElement);
-						canvas.addSelected(1, (Node)clickedElement);
-						if (((Node)clickedElement).getType() == NodeType.CITY) {
-							secondCityListModel.setSelectedItem(clickedElement);
+						canvas.removeSelected(clickedNode);
+						if (firstNodeListModel.getSelectedItem() == clickedNode) {
+							firstNodeListModel.setSelectedItem(null);
+							firstChecked = false;
 						}
-					}
-					if (dataPanel.getSelectedIndex() != 2) {
-						dataPanel.setSelectedIndex(3);
+						if (secondNodeListModel.getSelectedItem() == clickedNode) {
+							secondNodeListModel.setSelectedItem(null);
+							firstChecked = true;
+						}
+						if (clickedNode.getType() == NodeType.CITY) {
+							if (firstCityListModel.getSelectedItem() == clickedNode)
+								firstCityListModel.setSelectedItem(null);
+							if (secondCityListModel.getSelectedItem() == clickedNode)
+								secondCityListModel.setSelectedItem(null);
+						}
 					}
 					itineraryDistanceResult.setText("");
-					firstChecked = !firstChecked;
-				
+					
 				} else if (clickedElement instanceof Link) {
-					displayLink((Link)clickedElement);
+					linksComboBox.setSelectedItem(clickedElement);
 					dataPanel.setSelectedIndex(1);
 				}
 			}
@@ -238,6 +262,11 @@ public class App extends javax.swing.JFrame {
         dataPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         dataPanel.setMinimumSize(new java.awt.Dimension(183, 104));
         dataPanel.setPreferredSize(new java.awt.Dimension(334, 100));
+        dataPanel.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                dataPanelStateChanged(evt);
+            }
+        });
 
         placeDataPanel.setLayout(new javax.swing.BoxLayout(placeDataPanel, javax.swing.BoxLayout.PAGE_AXIS));
 
@@ -371,6 +400,11 @@ public class App extends javax.swing.JFrame {
 
         linksComboBox.setModel(linksModel);
         linksComboBox.setPreferredSize(new java.awt.Dimension(250, 22));
+        linksComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                linksComboBoxValueChanged(evt);
+            }
+        });
         linksSelectionPanel.add(linksComboBox);
 
         linkDataPanel.add(linksSelectionPanel);
@@ -827,6 +861,12 @@ public class App extends javax.swing.JFrame {
 	private void enablePanels(boolean state) {
 		resetFilters();
 		dataPanel.setSelectedIndex(0);
+		firstCityRestaurantComparisonRadio.setSelected(state);
+		firstCityRecreationComparisonRadio.setSelected(state);
+		firstCityOpenComparisonRadio.setSelected(state);
+		secondCityRestaurantComparisonRadio.setSelected(state);
+		secondCityRecreationComparisonRadio.setSelected(state);
+		secondCityOpenComparisonRadio.setSelected(state);
 		citySelectorCheckBox.setEnabled(state);
 		recreationSelectorCheckBox.setEnabled(state);
 		restaurantSelectorCheckBox.setEnabled(state);
@@ -836,6 +876,12 @@ public class App extends javax.swing.JFrame {
 		placeNameField.setEditable(state);
 		placeNameField.setText("");
 		placeCategoryField.setText("");
+		linkCategoryField.setText("");
+		linkDistanceField.setText("");
+		linkDepartureNameField.setText("");
+		linkDepartureCategoryField.setText("");
+		linkArrivalNameField.setText("");
+		linkArrivalCategoryField.setText("");
 		cityCounterLabel.setText("Villes : " + graph.getNumberNodes(NodeType.CITY));
 		restaurantCounterLabel.setText("Restaurants : " + graph.getNumberNodes(NodeType.RESTAURANT));
 		recreationCounterLabel.setText("Loisirs : " + graph.getNumberNodes(NodeType.RECREATION));
@@ -871,14 +917,6 @@ public class App extends javax.swing.JFrame {
 		}
 	}
 	
-	private void viewNeighbors(){
-		Node researchedNode = graph.getNode(placeNameField.getText());
-		int nbNeighbors = jumpNumberSlider.getValue();
-		if (researchedNode != null && nbNeighbors >= 0) {
-			displayNeighbors(researchedNode, nbNeighbors);
-		}
-	}
-	
 	private void displayNode(Node node) {
 		if (node == null) {
 			placeCategoryField.setText("");
@@ -901,21 +939,26 @@ public class App extends javax.swing.JFrame {
 		linkArrivalCategoryField.setText(destination.getType().toString());
 	}
 	
-	private void displayNeighbors(Node node, int nbJumps) {
-		List<NodeType> types = new ArrayList<>();
+	private void displayNeighbors() {
+		Node researchedNode = graph.getNode(placeNameField.getText());
+		int nbNeighbors = jumpNumberSlider.getValue();
 		
-		if (recreationSelectorCheckBox.isSelected())
-			types.add(NodeType.RECREATION);
+		if (researchedNode != null && nbNeighbors >= 0) {
+			List<NodeType> types = new ArrayList<>();
 		
-		if (citySelectorCheckBox.isSelected())
-			types.add(NodeType.CITY);
-		
-		if (restaurantSelectorCheckBox.isSelected())
-			types.add(NodeType.RESTAURANT);
-		
-		List<Node> neighborsList = node.getNeighbors(nbJumps);
-		
-		canvas.setDisplay(node.filterByType(neighborsList,types), graph.extractDistinctLink(neighborsList));
+			if (recreationSelectorCheckBox.isSelected())
+				types.add(NodeType.RECREATION);
+
+			if (citySelectorCheckBox.isSelected())
+				types.add(NodeType.CITY);
+
+			if (restaurantSelectorCheckBox.isSelected())
+				types.add(NodeType.RESTAURANT);
+
+			List<Node> neighborsList = researchedNode.getNeighbors(nbNeighbors);
+
+			canvas.setDisplay(researchedNode.filterByType(neighborsList,types), graph.extractDistinctLink(neighborsList));
+		}
 	}
 	
 	private void filterElements(ItemEvent evt, LinkType type) {
@@ -925,6 +968,11 @@ public class App extends javax.swing.JFrame {
 		} else {
 			linksFilter.remove(type);
 		}
+		List<Link> links = new ArrayList<>();
+		for (LinkType item: linksFilter)
+			links.addAll(graph.getDistinctLinks(item));
+		linksModel.setSelectedItem(null);
+		linksModel.addAll(links);
 		canvas.repaint();
 	}
 	
@@ -934,6 +982,22 @@ public class App extends javax.swing.JFrame {
 				nodesFilter.add(type);
 		} else {
 			nodesFilter.remove(type);
+			
+			Node node = canvas.getSelected(0);
+			if (node != null && node.getType() == type)
+				canvas.addSelected(0, null);
+			
+			node = canvas.getSelected(1);
+			if (node != null && node.getType() == type)
+				canvas.addSelected(1, null);
+			
+			List<Node> nodes = new ArrayList<>();
+			for (NodeType item: nodesFilter)
+				nodes.addAll(graph.getNodes(item));
+			firstNodeListModel.setSelectedItem(null);
+			firstNodeListModel.addAll(nodes);
+			secondNodeListModel.setSelectedItem(null);
+			secondNodeListModel.addAll(nodes);
 		}
 		canvas.repaint();
 	}
@@ -1000,12 +1064,11 @@ public class App extends javax.swing.JFrame {
 
     private void sliderValueChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderValueChanged
 		jumpNumberSpinner.setValue(jumpNumberSlider.getValue());
-		viewNeighbors();
+		displayNeighbors();
     }//GEN-LAST:event_sliderValueChanged
 
     private void spinnerValueChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinnerValueChanged
 		jumpNumberSlider.setValue((Integer)jumpNumberSpinner.getValue());
-		viewNeighbors();
     }//GEN-LAST:event_spinnerValueChanged
 
     private void comparisonFirstComboValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comparisonFirstComboValueChanged
@@ -1032,13 +1095,16 @@ public class App extends javax.swing.JFrame {
 		
 		if (departure != null && arrival != null) {
 			try {
-				List<Link> itinerary = graph.getShortestItinerary(departure, arrival, 
-						(Integer)restaurantItinerarySpinner.getValue(), 
-						(Integer)cityItinerarySpinner.getValue(), 
-						(Integer)recreationItinerarySpinner.getValue());
+				List<Link> itinerary = graph.getShortestItinerary(
+						departure,
+						arrival,
+						(Integer)restaurantItinerarySpinner.getValue(),
+						(Integer)cityItinerarySpinner.getValue(),
+						(Integer)recreationItinerarySpinner.getValue()
+				);
 				
 				itineraryDistanceResult.setText("Distance total : " + graph.getDistancePath(itinerary) + " km");
-				canvas.setDisplayLinks(itinerary);
+				canvas.setDisplay(graph.getNodes(), itinerary);
 				
 			} catch (ItineraryException e) {
 				JOptionPane.showConfirmDialog(this, e.getMessage(), "Erreur", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
@@ -1054,7 +1120,7 @@ public class App extends javax.swing.JFrame {
     }//GEN-LAST:event_nodeSearchbar
 
     private void submitNeighbors(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitNeighbors
-		viewNeighbors();
+		displayNeighbors();
     }//GEN-LAST:event_submitNeighbors
 
     private void menuItemClose(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemClose
@@ -1084,15 +1150,15 @@ public class App extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItemRefresh
 
     private void cityCheckboxValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cityCheckboxValueChanged
-        viewNeighbors();
+        displayNeighbors();
     }//GEN-LAST:event_cityCheckboxValueChanged
 
     private void recreationCheckboxValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_recreationCheckboxValueChanged
-		viewNeighbors();
+		displayNeighbors();
     }//GEN-LAST:event_recreationCheckboxValueChanged
 
     private void restaurantCheckboxValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_restaurantCheckboxValueChanged
-        viewNeighbors();
+        displayNeighbors();
     }//GEN-LAST:event_restaurantCheckboxValueChanged
     private void itineraryFirstComboValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_itineraryFirstComboValueChanged
 		Node selectedNode = (Node)((JComboBox)evt.getSource()).getSelectedItem();
@@ -1129,6 +1195,23 @@ public class App extends javax.swing.JFrame {
     private void restaurantMenuItemValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_restaurantMenuItemValueChanged
 		filterElements(evt, NodeType.RESTAURANT);
     }//GEN-LAST:event_restaurantMenuItemValueChanged
+
+    private void linksComboBoxValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_linksComboBoxValueChanged
+		Link link = (Link)((JComboBox)evt.getSource()).getSelectedItem();
+		if (link != null)
+			displayLink(link);
+    }//GEN-LAST:event_linksComboBoxValueChanged
+
+    private void dataPanelStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_dataPanelStateChanged
+		if (((JTabbedPane)evt.getSource()).getSelectedIndex() == 0) {
+			Node secondNode = canvas.getSelected(1);
+			if (secondNode != null) {
+				canvas.addSelected(1, null);
+				secondNodeListModel.setSelectedItem(null);
+				secondCityListModel.setSelectedItem(null);
+			}
+		}
+    }//GEN-LAST:event_dataPanelStateChanged
 	
 	/**
 	 * @param args the command line arguments
