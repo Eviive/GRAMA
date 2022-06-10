@@ -772,6 +772,8 @@ public class App extends javax.swing.JFrame {
 						(Integer) cityItinarySpinner.getValue(), 
 						(Integer) recreationItinarySpinner.getValue());
 				
+				canvas.setDisplayLinks(itinerary);
+				
 				System.out.print(departure);
 				if (!itinerary.isEmpty()) {
 					for (Link link: itinerary) {

@@ -269,19 +269,11 @@ public final class Graph {
 		if(restaurants==0&&cities==0&&recreations==0){ //check if de numbers are not null
 			return initialPath;
 		}
-		int countRestaurants=0;
-		int countRecreations=0;
-		int countCities = 0;
-		for(Node n : getNodes()){
-			if(n.getType()==NodeType.CITY)
-				countCities++;
-			else if(n.getType()==NodeType.RECREATION)
-				countRecreations++;
-			else
-				countRestaurants++;
-		}
+		int countRestaurants=this.getNodes(NodeType.RESTAURANT).size();
+		int countRecreations=this.getNodes(NodeType.RECREATION).size();
+		int countCities = this.getNodes(NodeType.CITY).size();//count the number of each type
 		if(restaurants>countRestaurants || cities>countCities||recreations>countRecreations)//throw exception if the number are too high
-			throw new ItineraryException("Chiffre trop grand");
+			throw new ItineraryException("Chiffre trop grand.");
 		int restaurantsNumber = restaurants;
 		int citiesNumber = cities;
 		int recreationsNumber = recreations;
@@ -312,37 +304,37 @@ public final class Graph {
 		int total = restaurants+cities+recreations;
 		for(int i = total; i>=0; i--){
 			int distance = Integer.MAX_VALUE;
-			if(i!=0){
+			if(i!=0){//add arrival to treated
 				if(!treated.contains(arrival))
 					treated.add(arrival);
-			if(restaurantsNumber>0){
+			if(restaurantsNumber>0){//if restaurants arent all treated
 				Node temp = n;
 				int tempDistance=distance;
 				AtomicInteger d = new AtomicInteger(tempDistance);
-				temp = getNearestNode(from, NodeType.RESTAURANT, getNodesFromLinkList(finalList), d);//get the nearest note
+				temp = getNearestNode(from, NodeType.RESTAURANT, getNodesFromLinkList(finalList), d);//get the nearest node
 				if(distance>d.get()){//if distance is shorter than the previous one 
 					n = temp;// the nearest node is this node
-					distance =d.get();//the shortest distance is this distance
+					distance = d.get();//the shortest distance is this distance
 				}
 			}
-			if(recreationsNumber>0){
+			if(recreationsNumber>0){//if recreations arent all treated
 				Node temp = n;
 				int tempDistance=distance;
 				AtomicInteger d = new AtomicInteger(tempDistance);
-				temp = getNearestNode(from, NodeType.RECREATION, getNodesFromLinkList(finalList), d);
-				if(distance>d.get()){
-					n = temp;
-					distance =d.get();
+				temp = getNearestNode(from, NodeType.RECREATION, getNodesFromLinkList(finalList), d);//get the nearest node
+				if(distance>d.get()){//if distance is shorter than the previous one 
+					n = temp;// the nearest node is this node
+					distance = d.get();//the shortest distance is this distance
 				}
 			}
-			if(citiesNumber>0){
+			if(citiesNumber>0){//if cities arent all treated
 				Node temp = n;
 				int tempDistance=distance;
 				AtomicInteger d = new AtomicInteger(tempDistance);
-				temp = getNearestNode(from, NodeType.CITY, getNodesFromLinkList(finalList), d);
-				if(distance>d.get()){
-					n = temp;
-					distance =d.get();
+				temp = getNearestNode(from, NodeType.CITY, getNodesFromLinkList(finalList), d);//get the nearest node
+				if(distance>d.get()){//if distance is shorter than the previous one 
+					n = temp;// the nearest node is this node
+					distance = d.get();//the shortest distance is this distance
 				}
 			}
 			if(n.getType()==NodeType.CITY)//updating the count of city, recreation and restaurants found
@@ -354,11 +346,11 @@ public final class Graph {
 			if(i==0)
 				n=arrival;
 			finalList.addAll(getShortestItinerary(from, n));//adding the itinerary
-			System.out.println("from = " +from.getName()+ " to ="+n.getName() + " distance = " + distance);
 			treated = getNodesFromLinkList(finalList);//updating the treated list
 			from = n;//updating the next departure node
 			}
 		}
+		finalList.addAll(getShortestItinerary(from, arrival));//add the final path to arrival
 		return finalList;
 	}
 	
@@ -368,17 +360,27 @@ public final class Graph {
 	 * @param type The type of the node
 	 * @param treated the list of node already treated
 	 * @param distance the distance of the from the previous node
-	 * @return 
+	 * @return the nearest node of the type <code>type</code>
 	 */
-	private Node getNearestNode(Node departure, NodeType type, List<Node> treated,AtomicInteger distance){
+	private Node getNearestNode(Node departure, NodeType type, List<Node> treated,AtomicInteger distance) throws ItineraryException{
 		Node nearest =null;
-		boolean find = false;
+		int count=0;
+		for(Node node : this.getNodes(type)){ // count the node already trated
+			if(treated.contains(node))
+				count++;
+		}
+		if(count==this.getNodes(type).size())//if all the links are treated throw exceptions
+			throw new ItineraryException("Chemin inaccessible");
+		if(count==this.getNodes(type).size()-1)//if there is only one node left, get that node
+			return getFreeNode(type, treated);
+		boolean find = false;//while the nearest node is not find
 		for(int i =1; !find; i++){
-			List<Node> neighbors = new ArrayList<>();
-			for(Node n : departure.getNeighbors(i, neighbors)){
+			List<Node> list_vide = new ArrayList<>();
+			List<Node> neighbors = departure.getNeighbors(i, list_vide);//get neighbors
+			for(Node n : neighbors){
 				if(n.getType()==type){
-					if(!treated.contains(n) && !n.equals(departure)){
-						nearest = n;
+					if(!treated.contains(n) && !n.equals(departure)){//if the type of the node is the good one and it is not equals to departure
+						nearest = n;//return that node
 						distance.set(i);
 						find=true;
 					}
@@ -386,6 +388,23 @@ public final class Graph {
 			}
 		}
 		return nearest;
+	}
+	
+	/**
+	 * Method to use where there is one or two free node of a type
+	 * @param type type of node
+	 * @param treated list of treated nodes
+	 * @return the free node
+	 */
+	private Node getFreeNode(NodeType type,List<Node> treated){
+		List<Node> list = this.getNodes(type);
+		Node node = null;
+		for(Node n : list){
+			if(!treated.contains(n)){
+				node = n;
+			}
+		}
+		return node;
 	}
 	
 	/**
