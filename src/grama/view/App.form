@@ -432,6 +432,9 @@
                         <Property name="text" type="java.lang.String" value="Villes"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cityCheckboxValueChanged"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="recreationSelectorCheckBox">
                       <Properties>
@@ -439,6 +442,9 @@
                         <Property name="text" type="java.lang.String" value="Loisirs"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="recreationCheckboxValueChanged"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="restaurantSelectorCheckBox">
                       <Properties>
@@ -446,6 +452,9 @@
                         <Property name="text" type="java.lang.String" value="Restaurants"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="restaurantCheckboxValueChanged"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>

@@ -15,6 +15,7 @@ import grama.model.Link;
 import grama.model.LinkType;
 import grama.model.Node;
 import grama.model.NodeType;
+import java.awt.BasicStroke;
 
 /**
  * @author BAUDRY Lilian
@@ -61,40 +62,52 @@ public class Canvas extends JPanel {
 		
 		setNodesLocation();
 		
-		for (Link link: linksDisplay) {
+		for(Link link: linksDisplay) {
 			drawLink(link);
 		}
 		
-		for (Node node: nodesDisplay) {
+		for(Node node: nodesDisplay) {
 			drawNode(node);
 		}
 	}
 	
 	public void drawLink(Link link){
+		if (linksType.contains(link.getType()) return;
+
 		Point coords = positions.get(link.getDeparture().getName());
 
-		if (linksType.contains(link.getType()) && nodesDisplay.contains(link.getDeparture()) && nodesDisplay.contains(link.getDestination())) {
-			Point destination = positions.get(link.getDestination().getName());
-			
-			graphic.setColor(link.getType().getColor());
-			graphic.drawLine(coords.x, coords.y, destination.x, destination.y);
-			
-			Point center = new Point((coords.x + destination.x)/2, (coords.y + destination.y)/2);
-			if (link == hover)
-				graphic.setFont(new Font("sans serif", Font.BOLD, 12));
-			else
-				graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
-			
-			graphic.setColor(Color.BLACK);
-			String info = Integer.toString(link.getDistance());
-			graphic.drawString(info, center.x - graphic.getFontMetrics().getDescent()*info.length()/2, center.y-10);
-		}
+		Point destination = positions.get(link.getDestination().getName());
+		graphic.setColor(link.getType().getColor());
+
+		graphic.setStroke(new BasicStroke(2));
+		graphic.drawLine(coords.x, coords.y, destination.x, destination.y);
+		graphic.setStroke(new BasicStroke(1));
+
+		Point center = new Point((coords.x + destination.x)/2 , (coords.y + destination.y)/2);
+		if (link == hover)
+			graphic.setFont(new Font("sans serif", Font.BOLD, 12));
+		else
+			graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
+
+		graphic.setColor(Color.BLACK);
+		String info = Integer.toString(link.getDistance());
+		graphic.drawString(info, center.x - graphic.getFontMetrics().getDescent()*info.length()/2, center.y-10);
+
+		if (link == hover)
+			graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
+		
 	}
 	
 	public void drawNode(Node node){
 		if (!nodesType.contains(node.getType())) return;
 		
 		Point coords = positions.get(node.getName());
+		graphic.setColor(node.getType().getColor());
+		
+		if (node == hover)
+			graphic.drawImage(node.getType().getImage(), coords.x - 20, coords.y - 20, 40, 40, null);
+		else
+			graphic.drawImage(node.getType().getImage(), coords.x - 15, coords.y - 15, 30, 30, null);
 		
 		graphic.setColor(Color.BLACK);
 		if (selected[0] == node || selected[1] == node) {
@@ -104,13 +117,8 @@ public class Canvas extends JPanel {
 				graphic.drawOval(coords.x - 15,coords.y - 15, 30, 30);
 		}
 		
-		if (node == hover)
-			graphic.drawImage(node.getType().getImage(), coords.x - 20, coords.y - 20, 40, 40, null);
-		else
-			graphic.drawImage(node.getType().getImage(), coords.x - 15, coords.y - 15, 30, 30, null);
-		
 		graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
-		graphic.drawString(node.getName(), coords.x - graphic.getFontMetrics().getDescent()*node.getName().length(), coords.y-21);
+		graphic.drawString(node.getName(), coords.x - graphic.getFontMetrics().getDescent()*node.getName().length(), coords.y-15);
 	}
 	
 	public Node getNode(Point pos){

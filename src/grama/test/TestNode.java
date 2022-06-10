@@ -25,11 +25,11 @@ public class TestNode {
 		Node vienne = graph.getNode("Vienne");
 		
 		if (chanas != null) {
-			System.out.println("Chanas' neighbors : " + chanas.getNeighbors(1, new ArrayList<>()) + "\n");
+			System.out.println("Chanas' neighbors : " + chanas.getNeighbors(1) + "\n");
 			
 			List<NodeType> types = new ArrayList<>();
 			types.add(NodeType.RESTAURANT);
-			System.out.println("Chanas' restaurant neighbors : " + chanas.getNeighbors(2, new ArrayList<>(), types) + "\n");
+			System.out.println("Chanas' restaurant neighbors : " + chanas.getNeighbors(2, types) + "\n");
 			
 			try {
 				System.out.println("Chanas is " + chanas.getShortestPath(graph.getNode("Annonay")).getDistance() + " km from Annonay");
