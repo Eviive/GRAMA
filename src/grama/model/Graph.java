@@ -1,7 +1,6 @@
 package grama.model;
 
 import grama.comparator.ItineraryComparatorDistance;
-import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -50,6 +49,7 @@ public final class Graph {
 					String element[] = elements[i].split(":");
 					Node destination = getNodeMap().get(element[2]);
 					if (destination == null) {
+						readGraph.close();
 						throw new LoadGraphException("La destination " + element[2] + " en partant de " + nodeDeparture + " n'a pas été trouvé");
 					}
 					nodeDeparture.addLink(new Link(element[0].charAt(0), Integer.parseInt(element[1]), nodeDeparture, destination));
@@ -136,6 +136,14 @@ public final class Graph {
 							 .collect(Collectors.toList());
 	}
 	
+	public List<Link> extractDistinctLink(List<Node> nodes){
+		return nodes.stream()
+					.flatMap(node -> node.getNodeLinks().stream())
+					.filter(link -> nodes.contains(link.getDestination()))
+					.distinct()
+					.collect(Collectors.toList());
+	}
+	
 	/**
 	 * @return Returns the number of <code>Nodes</code> of this <code>Graph</code>
 	 */
@@ -145,7 +153,7 @@ public final class Graph {
 	
 	/**
 	 * @param type The type of <code>Nodes</code> we will count
-	 * @return Returns the number of <code>Nodes</code> with the right type of this <code>Graph</code>
+	 * @return Returns the number of <code>Nodes</code> with th	e right type of this <code>Graph</code>
 	 */
 	public int getNumberNodes(NodeType type) {
 		return getNodes(type).size();
@@ -229,7 +237,7 @@ public final class Graph {
 			int distance = distances.remove(indexMin);
 			Node processing = notProcess.remove(indexMin);
 			
-			for (Node node : processing.getNeighbors(1, new ArrayList<>())){
+			for (Node node : processing.getNeighbors(1)){
 				if (notProcess.contains(node)){
 					int indice = notProcess.indexOf(node);
 					

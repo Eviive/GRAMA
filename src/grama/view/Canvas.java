@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.swing.JPanel;
 import grama.model.Link;
 import grama.model.Node;
+import java.awt.BasicStroke;
 
 /**
  * @author BAUDRY Lilian
@@ -67,24 +68,26 @@ public class Canvas extends JPanel {
 	public void drawLink(Link link){
 		Point coords = positions.get(link.getDeparture().getName());
 
-		if (nodesDisplay.contains(link.getDeparture()) && nodesDisplay.contains(link.getDestination())) {
-			Point destination = positions.get(link.getDestination().getName());
-			graphic.setColor(link.getType().getColor());
-			graphic.drawLine(coords.x, coords.y, destination.x, destination.y);
-			
-			Point center = new Point((coords.x + destination.x)/2 , (coords.y + destination.y)/2);
-			if (link == hover)
-				graphic.setFont(new Font("sans serif", Font.BOLD, 12));
-			else
-				graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
-			
-			graphic.setColor(Color.BLACK);
-			String info = Integer.toString(link.getDistance());
-			graphic.drawString(info, center.x - graphic.getFontMetrics().getDescent()*info.length()/2, center.y-10);
-			
-			if (link == hover)
-				graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
-		}
+		Point destination = positions.get(link.getDestination().getName());
+		graphic.setColor(link.getType().getColor());
+
+		graphic.setStroke(new BasicStroke(2));
+		graphic.drawLine(coords.x, coords.y, destination.x, destination.y);
+		graphic.setStroke(new BasicStroke(1));
+
+		Point center = new Point((coords.x + destination.x)/2 , (coords.y + destination.y)/2);
+		if (link == hover)
+			graphic.setFont(new Font("sans serif", Font.BOLD, 12));
+		else
+			graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
+
+		graphic.setColor(Color.BLACK);
+		String info = Integer.toString(link.getDistance());
+		graphic.drawString(info, center.x - graphic.getFontMetrics().getDescent()*info.length()/2, center.y-10);
+
+		if (link == hover)
+			graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
+		
 	}
 	
 	public void drawNode(Node node){

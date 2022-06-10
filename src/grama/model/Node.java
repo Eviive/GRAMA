@@ -1,6 +1,8 @@
 package grama.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,54 +99,52 @@ public final class Node implements Comparable<Node> {
 		return path;
 	}
 	
-	/**
-	 * @param nbJumps The number of jumps we have to do
-	 * @param results The <code>List</code> in which the results will go
-	 * @return Returns the <code>List</code> of all the <code>Nodes</code> you can go to by making <code>nbJumps</code> jumps or less from this <code>Node</code>
-	 */
-	public List<Node> getNeighbors(int nbJumps, List<Node> results) {
-		--nbJumps;
+	public List<Node> getNeighbors(int nbJumps){
 		
-		// if nbJumps is less than 0 you can't go anywhere but where you are
-		if (nbJumps < 0) {
-			results.add(this);
-			return results;
-		}
+		LinkedList<Node> queue = new LinkedList<>();
+		List<Node> visited = new ArrayList<>();
 		
-		// the List of all the neighbors of this Node
-		List<Node> neighbors = linkList.stream()
-									   .map(link -> link.getDestination())
-									   .collect(Collectors.toList());
-		neighbors.add(this);
+		HashMap<Node,Integer> distanceMap = new HashMap<>();
+
+		visited.add(this);
+		queue.add(this);
 		
-		// if it's not the last jump (nbJumps == 0) then do getNeighbors() on all of them
-		if (nbJumps > 0) {
-			for (Node neighbor: neighbors) {
-				neighbor.getNeighbors(nbJumps, results)
-						.stream()
-						.filter(node -> !results.contains(node))
-						.forEach(node -> results.add(node));
+		distanceMap.put(this, 0);
+		
+		while(!queue.isEmpty()){
+			
+			Node vertex = queue.poll();
+			
+			for (Link link : vertex.getNodeLinks()){
+				Node neighbour = link.getDestination();
+				
+				if (!(visited.contains(neighbour))){
+					visited.add(neighbour);
+					queue.add(neighbour);
+					distanceMap.put(neighbour,distanceMap.get(vertex)+1);
+				}
 			}
-			return results;
-		// if it's the last jump (nbJumps == 0) then we add the neighbors to the results List if they're not already in it
-		} else {
-			neighbors.stream()
-					 .filter(node -> !results.contains(node))
-					 .forEach(node -> results.add(node));
-			return results;
 		}
+
+		return distanceMap.entrySet().stream()
+							 .filter(entree -> entree.getValue() <= nbJumps || entree.getKey() == this )
+							 .map(entree -> entree.getKey())
+							 .collect(Collectors.toList());
+		
 	}
-	
 	/**
 	 * @param nbJumps The number of jumps we have to do
-	 * @param results The <code>List</code> in which the results will go
 	 * @param types The types of the <code>Node</code> we want to get
 	 * @return Returns the <code>List</code> of all the <code>Nodes</code> of type <code>type</code> you can go to by making <code>nbJumps</code> jumps or less from this <code>Node</code>
 	 */
-	public List<Node> getNeighbors(int nbJumps, List<Node> results, List<NodeType> types) {
-		return getNeighbors(nbJumps, results).stream()
-											 .filter(node -> types.contains(node.getType()))
-											 .collect(Collectors.toList());
+	public List<Node> getNeighbors(int nbJumps, List<NodeType> types) {
+		return filterByType(Node.this.getNeighbors(nbJumps), types);
+	}
+	
+	public List<Node> filterByType(List<Node> nodes, List<NodeType> types){
+		return nodes.stream()
+					.filter(node -> types.contains(node.getType()) || node == this)
+					.collect(Collectors.toList());
 	}
 	
 	/**
@@ -156,12 +156,12 @@ public final class Node implements Comparable<Node> {
 	}
 	
 	/**
-	 * Tells us if this <code>Node</code> is at two distances from the target <code>Node</code>
+	 * Tells us if this <code>Node</code> is exactly at two distances from the target <code>Node</code>
 	 * @param target The targeted <code>Node</code>
 	 * @return Returns <code>true</code> if the <code>Nodes</code> are at two distance from each other
 	 */
 	public boolean isTwoDistance(Node target) {
-		return getNeighbors(2, new ArrayList<>()).contains(target);
+		return target.getNodeLinks().stream().anyMatch(link -> linkList.contains(link));
 	}
 	
 	/**
@@ -173,8 +173,8 @@ public final class Node implements Comparable<Node> {
 	public int isMoreLinkedToType(Node target, NodeType type) {
 		List<NodeType> types = new ArrayList<>();
 		types.add(type);
-		int nbNode = getNeighbors(2, new ArrayList<>(), types).size();
-		int nbTarget = target.getNeighbors(2, new ArrayList<>(), types).size();
+		int nbNode = Node.this.getNeighbors(2, types).size();
+		int nbTarget = target.getNeighbors(2, types).size();
 		if (nbNode > nbTarget)
 			return 1;
 		else if (nbNode < nbTarget)

@@ -304,16 +304,31 @@ public class App extends javax.swing.JFrame {
         recreationSelectorCheckBox.setSelected(true);
         recreationSelectorCheckBox.setText("Loisirs");
         recreationSelectorCheckBox.setEnabled(false);
+        recreationSelectorCheckBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                recreationCheckboxValueChanged(evt);
+            }
+        });
         jumpCategorySelectorPanel.add(recreationSelectorCheckBox);
 
         citySelectorCheckBox.setSelected(true);
         citySelectorCheckBox.setText("Villes");
         citySelectorCheckBox.setEnabled(false);
+        citySelectorCheckBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cityCheckboxValueChanged(evt);
+            }
+        });
         jumpCategorySelectorPanel.add(citySelectorCheckBox);
 
         restaurantSelectorCheckBox.setSelected(true);
         restaurantSelectorCheckBox.setText("Restaurants");
         restaurantSelectorCheckBox.setEnabled(false);
+        restaurantSelectorCheckBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                restaurantCheckboxValueChanged(evt);
+            }
+        });
         jumpCategorySelectorPanel.add(restaurantSelectorCheckBox);
 
         jumpSelectorPanel.add(jumpCategorySelectorPanel);
@@ -739,6 +754,14 @@ public class App extends javax.swing.JFrame {
 		}
 	}
 	
+	private void viewNeighbors(){
+		Node researchedNode = graph.getNode(placeNameField.getText());
+		int nbNeighbors = jumpNumberSlider.getValue();
+		if (researchedNode != null && nbNeighbors >= 0) {
+			displayNeighbors(researchedNode, nbNeighbors);
+		}
+	}
+	
 	private void displayNode(Node node) {
 		if (node == null) {
 			placeCategoryField.setText("");
@@ -773,9 +796,9 @@ public class App extends javax.swing.JFrame {
 		if (restaurantSelectorCheckBox.isSelected())
 			types.add(NodeType.RESTAURANT);
 		
-		List<Node> neighborsList = node.getNeighbors(nbJumps, new ArrayList<>(), types);
-		neighborsList.add(graph.getNode(placeNameField.getText()));
-		canvas.setDisplay(neighborsList, graph.getDistinctLinks());
+		List<Node> neighborsList = node.getNeighbors(nbJumps);
+		
+		canvas.setDisplay(node.filterByType(neighborsList,types), graph.extractDistinctLink(neighborsList));
 	}
 	
 	private void confirmExit() {
@@ -839,10 +862,12 @@ public class App extends javax.swing.JFrame {
 
     private void sliderValueChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderValueChanged
 		jumpNumberSpinner.setValue(jumpNumberSlider.getValue());
+		viewNeighbors();
     }//GEN-LAST:event_sliderValueChanged
 
     private void spinnerValueChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinnerValueChanged
 		jumpNumberSlider.setValue((Integer)jumpNumberSpinner.getValue());
+		viewNeighbors();
     }//GEN-LAST:event_spinnerValueChanged
 
     private void comparisonFirstComboValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comparisonFirstComboValueChanged
@@ -880,11 +905,7 @@ public class App extends javax.swing.JFrame {
     }//GEN-LAST:event_nodeSearchbar
 
     private void submitNeighbors(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitNeighbors
-		Node researchedNode = graph.getNode(placeNameField.getText());
-		int nbNeighbors = jumpNumberSlider.getValue();
-		if (researchedNode != null && nbNeighbors > 0) {
-			displayNeighbors(researchedNode, nbNeighbors);
-		}
+		viewNeighbors();
     }//GEN-LAST:event_submitNeighbors
 
     private void menuItemClose(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemClose
@@ -909,6 +930,18 @@ public class App extends javax.swing.JFrame {
 		canvas.resetSelected();
 		canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
     }//GEN-LAST:event_menuItemRefresh
+
+    private void cityCheckboxValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cityCheckboxValueChanged
+        viewNeighbors();
+    }//GEN-LAST:event_cityCheckboxValueChanged
+
+    private void recreationCheckboxValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_recreationCheckboxValueChanged
+        viewNeighbors();
+    }//GEN-LAST:event_recreationCheckboxValueChanged
+
+    private void restaurantCheckboxValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_restaurantCheckboxValueChanged
+        viewNeighbors();
+    }//GEN-LAST:event_restaurantCheckboxValueChanged
 
 	/**
 	 * @param args the command line arguments
