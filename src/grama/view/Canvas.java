@@ -72,8 +72,8 @@ public class Canvas extends JPanel {
 	}
 	
 	public void drawLink(Link link){
-		if (linksType.contains(link.getType()) return;
-
+		if (!linksType.contains(link.getType())) return;
+		
 		Point coords = positions.get(link.getDeparture().getName());
 
 		Point destination = positions.get(link.getDestination().getName());
