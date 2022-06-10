@@ -160,14 +160,14 @@
             <Property name="text" type="java.lang.String" value="Villes : 0"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="restaurantCounterLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Restaurants : 0"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="recreationCounterLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Loisirs : 0"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="restaurantCounterLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Restaurants : 0"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="departementalCounterLabel">
@@ -360,16 +360,6 @@
                     <Property name="horizontalGap" type="int" value="20"/>
                   </Layout>
                   <SubComponents>
-                    <Component class="javax.swing.JCheckBox" name="recreationSelectorCheckBox">
-                      <Properties>
-                        <Property name="selected" type="boolean" value="true"/>
-                        <Property name="text" type="java.lang.String" value="Loisirs"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="recreationCheckboxValueChanged"/>
-                      </Events>
-                    </Component>
                     <Component class="javax.swing.JCheckBox" name="citySelectorCheckBox">
                       <Properties>
                         <Property name="selected" type="boolean" value="true"/>
@@ -378,6 +368,16 @@
                       </Properties>
                       <Events>
                         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cityCheckboxValueChanged"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="recreationSelectorCheckBox">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="Loisirs"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="recreationCheckboxValueChanged"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="restaurantSelectorCheckBox">
@@ -816,6 +816,11 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="itineraryDataPanel">
+          <Properties>
+            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+              <Color id="Default Cursor"/>
+            </Property>
+          </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
               <JTabbedPaneConstraints tabName="Itin&#xe9;raires">
@@ -828,7 +833,7 @@
             <Property name="axis" type="int" value="3"/>
           </Layout>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="itinaryPanel">
+            <Container class="javax.swing.JPanel" name="itineraryPanel">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -850,34 +855,40 @@
                 <Property name="verticalGap" type="int" value="20"/>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="originItinaryLabel">
+                <Component class="javax.swing.JLabel" name="originItineraryLabel">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="Origine"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="destinationItinaryLabel">
+                <Component class="javax.swing.JLabel" name="destinationItineraryLabel">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="Destination"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JComboBox" name="departureItinaryComboBox">
+                <Component class="javax.swing.JComboBox" name="departureItineraryComboBox">
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="firstNodeListModel" type="code"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="itineraryFirstComboValueChanged"/>
+                  </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Node&gt;"/>
                   </AuxValues>
                 </Component>
-                <Component class="javax.swing.JComboBox" name="destinationItinaryComboBox">
+                <Component class="javax.swing.JComboBox" name="destinationItineraryComboBox">
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="secondNodeListModel" type="code"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="itinerarySecondComboValueChanged"/>
+                  </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Node&gt;"/>
                   </AuxValues>
@@ -928,7 +939,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JPanel" name="planningItinaryPanel">
+            <Container class="javax.swing.JPanel" name="planningItineraryPanel">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -947,25 +958,25 @@
                 <Property name="verticalGap" type="int" value="20"/>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="cityItinaryLabel">
+                <Component class="javax.swing.JLabel" name="cityItineraryLabel">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="Villes"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="recreationItinaryLabel">
+                <Component class="javax.swing.JLabel" name="recreationItineraryLabel">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="Loisirs"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="restaurantItinaryLabel">
+                <Component class="javax.swing.JLabel" name="restaurantItineraryLabel">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="Restaurants"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JSpinner" name="cityItinarySpinner">
+                <Component class="javax.swing.JSpinner" name="cityItinerarySpinner">
                   <Properties>
                     <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                       <SpinnerModel initial="0" maximum="0" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
@@ -973,7 +984,7 @@
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JSpinner" name="recreationItinarySpinner">
+                <Component class="javax.swing.JSpinner" name="recreationItinerarySpinner">
                   <Properties>
                     <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                       <SpinnerModel initial="0" maximum="0" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
@@ -981,7 +992,7 @@
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JSpinner" name="restaurantItinarySpinner">
+                <Component class="javax.swing.JSpinner" name="restaurantItinerarySpinner">
                   <Properties>
                     <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                       <SpinnerModel initial="0" maximum="0" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
@@ -1012,6 +1023,11 @@
                 </Component>
               </SubComponents>
             </Container>
+            <Component class="javax.swing.JLabel" name="itineraryDistanceResult">
+              <Properties>
+                <Property name="alignmentX" type="float" value="0.5"/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
       </SubComponents>

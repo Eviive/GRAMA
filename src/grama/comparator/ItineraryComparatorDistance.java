@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package grama.comparator;
 
 import java.util.Comparator;
@@ -10,8 +5,8 @@ import java.util.HashMap;
 import grama.model.Node;
 
 /**
- *
- * @author etulyon1
+ * @author BENHIBA Naël
+ * @version JDK 11.0.13
  */
 public class ItineraryComparatorDistance implements Comparator<Node> {
 
