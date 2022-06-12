@@ -29,7 +29,7 @@ public class TestNode {
 			
 			List<NodeType> types = new ArrayList<>();
 			types.add(NodeType.RESTAURANT);
-			System.out.println("Chanas' restaurant neighbors : " + chanas.getNeighbors(2, types) + "\n");
+			System.out.println("Chanas' restaurant neighbors : " + chanas.GetFilteredNeighbors(2, types) + "\n");
 			
 			try {
 				System.out.println("Chanas is " + chanas.getShortestPath(graph.getNode("Annonay")).getDistance() + " km from Annonay");
