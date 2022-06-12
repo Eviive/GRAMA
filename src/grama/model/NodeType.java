@@ -1,6 +1,5 @@
 package grama.model;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -13,17 +12,15 @@ import javax.imageio.ImageIO;
  */
 public enum NodeType {
 	
-	CITY("Ville", new Color(220,20,20), "./src/grama/view/city.png"),
-	RESTAURANT("Restaurant", new Color(20,20,220), "./src/grama/view/restaurant.png"),
-	RECREATION("Loisir", new Color(20,220,20), "./src/grama/view/recreation.png");
+	CITY("Ville", "./src/grama/view/city.png"),
+	RESTAURANT("Restaurant", "./src/grama/view/restaurant.png"),
+	RECREATION("Loisir", "./src/grama/view/recreation.png");
 	
 	private String name;
-	private Color color;
 	private BufferedImage image;
 	
-	NodeType(String name, Color color, String imageSrc) {
+	NodeType(String name, String imageSrc) {
 		this.name = name;
-		this.color = color;
 		
 		try {
 			this.image = ImageIO.read(new File(imageSrc));
@@ -45,10 +42,6 @@ public enum NodeType {
 			}
 		}
 		throw new LoadGraphException("Le type de noeud " + text + " n'est pas valide, les types autorisés sont V, R, ou L");
-	}
-	
-	public Color getColor(){
-		return color;
 	}
 	
 	public BufferedImage getImage(){

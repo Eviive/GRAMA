@@ -1,6 +1,9 @@
 package grama.model;
 
+import swing.stroke.DoubleStroke;
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Stroke;
 
 /**
  * The enum representing a link's type
@@ -10,16 +13,18 @@ import java.awt.Color;
  */
 public enum LinkType {
 	
-	HIGHWAY("Autoroute", new Color(220,20,20)),
-	NATIONAL("National", new Color(19, 217, 15)),
-	DEPARTMENTAL("Départemental", new Color(20,20,220));
+	HIGHWAY("Autoroute", new Color(220,20,20), new DoubleStroke(2.5f,1f)),
+	NATIONAL("National", new Color(19, 217, 15), new BasicStroke(1.5f)),
+	DEPARTMENTAL("Départemental", new Color(20,20,220), new BasicStroke(1.25f, BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER, 12.0f, new float[]{6f}, 0.0f));
 	
 	private String name;
 	private Color color;
+	private Stroke stroke;
 	
-	LinkType(String name, Color color) {
+	LinkType(String name, Color color, Stroke stroke) {
 		this.name = name;
 		this.color = color;
+		this.stroke = stroke;
 	}
 	
 	/**
@@ -43,6 +48,10 @@ public enum LinkType {
 	
 	public Color getColor(){
 		return color;
+	}
+	
+	public Stroke getStroke(){
+		return stroke;
 	}
 	
 	@Override
