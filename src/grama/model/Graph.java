@@ -311,15 +311,15 @@ public final class Graph {
 
 		while ((insufisantType = counterNodeType.getInsufisantType(objectif)) != null ){
 			
-			Node nearest = getNearestNode(fixedNode, insufisantType, getNodesFromLinkList(initialPath));
+			Node nearest = getNearestNode(fixedNode, insufisantType, getNodesFromLinkList(initialPath), linkTypes, nodeTypes);
 			
-			fixedLinks.addAll(getShortestItinerary(fixedNode,nearest));
+			fixedLinks.addAll(getShortestItinerary(fixedNode, nearest, nodeTypes, linkTypes));
 			
 			fixedNode = nearest;
 
 			initialPath.clear();
 			initialPath.addAll(fixedLinks);
-			initialPath.addAll(getShortestItinerary(nearest, arrival));
+			initialPath.addAll(getShortestItinerary(nearest, arrival, nodeTypes, linkTypes));
 
 			counterNodeType.update(getNodesFromLinkList(initialPath));
 		}
@@ -327,7 +327,7 @@ public final class Graph {
 		return initialPath;
 	}
 	
-	private Node getNearestNode(Node departure, NodeType type, List<Node> treated){
+	private Node getNearestNode(Node departure, NodeType type, List<Node> treated, List<LinkType> linksfilter, List<NodeType> Nodesfilter) throws ItineraryException{
 	
 		Node nearestNode = null;
 		List<Link> links;
@@ -337,17 +337,18 @@ public final class Graph {
 		for (Node node : getNodes(type)){
 			if(!(treated.contains(node)) && node != departure){
 				try {
-					links = getShortestItinerary(departure, node);
+					links = getShortestItinerary(departure, node, Nodesfilter, linksfilter);
 					if (getDistancePath(links)<distance){
 						nearestNode = node;
 						distance = getDistancePath(links); 
 					}
 
-				} catch (ItineraryException e) {
-					System.err.println(e.getMessage());
-				}
+				} catch (ItineraryException e) {}
 			}
 		}
+
+		if (nearestNode == null)
+			throw new ItineraryException("Construction du chemin impossible");
 
 		return nearestNode;
 	}
