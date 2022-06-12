@@ -122,7 +122,7 @@ public class Canvas extends JPanel {
 			graphic.drawImage(node.getType().getImage(), coords.x - 15, coords.y - 15, 30, 30, null);
 		
 		graphic.setFont(new Font("sans serif", Font.PLAIN, 12));
-		graphic.drawString(node.getName(), coords.x - graphic.getFontMetrics().getDescent()*node.getName().length(), coords.y-15);
+		graphic.drawString(node.getName(), coords.x - graphic.getFontMetrics().getDescent()*node.getName().length(), coords.y-20);
 	}
 	
 	public Node getNode(Point pos){
