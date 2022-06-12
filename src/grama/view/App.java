@@ -17,9 +17,11 @@ import grama.model.LinkType;
 import grama.model.LoadGraphException;
 import grama.model.Node;
 import grama.model.NodeType;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JTabbedPane;
 
@@ -49,6 +51,15 @@ public class App extends javax.swing.JFrame {
 	 */
 	public App() {
 		initComponents();
+		
+		
+		cityCounterLabel.setIcon(new ImageIcon(new ImageIcon("./src/grama/view/city.png").getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
+		recreationCounterLabel.setIcon(new ImageIcon(new ImageIcon("./src/grama/view/recreation.png").getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
+		restaurantCounterLabel.setIcon(new ImageIcon(new ImageIcon("./src/grama/view/restaurant.png").getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
+		
+		highwayCounterLabel.setIcon(new ImageIcon("./src/grama/view/highway.png"));
+		departementalCounterLabel.setIcon(new ImageIcon("./src/grama/view/departmental.png"));
+		nationalCounterLabel.setIcon(new ImageIcon("./src/grama/view/nationnal.png"));
 		
 		canvas.setNodesType(nodesFilter);
 		canvas.setLinksType(linksFilter);
@@ -1111,6 +1122,8 @@ public class App extends javax.swing.JFrame {
 				List<Link> itinerary = graph.getShortestItinerary(
 						departure,
 						arrival,
+						nodesFilter,
+						linksFilter,
 						(Integer)restaurantItinerarySpinner.getValue(),
 						(Integer)cityItinerarySpinner.getValue(),
 						(Integer)recreationItinerarySpinner.getValue()

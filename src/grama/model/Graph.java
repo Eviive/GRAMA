@@ -1,9 +1,9 @@
 package grama.model;
 
-import grama.comparator.ItineraryComparatorDistance;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -106,6 +106,12 @@ public final class Graph {
 						 .collect(Collectors.toList());
 	}
 	
+	public List<Node> getNodes(List <NodeType> types){
+		return getNodes().stream()
+						 .filter(node -> types.contains(node.getType()))
+						 .collect(Collectors.toList());
+	}
+	
 	/**
 	 * @return Returns the <code>List</code> of all the <code>Links</code> of this <code>Graph</code>
 	 */
@@ -198,23 +204,29 @@ public final class Graph {
 		return distance;
 	}
 	
+	public List<Link> getShortestItinerary(Node departure, Node arrival) throws ItineraryException{
+		return getShortestItinerary(departure, arrival, Arrays.asList(NodeType.values()), Arrays.asList(LinkType.values()));
+	}
+	
 	/**
 	 * The Dijkstra shortest path resolution algorithm
 	 * @param departure The starting node
 	 * @param arrival	The arrival node
+	 * @param nodeTypes
+	 * @param linkTypes
 	 * @return A list of link representing the shortest path between 2 places
 	 * @throws ItineraryException 
 	 */
-	public List<Link> getShortestItinerary(Node departure, Node arrival) throws ItineraryException{
+	public List<Link> getShortestItinerary(Node departure, Node arrival, List<NodeType> nodeTypes, List<LinkType> linkTypes) throws ItineraryException{
 		
 		List<Node> notProcess = new ArrayList<>();
 		List<Integer> distances = new ArrayList<>();
 		
-		List<Node> nodes = getNodes();
+		List<Node> nodes = getNodes(nodeTypes);
 		Link previousLink[] = new Link[nodes.size()];
 		
 		// Dijkstra Initialization
-		for (Node place : nodeMap.values()){
+		for (Node place : nodes){
 			notProcess.add(place);
 			
 			if (place == departure)
@@ -238,7 +250,7 @@ public final class Graph {
 			int distance = distances.remove(indexMin);
 			Node processing = notProcess.remove(indexMin);
 			
-			for (Node node : processing.getNeighbors(1)){
+			for (Node node : processing.getNeighbors(1, linkTypes)){
 				if (notProcess.contains(node)){
 					int indice = notProcess.indexOf(node);
 					
@@ -274,14 +286,18 @@ public final class Graph {
 	 * The Dijkstra shortest path resolution algorithm with a number of cities, restaurants and recreations node
 	 * @param departure The starting point of the itinerary
 	 * @param arrival The end point of the itinerary
+	 * @param nodeTypes
+	 * @param linkTypes
 	 * @param restaurants The number of restaurants that we must have in the itinerary
 	 * @param cities The number of cities that we must have in the itinerary
 	 * @param recreations The number of recreations that we must have in the itinerary
 	 * @return
 	 * @throws ItineraryException 
 	 */
-	public List<Link> getShortestItinerary(Node departure, Node arrival, int restaurants, int cities, int recreations) throws ItineraryException{
-		List<Link> initialPath = getShortestItinerary(departure, arrival);
+	public List<Link> getShortestItinerary(Node departure, Node arrival, List<NodeType> nodeTypes, List<LinkType> linkTypes, int restaurants, int cities, int recreations) throws ItineraryException{
+
+		List<Link> initialPath = getShortestItinerary(departure, arrival, nodeTypes, linkTypes);
+		
 		if(restaurants==0&&cities==0&&recreations==0){ //check if de numbers are not null
 			return initialPath;
 		}
@@ -361,12 +377,12 @@ public final class Graph {
 				restaurantsNumber--;
 			if(i==0)
 				n=arrival;
-			finalList.addAll(getShortestItinerary(from, n));//adding the itinerary
+			finalList.addAll(getShortestItinerary(from, n, nodeTypes, linkTypes));//adding the itinerary
 			treated = getNodesFromLinkList(finalList);//updating the treated list
 			from = n;//updating the next departure node
 			}
 		}
-		finalList.addAll(getShortestItinerary(from, arrival));//add the final path to arrival
+		finalList.addAll(getShortestItinerary(from, arrival, nodeTypes, linkTypes));//add the final path to arrival
 		return finalList;
 	}
 	

@@ -1,6 +1,7 @@
 package grama.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,6 +64,11 @@ public final class Node implements Comparable<Node> {
 		return linkList;
 	}
 	
+	public List<Link> getNodeLinks(List <LinkType> types) {
+		return linkList.stream()
+					   .filter(link -> types.contains(link.getType()))
+					   .collect(Collectors.toList());
+	}
 	
 	/**
 	 * @param neighbor A neighbor of this node
@@ -100,6 +106,10 @@ public final class Node implements Comparable<Node> {
 	}
 	
 	public List<Node> getNeighbors(int nbJumps){
+		return getNeighbors(nbJumps,Arrays.asList(LinkType.values()));
+	}
+	
+	public List<Node> getNeighbors(int nbJumps, List<LinkType> linkTypes){
 		
 		LinkedList<Node> queue = new LinkedList<>();
 		List<Node> visited = new ArrayList<>();
@@ -115,7 +125,7 @@ public final class Node implements Comparable<Node> {
 			
 			Node vertex = queue.poll();
 			
-			for (Link link : vertex.getNodeLinks()){
+			for (Link link : vertex.getNodeLinks(linkTypes)){
 				Node neighbour = link.getDestination();
 				
 				if (!(visited.contains(neighbour))){
@@ -132,12 +142,13 @@ public final class Node implements Comparable<Node> {
 							 .collect(Collectors.toList());
 		
 	}
+	
 	/**
 	 * @param nbJumps The number of jumps we have to do
 	 * @param types The types of the <code>Node</code> we want to get
 	 * @return Returns the <code>List</code> of all the <code>Nodes</code> of type <code>type</code> you can go to by making <code>nbJumps</code> jumps or less from this <code>Node</code>
 	 */
-	public List<Node> getNeighbors(int nbJumps, List<NodeType> types) {
+	public List<Node> GetFilteredNeighbors(int nbJumps, List<NodeType> types) {
 		return filterByType(Node.this.getNeighbors(nbJumps), types);
 	}
 	
@@ -173,8 +184,8 @@ public final class Node implements Comparable<Node> {
 	public int isMoreLinkedToType(Node target, NodeType type) {
 		List<NodeType> types = new ArrayList<>();
 		types.add(type);
-		int nbNode = Node.this.getNeighbors(2, types).size();
-		int nbTarget = target.getNeighbors(2, types).size();
+		int nbNode = GetFilteredNeighbors(2, types).size();
+		int nbTarget = target.GetFilteredNeighbors(2, types).size();
 		if (nbNode > nbTarget)
 			return 1;
 		else if (nbNode < nbTarget)

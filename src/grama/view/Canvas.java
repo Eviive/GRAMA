@@ -77,11 +77,12 @@ public class Canvas extends JPanel {
 		Point coords = positions.get(link.getDeparture().getName());
 
 		Point destination = positions.get(link.getDestination().getName());
-		graphic.setColor(link.getType().getColor());
 
-		graphic.setStroke(new BasicStroke(1.5F));
+		graphic.setColor(link.getType().getColor());
+		graphic.setStroke(link.getType().getStroke());
+
 		graphic.drawLine(coords.x, coords.y, destination.x, destination.y);
-		graphic.setStroke(new BasicStroke(1));
+		graphic.setStroke(new BasicStroke());
 
 		Point center = new Point((coords.x + destination.x)/2 , (coords.y + destination.y)/2);
 		if (link == hover)
