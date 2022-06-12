@@ -328,27 +328,22 @@ public final class Graph {
 	}
 	
 	private Node getNearestNode(Node departure, NodeType type, List<Node> treated){
-	
 		Node nearestNode = null;
 		List<Link> links;
-
 		int distance = Integer.MAX_VALUE;
-		
-		for (Node node : getNodes(type)){
-			if(!(treated.contains(node)) && node != departure){
-				try {
-					links = getShortestItinerary(departure, node);
-					if (getDistancePath(links)<distance){
-						nearestNode = node;
-						distance = getDistancePath(links); 
-					}
-
-				} catch (ItineraryException e) {
-					System.err.println(e.getMessage());
+		List<Node> toProcessNode = getNodes(type).stream()
+				.filter(node -> !(treated.contains(node)) && node!=departure).collect(Collectors.toList());		
+		for (Node node : toProcessNode){
+			try {
+				links = getShortestItinerary(departure, node);
+				if (getDistancePath(links)<distance){
+					nearestNode = node;
+					distance = getDistancePath(links); 						
 				}
+			}catch (ItineraryException e) {
+				System.err.println(e.getMessage());
 			}
 		}
-
 		return nearestNode;
 	}
 	
