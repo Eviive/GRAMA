@@ -331,20 +331,20 @@ public final class Graph {
 	
 		Node nearestNode = null;
 		List<Link> links;
-
 		int distance = Integer.MAX_VALUE;
-		
-		for (Node node : getNodes(type)){
-			if(!(treated.contains(node)) && node != departure){
-				try {
-					links = getShortestItinerary(departure, node, Nodesfilter, linksfilter);
-					if (getDistancePath(links)<distance){
-						nearestNode = node;
-						distance = getDistancePath(links); 
-					}
 
-				} catch (ItineraryException e) {}
-			}
+		List<Node> toProcessNode = getNodes(type).stream()
+												 .filter(node -> !(treated.contains(node)) && node!=departure)
+												 .collect(Collectors.toList());
+
+		for (Node node : toProcessNode){
+			try {
+				links = getShortestItinerary(departure, node, Nodesfilter, linksfilter);
+				if (getDistancePath(links)<distance){
+					nearestNode = node;
+					distance = getDistancePath(links); 
+				}
+			} catch (ItineraryException e) {}
 		}
 
 		if (nearestNode == null)
