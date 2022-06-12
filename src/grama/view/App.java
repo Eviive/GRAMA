@@ -1,6 +1,7 @@
 package grama.view;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import grama.model.CounterNodeType;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -1176,9 +1177,7 @@ public class App extends javax.swing.JFrame {
 						arrival,
 						nodesFilter,
 						linksFilter,
-						(Integer)restaurantItinerarySpinner.getValue(),
-						(Integer)cityItinerarySpinner.getValue(),
-						(Integer)recreationItinerarySpinner.getValue()
+						new CounterNodeType((Integer)cityItinerarySpinner.getValue(), (Integer)restaurantItinerarySpinner.getValue(), (Integer)recreationItinerarySpinner.getValue())
 				);
 				
 				itineraryDistanceResult.setText("Distance total : " + graph.getDistancePath(itinerary) + " km");
@@ -1279,13 +1278,18 @@ public class App extends javax.swing.JFrame {
 				canvas.addSelected(0, researchedNode);
 				canvas.addSelected(1, null);
 				break;
+			case 1:
+				canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
+				break;
 			case 2:
 				canvas.addSelected(0, (Node)comparisonSelectorFirstCityComboBox.getSelectedItem());
 				canvas.addSelected(1, (Node)comparisonSelectorSecondCityComboBox.getSelectedItem());
+				canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
 				break;
 			case 3:
 				canvas.addSelected(0, (Node)departureItineraryComboBox.getSelectedItem());
 				canvas.addSelected(1, (Node)destinationItineraryComboBox.getSelectedItem());
+				canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
 				break;
 		}
     }//GEN-LAST:event_dataPanelStateChanged
