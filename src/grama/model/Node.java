@@ -148,7 +148,7 @@ public final class Node implements Comparable<Node> {
 	 * @param types The types of the <code>Node</code> we want to get
 	 * @return Returns the <code>List</code> of all the <code>Nodes</code> of type <code>type</code> you can go to by making <code>nbJumps</code> jumps or less from this <code>Node</code>
 	 */
-	public List<Node> GetFilteredNeighbors(int nbJumps, List<NodeType> types) {
+	public List<Node> getFilteredNeighbors(int nbJumps, List<NodeType> types) {
 		return filterByType(Node.this.getNeighbors(nbJumps), types);
 	}
 	
@@ -184,8 +184,8 @@ public final class Node implements Comparable<Node> {
 	public int isMoreLinkedToType(Node target, NodeType type) {
 		List<NodeType> types = new ArrayList<>();
 		types.add(type);
-		int nbNode = GetFilteredNeighbors(2, types).size();
-		int nbTarget = target.GetFilteredNeighbors(2, types).size();
+		int nbNode = getFilteredNeighbors(2, types).size();
+		int nbTarget = target.getFilteredNeighbors(2, types).size();
 		if (nbNode > nbTarget)
 			return 1;
 		else if (nbNode < nbTarget)
