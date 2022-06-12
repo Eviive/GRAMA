@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -298,6 +300,20 @@ public final class Graph {
 
 		List<Link> initialPath = getShortestItinerary(departure, arrival, nodeTypes, linkTypes);
 		
+
+		if(isNodeThisType(departure, NodeType.CITY) && cities>0){
+			cities--;
+		}else if (isNodeThisType(departure, NodeType.RESTAURANT) && restaurants>0){
+			restaurants--;
+		}else if(isNodeThisType(departure, NodeType.RECREATION) && recreations>0){
+			recreations--;
+		}if(isNodeThisType(arrival, NodeType.CITY) && cities>0){
+			cities--;
+		}else if (isNodeThisType(arrival, NodeType.RESTAURANT) && restaurants>0){
+			restaurants--;
+		}else if(isNodeThisType(arrival, NodeType.RECREATION) && recreations>0){
+			recreations--;
+		}	
 		if(restaurants==0&&cities==0&&recreations==0){ //check if de numbers are not null
 			return initialPath;
 		}
@@ -310,7 +326,7 @@ public final class Graph {
 		int citiesNumber = cities;
 		int recreationsNumber = recreations;
 		
-		//cehck if th shortest path does contain the required number of each NodeType
+		//cehck if the shortest path does contain the required number of each NodeType
 		for(Link l : initialPath){
 			Node n = l.getDeparture();
 			NodeType type = n.getType();
@@ -331,9 +347,12 @@ public final class Graph {
 		recreationsNumber = recreations;
 		Node from = departure;
 		Node n = arrival;
-		List<Node> treated = new ArrayList<>(); // treated list of node
 		List<Link> finalList = new ArrayList<>(); // final list of node
 		int total = restaurants+cities+recreations;
+		List<Node> treated = new ArrayList<>(); // treated list of node
+		treated.add(departure);
+		treated.add(arrival);
+		if(treated.contains(getNode("Bron")))System.out.println("oudlkqjshfkjsdhiusdhfj");
 		for(int i = total; i>=0; i--){
 			int distance = Integer.MAX_VALUE;
 			if(i!=0){//add arrival to treated
@@ -343,7 +362,7 @@ public final class Graph {
 				Node temp = n;
 				int tempDistance=distance;
 				AtomicInteger d = new AtomicInteger(tempDistance);
-				temp = getNearestNode(from, NodeType.RESTAURANT, getNodesFromLinkList(finalList), d);//get the nearest node
+				temp = getNearestNode(from, NodeType.RESTAURANT, getNodesFromLinkList(finalList), d, arrival);//get the nearest node
 				if(distance>d.get()){//if distance is shorter than the previous one 
 					n = temp;// the nearest node is this node
 					distance = d.get();//the shortest distance is this distance
@@ -353,7 +372,7 @@ public final class Graph {
 				Node temp = n;
 				int tempDistance=distance;
 				AtomicInteger d = new AtomicInteger(tempDistance);
-				temp = getNearestNode(from, NodeType.RECREATION, getNodesFromLinkList(finalList), d);//get the nearest node
+				temp = getNearestNode(from, NodeType.RECREATION, getNodesFromLinkList(finalList), d, arrival);//get the nearest node
 				if(distance>d.get()){//if distance is shorter than the previous one 
 					n = temp;// the nearest node is this node
 					distance = d.get();//the shortest distance is this distance
@@ -363,7 +382,7 @@ public final class Graph {
 				Node temp = n;
 				int tempDistance=distance;
 				AtomicInteger d = new AtomicInteger(tempDistance);
-				temp = getNearestNode(from, NodeType.CITY, getNodesFromLinkList(finalList), d);//get the nearest node
+				temp = getNearestNode(from, NodeType.CITY, getNodesFromLinkList(finalList), d, arrival);//get the nearest node
 				if(distance>d.get()){//if distance is shorter than the previous one 
 					n = temp;// the nearest node is this node
 					distance = d.get();//the shortest distance is this distance
@@ -394,7 +413,7 @@ public final class Graph {
 	 * @param distance the distance of the from the previous node
 	 * @return the nearest node of the type <code>type</code>
 	 */
-	private Node getNearestNode(Node departure, NodeType type, List<Node> treated,AtomicInteger distance) throws ItineraryException{
+	private Node getNearestNode(Node departure, NodeType type, List<Node> treated,AtomicInteger distance, Node arrival) throws ItineraryException{
 		Node nearest =null;
 		int count=0;
 		for(Node node : this.getNodes(type)){ // count the node already trated
@@ -408,17 +427,56 @@ public final class Graph {
 		boolean find = false;//while the nearest node is not find
 		for(int i =1; !find; i++){
 			List<Node> neighbors = departure.getNeighbors(i);//get neighbors
+			List<Node> correctNode = new ArrayList<>();
 			for(Node n : neighbors){
 				if(n.getType()==type){
-					if(!treated.contains(n) && !n.equals(departure)){//if the type of the node is the good one and it is not equals to departure
-						nearest = n;//return that node
-						distance.set(i);
-						find=true;
+					if(!treated.contains(n) && !n.equals(departure) &&!n.equals(arrival)){//if the type of the node is the good one and it is not equals to departure
+						correctNode.add(n);						
 					}
 				}
 			}
+			if(!correctNode.isEmpty()){ // we search the shortest distance beetween a node and we return that node
+				nearest = getShortestNode(correctNode, departure, distance, treated);
+				find=true;
+			}
 		}
-		return nearest;
+		return nearest;//return the nearest
+	}
+	
+	/**
+	 * Return the shortest node from a neighbors list
+	 * @param neighbors
+	 * @param departure
+	 * @param i
+	 * @param treated
+	 * @return
+	 * @throws ItineraryException 
+	 */
+	private Node getShortestNode(List<Node> neighbors, Node departure, AtomicInteger i,List<Node> treated) throws ItineraryException{
+		int distance = Integer.MAX_VALUE;
+		Node shortest = neighbors.get(0);
+		
+		for(Node n : neighbors){
+			List<Link> shortestItinerary = this.getShortestItinerary(departure, n);
+			int distanceNeighbors = shortestItinerary.get(shortestItinerary.size()-1).getDistance();//get the distance of the node
+			if(!n.equals(departure))
+			if(distanceNeighbors<distance && !treated.contains(n)){//if the node is more near than the previous one
+				shortest=n;
+				distance = distanceNeighbors;
+				i.set(distanceNeighbors);
+			}
+		}
+		return shortest;
+	}
+	
+	/**
+	 * Method to know if the type of the node is the specified type.
+	 * @param n
+	 * @param type
+	 * @return true if the node type is the specified type or return false if it is not.
+	 */
+	private boolean isNodeThisType(Node n, NodeType type){
+		return n.getType()==type;
 	}
 	
 	/**
