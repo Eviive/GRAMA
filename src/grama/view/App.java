@@ -869,8 +869,7 @@ public class App extends javax.swing.JFrame {
 	
 	private void initGraphUI(){
 		canvas.initNodes(graph.getNodes());
-		canvas.setDisplayNodes(graph.getNodes());
-		canvas.setDisplayLinks(graph.getDistinctLinks());
+		canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
 	}
 	
 	private void enablePanels(boolean state) {
@@ -887,6 +886,11 @@ public class App extends javax.swing.JFrame {
 		citySelectorCheckBox.setSelected(true);
 		recreationSelectorCheckBox.setSelected(true);
 		restaurantSelectorCheckBox.setSelected(true);
+		firstNodeListModel.setSelectedItem(null);
+		secondNodeListModel.setSelectedItem(null);
+		firstCityListModel.setSelectedItem(null);
+		secondCityListModel.setSelectedItem(null);
+		linksComboBox.setSelectedItem(null);
 		placeNameField.setEditable(state);
 		placeNameField.setText("");
 		placeCategoryField.setText("");
@@ -982,11 +986,14 @@ public class App extends javax.swing.JFrame {
 		} else {
 			linksFilter.remove(type);
 		}
+		
 		List<Link> links = new ArrayList<>();
 		for (LinkType item: linksFilter)
 			links.addAll(graph.getDistinctLinks(item));
 		linksModel.setSelectedItem(null);
 		linksModel.addAll(links);
+		
+		canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
 		canvas.repaint();
 	}
 	
@@ -998,6 +1005,12 @@ public class App extends javax.swing.JFrame {
 		} else {
 			nodesFilter.remove(type);
 			
+			Node researchedNode = graph.getNode(placeNameField.getText());
+			if (researchedNode != null && researchedNode.getType() == type) {
+				placeNameField.setText("");
+				placeCategoryField.setText("");
+			}
+			
 			Node node = canvas.getSelected(0);
 			if (node != null && node.getType() == type)
 				canvas.addSelected(0, null);
@@ -1006,6 +1019,23 @@ public class App extends javax.swing.JFrame {
 			if (node != null && node.getType() == type)
 				canvas.addSelected(1, null);
 		}
+		
+		List<Node> nodes = graph.getNodes(nodesFilter);
+		Node selectedNode = (Node)firstNodeListModel.getSelectedItem();
+		firstNodeListModel.addAll(nodes);
+		if (selectedNode != null && nodesFilter.contains((selectedNode.getType())))
+			firstNodeListModel.setSelectedItem(selectedNode);
+		else {
+			firstNodeListModel.setSelectedItem(null);
+			firstChecked = false;
+		}
+		
+		selectedNode = (Node)secondNodeListModel.getSelectedItem();
+		secondNodeListModel.addAll(nodes);
+		if (selectedNode != null && nodesFilter.contains((selectedNode.getType())))
+			secondNodeListModel.setSelectedItem(selectedNode);
+		else
+			secondNodeListModel.setSelectedItem(null);
 		
 		switch(type) {
 			case CITY:
@@ -1022,6 +1052,7 @@ public class App extends javax.swing.JFrame {
 				break;
 		}
 		
+		canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
 		canvas.repaint();
 	}
 	
@@ -1065,14 +1096,35 @@ public class App extends javax.swing.JFrame {
 				((SpinnerNumberModel)recreationItinerarySpinner.getModel()).setMaximum(graph.getNumberNodes(NodeType.RECREATION));
 				((SpinnerNumberModel)restaurantItinerarySpinner.getModel()).setMaximum(graph.getNumberNodes(NodeType.RESTAURANT));
 				
-				enablePanels(true);
 				dataPanel.setSelectedIndex(0);
+				enablePanels(true);
 				initGraphUI();
 			} catch (LoadGraphException e) {
+				graphClosing();
 				JOptionPane.showConfirmDialog(this, e.getMessage(), "Erreur", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 			}
 		}
     }//GEN-LAST:event_graphOpening
+	
+	private void graphClosing() {
+		canvas.reset();
+		graph.reset();
+		enablePanels(false);
+		dataPanel.setSelectedIndex(0);
+		
+		firstCityListModel.reset();
+		secondCityListModel.reset();
+		firstNodeListModel.reset();
+		secondNodeListModel.reset();
+		linksModel.reset();
+		
+		resetValueSpinner();
+		jumpNumberSlider.setMaximum(0);
+		((SpinnerNumberModel)jumpNumberSpinner.getModel()).setMaximum(0);
+		((SpinnerNumberModel)cityItinerarySpinner.getModel()).setMaximum(0);
+		((SpinnerNumberModel)recreationItinerarySpinner.getModel()).setMaximum(0);
+		((SpinnerNumberModel)restaurantItinerarySpinner.getModel()).setMaximum(0);
+	}
 	
     private void menuItemExit(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemExit
         confirmExit();
@@ -1150,33 +1202,14 @@ public class App extends javax.swing.JFrame {
     }//GEN-LAST:event_submitNeighbors
 
     private void menuItemClose(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemClose
-		canvas.reset();
-		graph.reset();
-		enablePanels(false);
-		dataPanel.setSelectedIndex(0);
-		
-		firstCityListModel.reset();
-		secondCityListModel.reset();
-		firstNodeListModel.reset();
-		secondNodeListModel.reset();
-		linksModel.reset();
-		
-		resetValueSpinner();
-		jumpNumberSlider.setMaximum(0);
-		((SpinnerNumberModel)jumpNumberSpinner.getModel()).setMaximum(0);
-		((SpinnerNumberModel)cityItinerarySpinner.getModel()).setMaximum(0);
-		((SpinnerNumberModel)recreationItinerarySpinner.getModel()).setMaximum(0);
-		((SpinnerNumberModel)restaurantItinerarySpinner.getModel()).setMaximum(0);
+		graphClosing();
     }//GEN-LAST:event_menuItemClose
 
     private void menuItemRefresh(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRefresh
-		enablePanels(true);
-		firstNodeListModel.setSelectedItem(null);
-		secondNodeListModel.setSelectedItem(null);
-		firstCityListModel.setSelectedItem(null);
-		secondCityListModel.setSelectedItem(null);
-		linksComboBox.setSelectedItem(null);
-		canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
+		if (!graph.getNodeMap().isEmpty()) {
+			enablePanels(true);
+			canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
+		}
     }//GEN-LAST:event_menuItemRefresh
 
     private void cityCheckboxValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cityCheckboxValueChanged

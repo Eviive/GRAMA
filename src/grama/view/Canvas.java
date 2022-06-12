@@ -129,7 +129,7 @@ public class Canvas extends JPanel {
 	public Node getNode(Point pos){
 		for(Node node : nodesDisplay){
 			Point coords = positions.get(node.getName());
-			if (coords.distance(pos.x, pos.y) < 20){
+			if (coords.distance(pos.x, pos.y) < 20 && nodesType.contains(node.getType())){
 				return node;
 			}
 		}
