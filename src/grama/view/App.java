@@ -53,7 +53,6 @@ public class App extends javax.swing.JFrame {
 	public App() {
 		initComponents();
 		
-		
 		cityCounterLabel.setIcon(new ImageIcon(new ImageIcon("./src/grama/view/city.png").getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
 		recreationCounterLabel.setIcon(new ImageIcon(new ImageIcon("./src/grama/view/recreation.png").getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
 		restaurantCounterLabel.setIcon(new ImageIcon(new ImageIcon("./src/grama/view/restaurant.png").getImage().getScaledInstance(30,30,Image.SCALE_SMOOTH)));
@@ -820,7 +819,7 @@ public class App extends javax.swing.JFrame {
         optionsMenu.add(optionsSeparator);
 
         departmentalMenuItem.setSelected(true);
-        departmentalMenuItem.setText(" Départementales");
+        departmentalMenuItem.setText("Départementales");
         departmentalMenuItem.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 departmentalMenuItemValueChanged(evt);
@@ -971,10 +970,12 @@ public class App extends javax.swing.JFrame {
 		linkDistanceField.setText(Integer.toString(link.getDistance()));
 		
 		Node departure = link.getDeparture();
+		canvas.addSelected(0, departure);
 		linkDepartureNameField.setText(departure.getName());
 		linkDepartureCategoryField.setText(departure.getType().toString());
 		
 		Node destination = link.getDestination();
+		canvas.addSelected(1, destination);
 		linkArrivalNameField.setText(destination.getName());
 		linkArrivalCategoryField.setText(destination.getType().toString());
 	}
@@ -1326,6 +1327,11 @@ public class App extends javax.swing.JFrame {
 				canvas.addSelected(1, null);
 				break;
 			case 1:
+				Link displayedLink = (Link)linksComboBox.getSelectedItem();
+				if (displayedLink != null) {
+					canvas.addSelected(0, displayedLink.getDeparture());
+					canvas.addSelected(1, displayedLink.getDestination());
+				}
 				canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
 				break;
 			case 2:
