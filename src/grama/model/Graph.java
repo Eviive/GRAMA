@@ -105,6 +105,10 @@ public final class Graph {
 						 .collect(Collectors.toList());
 	}
 	
+	/**
+	 * @param types The list of <code>Node</code> types we want
+	 * @return Returns the <code>List</code> of all the <code>Nodes</code> with the right type of this <code>Graph</code>
+	 */
 	public List<Node> getNodes(List <NodeType> types){
 		return getNodes().stream()
 						 .filter(node -> types.contains(node.getType()))
@@ -120,6 +124,9 @@ public final class Graph {
 						 .collect(Collectors.toList());
 	}
 	
+	/**
+	 * @return Returns the <code>List</code> of all the distinct <code>Links</code> of this <code>Graph</code>
+	 */
 	public List<Link> getDistinctLinks() {
 		return getLinks().stream()
 						 .distinct()
@@ -136,12 +143,20 @@ public final class Graph {
 						 .collect(Collectors.toList());
 	}
 	
+	/**
+	 * @param type The type of <code>Links</code> we want
+	 * @return Returns the <code>List</code> of all the distinct <code>Links</code> of this <code>Graph</code>
+	 */
 	public List<Link> getDistinctLinks(LinkType type) {
 		return getLinks(type).stream()
 							 .distinct()
 							 .collect(Collectors.toList());
 	}
 	
+	/**
+	 * @param nodes The <code>List</code> of <code>Nodes</code>
+	 * @return Returns the <code>List</code> of <code>Links</code> connecting the <code>Nodes</code> from <code>nodes</code>
+	 */
 	public List<Link> extractDistinctLink(List<Node> nodes){
 		return nodes.stream()
 					.flatMap(node -> node.getNodeLinks().stream())
@@ -203,16 +218,22 @@ public final class Graph {
 		return distance;
 	}
 	
-	public List<Link> getShortestItinerary(Node departure, Node arrival) throws ItineraryException{
+	/**
+	 * @param departure The starting node
+	 * @param arrival The arrival node
+	 * @return A list of link representing the shortest path between 2 places
+	 * @throws ItineraryException 
+	 */
+	public List<Link> getShortestItinerary(Node departure, Node arrival) throws ItineraryException {
 		return getShortestItinerary(departure, arrival, Arrays.asList(NodeType.values()), Arrays.asList(LinkType.values()));
 	}
 	
 	/**
-	 * The Dijkstra shortest path resolution algorithm
+	 * The implementation of the Dijkstra shortest path resolution algorithm
 	 * @param departure The starting node
-	 * @param arrival	The arrival node
-	 * @param nodeTypes
-	 * @param linkTypes
+	 * @param arrival The arrival node
+	 * @param nodeTypes The list of <code>Node</code> types we want
+	 * @param linkTypes The list of <code>Link</code> types we want
 	 * @return A list of link representing the shortest path between 2 places
 	 * @throws ItineraryException 
 	 */
@@ -282,11 +303,12 @@ public final class Graph {
 	}
 	
 	/**
-	 * The Dijkstra shortest path resolution algorithm with a number of cities, restaurants and recreations node
+	 * The implementation of the Dijkstra shortest path resolution algorithm with a number of cities, restaurants and recreations node
 	 * @param departure The starting point of the itinerary
 	 * @param arrival The end point of the itinerary
-	 * @param nodeTypes
-	 * @param linkTypes
+	 * @param nodeTypes The list of <code>Node</code> types we want
+	 * @param linkTypes The list of <code>Link</code> types we want
+	 * @param objectif The object telling us how many nodes of a certain type we need to go through
 	 * @return
 	 * @throws ItineraryException 
 	 */
@@ -327,8 +349,16 @@ public final class Graph {
 		return initialPath;
 	}
 	
-	private Node getNearestNode(Node departure, NodeType type, List<Node> treated, List<LinkType> linksfilter, List<NodeType> nodesfilter) throws ItineraryException{
-	
+	/**
+	 * @param departure The starting <code>Node</code>
+	 * @param type The type of the <code>Node</code> we want to get
+	 * @param treated The <code>List</code> of already treated <code>Nodes</code>
+	 * @param linksfilter The <code>List</code> of <code>Link</code> types we want
+	 * @param Nodesfilter The <code>List</code> of <code>Node</code> types we want
+	 * @return Returns the nearest <code>Node</code> with the right type
+	 * @throws ItineraryException 
+	 */
+	private Node getNearestNode(Node departure, NodeType type, List<Node> treated, List<LinkType> linksfilter, List<NodeType> nodesfilter) throws ItineraryException {
 		Node nearestNode = null;
 		List<Link> links;
 		int distance = Integer.MAX_VALUE;
@@ -354,8 +384,8 @@ public final class Graph {
 	}
 	
 	/**
-	 * Transform a list of link into a list of node
-	 * @param list
+	 * Transform a list of Links into a list of Nodes
+	 * @param list The list of <code>Links</code>
 	 * @return nodeList
 	 */
 	private List<Node> getNodesFromLinkList(List<Link> list){	
@@ -369,6 +399,10 @@ public final class Graph {
 		return nodeList;
 	}
 	
+	/**
+	 * @param list The list of <code>Links</code>
+	 * @return The destination of the last <code>Link</code> in the list
+	 */
 	private Node getArrivalLinkList(List<Link> list){
 		if (list.isEmpty())
 			return null;

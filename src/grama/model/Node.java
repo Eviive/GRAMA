@@ -26,19 +26,27 @@ public final class Node implements Comparable<Node> {
 	 * Creates a new <code>Node</code>
 	 * @param type The type of the <code>Node</code>
 	 * @param name The name of the <code>Node</code>
+	 * @param ratioX A value between 0 and 1 used to determine where to place the node horizontally in the visualization of the graph
+	 * @param ratioY A value between 0 and 1 used to determine where to place the node vertically in the visualization of the graph
 	 * @throws LoadGraphException If <code>NodeType.typeOf(type)</code> throws a <code>LoadGraphException</code>
 	 */
-	public Node(char type, String name, double ratioX, double ratioY ) throws LoadGraphException {
+	public Node(char type, String name, double ratioX, double ratioY) throws LoadGraphException {
 		this.type = NodeType.typeOf(type);
 		this.name = name;
 		this.ratioX = ratioX;
 		this.ratioY = ratioY;
 	}
-
+	
+	/**
+	 * @return Returns a value between 0 and 1 used to determine where to place the node horizontally in the visualization of the graph
+	 */
 	public double getRatioX() {
 		return ratioX;
 	}
-
+	
+	/**
+	 * @return Returns a value between 0 and 1 used to determine where to place the node vertically in the visualization of the graph
+	 */
 	public double getRatioY() {
 		return ratioY;
 	}
@@ -64,6 +72,10 @@ public final class Node implements Comparable<Node> {
 		return linkList;
 	}
 	
+	/**
+	 * @param types The list of <code>Link</code> types we want
+	 * @return Returns the <code>List</code> of all the <code>Links</code> with the right type connected to this Node
+	 */
 	public List<Link> getNodeLinks(List <LinkType> types) {
 		return linkList.stream()
 					   .filter(link -> types.contains(link.getType()))
@@ -84,7 +96,6 @@ public final class Node implements Comparable<Node> {
 			throw new ItineraryException("Les noeuds ne sont pas reliés");
 		
 		return paths;
-		
 	}
 	
 	 /**
@@ -119,10 +130,19 @@ public final class Node implements Comparable<Node> {
 
 	}
 	
+	/**
+	 * @param nbJumps The number of jumps we have to do
+	 * @return Returns the <code>List</code> of all the <code>Nodes</code> you can go to by making <code>nbJumps</code> jumps or less from this <code>Node</code>
+	 */
 	public List<Node> getNeighbors(int nbJumps){
 		return getNeighbors(nbJumps,Arrays.asList(LinkType.values()));
 	}
 	
+	/**
+	 * @param nbJumps The number of jumps we have to do
+	 * @param linkTypes The types of <code>Links</code> we want to get
+	 * @return Returns the <code>List</code> of all the <code>Nodes</code> you can go to by making <code>nbJumps</code> jumps and only going through <code>Links</code> of type <code>linkTypes</code> or less from this <code>Node</code>
+	 */
 	public List<Node> getNeighbors(int nbJumps, List<LinkType> linkTypes){
 		return getNeighborsMap(linkTypes).entrySet().stream()
 										 .filter(entree -> entree.getValue() <= nbJumps || entree.getKey() == this )
@@ -130,6 +150,11 @@ public final class Node implements Comparable<Node> {
 										 .collect(Collectors.toList());
 	}
 	
+	/**
+	 * @param nbJumps The exact number of jumps we have to do
+	 * @param linkTypes The types of <code>Links</code> we want to get
+	 * @return Returns the <code>List</code> of all the <code>Nodes</code> you can go to by making exactly <code>nbJumps</code> jumps and only going through <code>Links</code> of type <code>linkTypes</code> or less from this <code>Node</code>
+	 */
 	public List<Node> getExaclyNeighbors(int nbJumps, List<LinkType> linkTypes){
 		return getNeighborsMap(linkTypes).entrySet().stream()
 										 .filter(entree ->  entree.getValue() == nbJumps || entree.getKey() == this )
@@ -137,6 +162,10 @@ public final class Node implements Comparable<Node> {
 										 .collect(Collectors.toList());
 	}
 	
+	/**
+	 * @param linkTypes The types of <code>Links</code> we want to get
+	 * @return Returns the <code>Map</code> of all the <code>Nodes</code> with the minimum number of jumps between them and this <code>Node</code>
+	 */
 	public HashMap<Node,Integer> getNeighborsMap(List<LinkType> linkTypes){
 		
 		LinkedList<Node> queue = new LinkedList<>();
@@ -169,13 +198,18 @@ public final class Node implements Comparable<Node> {
 	
 	/**
 	 * @param nbJumps The number of jumps we have to do
-	 * @param types The types of the <code>Node</code> we want to get
+	 * @param types The types of <code>Node</code> we want to get
 	 * @return Returns the <code>List</code> of all the <code>Nodes</code> of type <code>type</code> you can go to by making <code>nbJumps</code> jumps or less from this <code>Node</code>
 	 */
 	public List<Node> getFilteredNeighbors(int nbJumps, List<NodeType> types) {
 		return filterByType(Node.this.getNeighbors(nbJumps), types);
 	}
 	
+	/**
+	 * @param nodes The <code>List</code> of <code>Nodes</code>
+	 * @param types The <code>List</code> of <code>Links</code>
+	 * @return Returns a <code>List</code> of <code>Nodes</code> filtered by the <code>List</code> of <code>Links</code>
+	 */
 	public List<Node> filterByType(List<Node> nodes, List<NodeType> types){
 		return nodes.stream()
 					.filter(node -> types.contains(node.getType()) || node == this)
