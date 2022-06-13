@@ -105,11 +105,39 @@ public final class Node implements Comparable<Node> {
 		return path;
 	}
 	
+	/**
+	 * @param nodesFilter The <code>List</code> of <code>Node</code> types we want
+	 * @param linksFilter The <code>List</code> of <code>Link</code> types we want
+	 * @return The directly connected <code>nodes</code> links
+	 */
+	public List<Node> getNeighbors(List<NodeType> nodesFilter, List<LinkType> linksFilter){
+		return linkList.stream()
+					   .filter(link -> linksFilter.contains(link.getType()) && nodesFilter.contains(link.getDestination().getType()))
+					   .distinct()
+					   .map(link -> link.getDestination())
+					   .collect(Collectors.toList());
+
+	}
+	
 	public List<Node> getNeighbors(int nbJumps){
 		return getNeighbors(nbJumps,Arrays.asList(LinkType.values()));
 	}
 	
 	public List<Node> getNeighbors(int nbJumps, List<LinkType> linkTypes){
+		return getNeighborsMap(linkTypes).entrySet().stream()
+										 .filter(entree -> entree.getValue() <= nbJumps || entree.getKey() == this )
+										 .map(entree -> entree.getKey())
+										 .collect(Collectors.toList());
+	}
+	
+	public List<Node> getExaclyNeighbors(int nbJumps, List<LinkType> linkTypes){
+		return getNeighborsMap(linkTypes).entrySet().stream()
+										 .filter(entree ->  entree.getValue() == nbJumps || entree.getKey() == this )
+										 .map(entree -> entree.getKey())
+										 .collect(Collectors.toList());
+	}
+	
+	public HashMap<Node,Integer> getNeighborsMap(List<LinkType> linkTypes){
 		
 		LinkedList<Node> queue = new LinkedList<>();
 		List<Node> visited = new ArrayList<>();
@@ -123,23 +151,19 @@ public final class Node implements Comparable<Node> {
 		
 		while(!queue.isEmpty()){
 			
-			Node vertex = queue.poll();
+			Node node = queue.poll();
 			
-			for (Link link : vertex.getNodeLinks(linkTypes)){
-				Node neighbour = link.getDestination();
+			for (Link link : node.getNodeLinks(linkTypes)){
+				Node neighbor = link.getDestination();
 				
-				if (!(visited.contains(neighbour))){
-					visited.add(neighbour);
-					queue.add(neighbour);
-					distanceMap.put(neighbour,distanceMap.get(vertex)+1);
+				if (!(visited.contains(neighbor))){
+					visited.add(neighbor);
+					queue.add(neighbor);
+					distanceMap.put(neighbor,distanceMap.get(node)+1);
 				}
 			}
 		}
-
-		return distanceMap.entrySet().stream()
-							 .filter(entree -> entree.getValue() <= nbJumps || entree.getKey() == this )
-							 .map(entree -> entree.getKey())
-							 .collect(Collectors.toList());
+		return distanceMap;
 		
 	}
 	
@@ -169,10 +193,12 @@ public final class Node implements Comparable<Node> {
 	/**
 	 * Tells us if this <code>Node</code> is exactly at two distances from the target <code>Node</code>
 	 * @param target The targeted <code>Node</code>
+	 * @param nodesFilter filter by type of nodes requested
 	 * @return Returns <code>true</code> if the <code>Nodes</code> are at two distance from each other
 	 */
-	public boolean isTwoDistance(Node target) {
-		return target.getNodeLinks().stream().anyMatch(link -> linkList.contains(link));
+	public boolean isTwoDistance(Node target, List<NodeType> nodesFilter, List<LinkType> linksFilter) {
+		return getNeighbors(nodesFilter, linksFilter).stream()
+													 .anyMatch(node -> target.getNeighbors(nodesFilter, linksFilter).contains(node));
 	}
 	
 	/**

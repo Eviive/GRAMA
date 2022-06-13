@@ -327,7 +327,7 @@ public final class Graph {
 		return initialPath;
 	}
 	
-	private Node getNearestNode(Node departure, NodeType type, List<Node> treated, List<LinkType> linksfilter, List<NodeType> Nodesfilter) throws ItineraryException{
+	private Node getNearestNode(Node departure, NodeType type, List<Node> treated, List<LinkType> linksfilter, List<NodeType> nodesfilter) throws ItineraryException{
 	
 		Node nearestNode = null;
 		List<Link> links;
@@ -339,7 +339,7 @@ public final class Graph {
 
 		for (Node node : toProcessNode){
 			try {
-				links = getShortestItinerary(departure, node, Nodesfilter, linksfilter);
+				links = getShortestItinerary(departure, node, nodesfilter, linksfilter);
 				if (getDistancePath(links)<distance){
 					nearestNode = node;
 					distance = getDistancePath(links); 

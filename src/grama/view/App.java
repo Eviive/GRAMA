@@ -156,6 +156,7 @@ public class App extends javax.swing.JFrame {
         jumpNumberSelectorPanel = new javax.swing.JPanel();
         jumpNumberSlider = new javax.swing.JSlider();
         jumpNumberSpinner = new javax.swing.JSpinner();
+        neighborExaclyRadioButton = new javax.swing.JRadioButton();
         jumpCategorySelectorPanel = new javax.swing.JPanel();
         citySelectorCheckBox = new javax.swing.JCheckBox();
         recreationSelectorCheckBox = new javax.swing.JCheckBox();
@@ -219,6 +220,7 @@ public class App extends javax.swing.JFrame {
         submitPanel = new javax.swing.JPanel();
         submitItineraryButton = new javax.swing.JButton();
         itineraryDistanceResult = new javax.swing.JLabel();
+        twoDistanceLabel = new javax.swing.JLabel();
         canvas = new grama.view.Canvas();
         MenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
@@ -235,7 +237,7 @@ public class App extends javax.swing.JFrame {
         departmentalMenuItem = new javax.swing.JCheckBoxMenuItem();
         nationalMenuItem = new javax.swing.JCheckBoxMenuItem();
         highwayMenuItem = new javax.swing.JCheckBoxMenuItem();
-        HelpMenu = new javax.swing.JMenu();
+        helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
         graphFileChooser.setCurrentDirectory(new File("."));
@@ -343,8 +345,11 @@ public class App extends javax.swing.JFrame {
         jumpLabel.setText("Nombre de sauts");
         jumpSelectorPanel.add(jumpLabel);
 
+        jumpNumberSelectorPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 5));
+
         jumpNumberSlider.setMaximum(0);
         jumpNumberSlider.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
+        jumpNumberSlider.setPreferredSize(new java.awt.Dimension(150, 20));
         jumpNumberSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sliderValueChanged(evt);
@@ -362,6 +367,15 @@ public class App extends javax.swing.JFrame {
         jumpNumberSelectorPanel.add(jumpNumberSpinner);
 
         jumpSelectorPanel.add(jumpNumberSelectorPanel);
+
+        neighborExaclyRadioButton.setText("Exactement");
+        neighborExaclyRadioButton.setEnabled(false);
+        neighborExaclyRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                neighborExaclyButtonPerformed(evt);
+            }
+        });
+        jumpSelectorPanel.add(neighborExaclyRadioButton);
 
         jumpCategorySelectorPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 20, 5));
 
@@ -725,6 +739,10 @@ public class App extends javax.swing.JFrame {
         itineraryDistanceResult.setAlignmentX(0.5F);
         itineraryDataPanel.add(itineraryDistanceResult);
 
+        twoDistanceLabel.setAlignmentX(0.5F);
+        twoDistanceLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        itineraryDataPanel.add(twoDistanceLabel);
+
         dataPanel.addTab("Itinéraires", itineraryDataPanel);
 
         getContentPane().add(dataPanel, java.awt.BorderLayout.EAST);
@@ -848,8 +866,8 @@ public class App extends javax.swing.JFrame {
 
         MenuBar.add(optionsMenu);
 
-        HelpMenu.setMnemonic(KeyEvent.VK_COMMA);
-        HelpMenu.setText("?");
+        helpMenu.setMnemonic(KeyEvent.VK_COMMA);
+        helpMenu.setText("?");
 
         aboutMenuItem.setMnemonic(KeyEvent.VK_A);
         aboutMenuItem.setText("A propos");
@@ -858,9 +876,9 @@ public class App extends javax.swing.JFrame {
                 menuItemAbout(evt);
             }
         });
-        HelpMenu.add(aboutMenuItem);
+        helpMenu.add(aboutMenuItem);
 
-        MenuBar.add(HelpMenu);
+        MenuBar.add(helpMenu);
 
         setJMenuBar(MenuBar);
 
@@ -882,8 +900,10 @@ public class App extends javax.swing.JFrame {
 		secondCityRecreationComparisonRadio.setSelected(state);
 		secondCityOpenComparisonRadio.setSelected(state);
 		citySelectorCheckBox.setEnabled(state);
+		neighborExaclyRadioButton.setEnabled(state);
 		recreationSelectorCheckBox.setEnabled(state);
 		restaurantSelectorCheckBox.setEnabled(state);
+		neighborExaclyRadioButton.setSelected(false);
 		citySelectorCheckBox.setSelected(true);
 		recreationSelectorCheckBox.setSelected(true);
 		restaurantSelectorCheckBox.setSelected(true);
@@ -974,9 +994,15 @@ public class App extends javax.swing.JFrame {
 			if (restaurantSelectorCheckBox.isSelected())
 				types.add(NodeType.RESTAURANT);
 
-			List<Node> neighborsList = researchedNode.getNeighbors(nbNeighbors);
 
-			canvas.setDisplay(researchedNode.filterByType(neighborsList,types), graph.extractDistinctLink(neighborsList));
+			List<Node> neighborsList = researchedNode.getNeighbors(nbNeighbors, linksFilter);
+
+			canvas.setDisplayLinks(graph.extractDistinctLink(neighborsList));
+
+			if (neighborExaclyRadioButton.isSelected())
+				neighborsList = researchedNode.getExaclyNeighbors(nbNeighbors, linksFilter);
+
+			canvas.setDisplayNodes(researchedNode.filterByType(neighborsList,types));
 		}
 	}
 	
@@ -994,6 +1020,7 @@ public class App extends javax.swing.JFrame {
 		linksModel.setSelectedItem(null);
 		linksModel.addAll(links);
 		
+		twoDistanceVerification();
 		canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
 		canvas.repaint();
 	}
@@ -1054,6 +1081,7 @@ public class App extends javax.swing.JFrame {
 		}
 		
 		canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
+		twoDistanceVerification();
 		canvas.repaint();
 	}
 	
@@ -1180,7 +1208,7 @@ public class App extends javax.swing.JFrame {
 						new CounterNodeType((Integer)cityItinerarySpinner.getValue(), (Integer)restaurantItinerarySpinner.getValue(), (Integer)recreationItinerarySpinner.getValue())
 				);
 				
-				itineraryDistanceResult.setText("Distance total : " + graph.getDistancePath(itinerary) + " km");
+				itineraryDistanceResult.setText("Distance totale : " + graph.getDistancePath(itinerary) + " km");
 				canvas.setDisplay(graph.getNodes(), itinerary);
 				
 			} catch (ItineraryException e) {
@@ -1226,12 +1254,14 @@ public class App extends javax.swing.JFrame {
 		Node selectedNode = (Node)((JComboBox)evt.getSource()).getSelectedItem();
 		comparisonSelectorFirstCityComboBox.setSelectedItem(selectedNode);
 		canvas.addSelected(0, selectedNode);
+		twoDistanceVerification();
     }//GEN-LAST:event_itineraryFirstComboValueChanged
 
     private void itinerarySecondComboValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_itinerarySecondComboValueChanged
 		Node selectedNode = (Node)((JComboBox)evt.getSource()).getSelectedItem();
 		comparisonSelectorSecondCityComboBox.setSelectedItem(selectedNode);
 		canvas.addSelected(1, selectedNode);
+		twoDistanceVerification();
     }//GEN-LAST:event_itinerarySecondComboValueChanged
 
     private void departmentalMenuItemValueChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_departmentalMenuItemValueChanged
@@ -1293,7 +1323,20 @@ public class App extends javax.swing.JFrame {
 				break;
 		}
     }//GEN-LAST:event_dataPanelStateChanged
+
+    private void neighborExaclyButtonPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_neighborExaclyButtonPerformed
+        displayNeighbors();
+    }//GEN-LAST:event_neighborExaclyButtonPerformed
 	
+	private void twoDistanceVerification() {
+		twoDistanceLabel.setText("");
+
+		if (departureItineraryComboBox.getSelectedItem() != null && destinationItineraryComboBox.getSelectedItem() != null){
+			if (((Node)departureItineraryComboBox.getSelectedItem()).isTwoDistance((Node)destinationItineraryComboBox.getSelectedItem(), nodesFilter, linksFilter)){
+				twoDistanceLabel.setText("Ces noeuds sont à deux distances.");
+			}	
+		}
+	}
 	/**
 	 * @param args the command line arguments
 	 */
@@ -1309,7 +1352,6 @@ public class App extends javax.swing.JFrame {
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu HelpMenu;
     private javax.swing.JMenuBar MenuBar;
     private javax.swing.JMenuItem aboutMenuItem;
     private grama.view.Canvas canvas;
@@ -1343,6 +1385,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JRadioButton firstCityRecreationComparisonRadio;
     private javax.swing.JRadioButton firstCityRestaurantComparisonRadio;
     private javax.swing.JFileChooser graphFileChooser;
+    private javax.swing.JMenu helpMenu;
     private javax.swing.JLabel highwayCounterLabel;
     private javax.swing.JCheckBoxMenuItem highwayMenuItem;
     private javax.swing.JPanel itineraryDataPanel;
@@ -1371,6 +1414,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JPanel linksSelectionPanel;
     private javax.swing.JLabel nationalCounterLabel;
     private javax.swing.JCheckBoxMenuItem nationalMenuItem;
+    private javax.swing.JRadioButton neighborExaclyRadioButton;
     private javax.swing.JSeparator neighborsSeparation;
     private javax.swing.JLabel neighborsSeparationLabel;
     private javax.swing.JPanel neighborsSeparationPanel;
@@ -1413,5 +1457,6 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JButton submitItineraryButton;
     private javax.swing.JButton submitNeighborsButton;
     private javax.swing.JPanel submitPanel;
+    private javax.swing.JLabel twoDistanceLabel;
     // End of variables declaration//GEN-END:variables
 }
