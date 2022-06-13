@@ -1,13 +1,6 @@
-package grama.test;
+package grama.model;
 
 import java.util.List;
-import grama.model.Graph;
-import grama.model.ItineraryException;
-import grama.model.Link;
-import grama.model.LinkType;
-import grama.model.LoadGraphException;
-import grama.model.Node;
-import grama.model.NodeType;
 
 /**
  * Test class for Graph

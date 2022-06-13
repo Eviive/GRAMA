@@ -1,12 +1,8 @@
-package grama.test;
+package grama.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import grama.model.Graph;
-import grama.model.ItineraryException;
-import grama.model.LoadGraphException;
-import grama.model.Node;
-import grama.model.NodeType;
 
 /**
  * Test class for Node
@@ -38,7 +34,7 @@ public class TestNode {
 			}
 			
 			if (lyon != null) {
-				System.out.println("Lyon is at two jumps from Chanas : " + lyon.isTwoDistance(chanas));
+				System.out.println("Lyon is at two jumps from Chanas : " + lyon.isTwoDistance(chanas, Arrays.asList(NodeType.values()), Arrays.asList(LinkType.values())));
 				System.out.println("Lyon is connected to more two jump cities : " + lyon.isMoreLinkedToType(chanas, NodeType.CITY));
 			}
 			
