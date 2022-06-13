@@ -63,7 +63,7 @@ public final class Link implements Comparable<Link> {
 	
 	@Override
 	public int hashCode(){
-		return Objects.hash(type,distance);
+		return Objects.hash(type, distance, departure, destination);
 	}
 	
 	@Override
@@ -76,7 +76,7 @@ public final class Link implements Comparable<Link> {
 		if (!(o instanceof Link))
 			return false;
 		Link e = (Link)o;
-		return type == e.type && distance == e.distance && (departure == e.departure || departure == e.destination);
+		return type == e.type && distance == e.distance && ((departure.equals(e.departure) && destination.equals(e.destination)) || (departure.equals(e.destination) && destination.equals(e.departure)));
 	}
 	
 	@Override

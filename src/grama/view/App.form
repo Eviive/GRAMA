@@ -78,7 +78,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="optionsMenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Options"/>
+            <Property name="text" type="java.lang.String" value="Filtres"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cityMenuItem">
@@ -113,7 +113,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="departmentalMenuItem">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value=" D&#xe9;partementales"/>
+                <Property name="text" type="java.lang.String" value="D&#xe9;partementales"/>
               </Properties>
               <Events>
                 <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="departmentalMenuItemValueChanged"/>

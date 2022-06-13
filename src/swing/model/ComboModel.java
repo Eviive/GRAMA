@@ -27,7 +27,7 @@ public class ComboModel<E extends Comparable> extends AbstractListModel<E> imple
 	
 	/**
 	 * @param i The row index
-	 * @return Returns the elemnt at the row <code>i</code>
+	 * @return Returns the element at the row <code>i</code>
 	 */
 	@Override
 	public E getElementAt(int i) {

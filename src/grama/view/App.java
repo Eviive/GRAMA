@@ -806,7 +806,7 @@ public class App extends javax.swing.JFrame {
 
         MenuBar.add(fileMenu);
 
-        optionsMenu.setText("Options");
+        optionsMenu.setText("Filtres");
 
         cityMenuItem.setSelected(true);
         cityMenuItem.setText("Villes");
