@@ -868,11 +868,18 @@ public class App extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 	
+	/**
+	 * Initializes the graph visualization
+	 */
 	private void initGraphUI(){
 		canvas.initNodes(graph.getNodes());
 		canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
 	}
 	
+	/**
+	 * Enables or disables the UI
+	 * @param state Equals to <code>true</code> if we want to activate the UI otherwise <code>false</code>
+	 */
 	private void enablePanels(boolean state) {
 		resetFilters();
 		firstCityRestaurantComparisonRadio.setSelected(state);
@@ -909,6 +916,9 @@ public class App extends javax.swing.JFrame {
 		highwayCounterLabel.setText("Autoroutes : " + graph.getNumberLinks(LinkType.HIGHWAY));
 	}
 	
+	/**
+	 * Resets the value of all the <code>JSpinners</code>
+	 */
 	private void resetValueSpinner() {
 		jumpNumberSlider.setValue(0);
 		jumpNumberSpinner.setValue(0);
@@ -917,6 +927,9 @@ public class App extends javax.swing.JFrame {
 		restaurantItinerarySpinner.setValue(0);
 	}
 	
+	/**
+	 * Compares the two cities selected in the <code>ComboBoxes</code>
+	 */
 	private void cityComparison() {
 		Node n1 = (Node)comparisonSelectorFirstCityComboBox.getSelectedItem();
 		Node n2 = (Node)comparisonSelectorSecondCityComboBox.getSelectedItem();
@@ -936,6 +949,10 @@ public class App extends javax.swing.JFrame {
 		}
 	}
 	
+	/**
+	 * Displays the <code>Node</code> in the Emplacement <code>JPanel</code>
+	 * @param node The <code>Node</code> we'll display on the UI
+	 */
 	private void displayNode(Node node) {
 		if (node == null) {
 			placeCategoryField.setText("");
@@ -945,6 +962,10 @@ public class App extends javax.swing.JFrame {
 		}
 	}
 	
+	/**
+	 * Displays the <code>Node</code> in the Route <code>JPanel</code>
+	 * @param link The link we'll display on the UI
+	 */
 	private void displayLink(Link link) {
 		linkCategoryField.setText(link.getType().toString());
 		linkDistanceField.setText(Integer.toString(link.getDistance()));
@@ -958,6 +979,9 @@ public class App extends javax.swing.JFrame {
 		linkArrivalCategoryField.setText(destination.getType().toString());
 	}
 	
+	/**
+	 * Displays the neighbors of the displayed <code>Node</code>
+	 */
 	private void displayNeighbors() {
 		Node researchedNode = graph.getNode(placeNameField.getText());
 		int nbNeighbors = jumpNumberSlider.getValue();
@@ -980,6 +1004,11 @@ public class App extends javax.swing.JFrame {
 		}
 	}
 	
+	/**
+	 * Filters all the UI by adding or removing the <code>Link</code> type
+	 * @param evt
+	 * @param type 
+	 */
 	private void filterElements(ItemEvent evt, LinkType type) {
 		if (evt.getStateChange() == ItemEvent.SELECTED) {
 			if (!linksFilter.contains(type))
@@ -998,6 +1027,11 @@ public class App extends javax.swing.JFrame {
 		canvas.repaint();
 	}
 	
+	/**
+	 * Filters all the UI by adding or removing the <code>Node</code> type
+	 * @param evt
+	 * @param type 
+	 */
 	private void filterElements(ItemEvent evt, NodeType type) {
 		boolean isSelected = evt.getStateChange() == ItemEvent.SELECTED;
 		if (isSelected) {
@@ -1057,6 +1091,9 @@ public class App extends javax.swing.JFrame {
 		canvas.repaint();
 	}
 	
+	/**
+	 * Resets all the filters
+	 */
 	private void resetFilters() {
 		cityMenuItem.setSelected(true);
 		recreationMenuItem.setSelected(true);
@@ -1066,6 +1103,9 @@ public class App extends javax.swing.JFrame {
 		highwayMenuItem.setSelected(true);
 	}
 	
+	/**
+	 * Confirms whether the user wants to exit the app or not
+	 */
 	private void confirmExit() {
 		int returnValue = JOptionPane.showConfirmDialog(this, "Souhaitez-vous vraiment quitter l'application ?", "Attention", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 		if (returnValue == JOptionPane.OK_OPTION) {
@@ -1073,6 +1113,10 @@ public class App extends javax.swing.JFrame {
 		}
 	}
 	
+	/**
+	 * Opens a graph using a <code>JFileChooser</code>
+	 * @param evt 
+	 */
     private void graphOpening(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphOpening
 		int returnValue = graphFileChooser.showOpenDialog(this);
 		if (returnValue == javax.swing.JFileChooser.APPROVE_OPTION) {
@@ -1107,6 +1151,9 @@ public class App extends javax.swing.JFrame {
 		}
     }//GEN-LAST:event_graphOpening
 	
+	/**
+	 * Closes the opened graph if there's one
+	 */
 	private void graphClosing() {
 		canvas.reset();
 		graph.reset();
@@ -1165,7 +1212,7 @@ public class App extends javax.swing.JFrame {
 			cityComparison();
 		}
     }//GEN-LAST:event_comparisonSecondComboValueChanged
-
+	
     private void submitItinerary(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitItinerary
 		Node departure = (Node)departureItineraryComboBox.getSelectedItem();
 		Node arrival = (Node)destinationItineraryComboBox.getSelectedItem();

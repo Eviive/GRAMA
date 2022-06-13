@@ -41,19 +41,31 @@ public enum LinkType {
 		}
 		throw new LoadGraphException("Le type de lien " + text + " n'est pas valide, les types autorisés sont A, N, ou D");
 	}
-
+	
+	/**
+	 * @return Returns the character used in the CSV to describe this type
+	 */
 	public char getCharID() {
 		return name.charAt(0);
 	}
 	
+	/**
+	 * @return Returns the colors used in the visualization of the graph
+	 */
 	public Color getColor(){
 		return color;
 	}
 	
+	/**
+	 * @return Returns the stroke used in the visualization of the graph
+	 */
 	public Stroke getStroke(){
 		return stroke;
 	}
 	
+	/**
+	 * @return Returns the name of this type
+	 */
 	@Override
 	public String toString() {
 		return name;

@@ -44,10 +44,16 @@ public enum NodeType {
 		throw new LoadGraphException("Le type de noeud " + text + " n'est pas valide, les types autorisés sont V, R, ou L");
 	}
 	
+	/**
+	 * @return Returns the icon that will be used in the graph visualization to represent this type
+	 */
 	public BufferedImage getImage(){
 		return image;
 	}
 	
+	/**
+	 * @return Returns the name of this type
+	 */
 	@Override
 	public String toString() {
 		return name;
