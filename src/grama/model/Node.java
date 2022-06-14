@@ -202,7 +202,7 @@ public final class Node implements Comparable<Node> {
 	 * @return Returns the <code>List</code> of all the <code>Nodes</code> of type <code>type</code> you can go to by making <code>nbJumps</code> jumps or less from this <code>Node</code>
 	 */
 	public List<Node> getFilteredNeighbors(int nbJumps, List<NodeType> types) {
-		return filterByType(Node.this.getNeighbors(nbJumps), types);
+		return filterByType(getNeighbors(nbJumps), types);
 	}
 	
 	/**
@@ -228,6 +228,7 @@ public final class Node implements Comparable<Node> {
 	 * Tells us if this <code>Node</code> is exactly at two distances from the target <code>Node</code>
 	 * @param target The targeted <code>Node</code>
 	 * @param nodesFilter filter by type of nodes requested
+	 * @param linksFilter filter by type of links requested
 	 * @return Returns <code>true</code> if the <code>Nodes</code> are at two distance from each other
 	 */
 	public boolean isTwoDistance(Node target, List<NodeType> nodesFilter, List<LinkType> linksFilter) {

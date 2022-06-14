@@ -69,7 +69,7 @@ public class App extends javax.swing.JFrame {
 			public void mouseReleased(MouseEvent e) {
 				Object clickedElement = canvas.getHover();
 				
-				if (clickedElement instanceof Node) {
+				if (clickedElement instanceof Node && dataPanel.getSelectedIndex() != 1) {
 					Node clickedNode = (Node)clickedElement;
 					displayNode(clickedNode);
 					if (!canvas.isSelected(clickedNode)) {
@@ -218,8 +218,8 @@ public class App extends javax.swing.JFrame {
         restaurantItinerarySpinner = new javax.swing.JSpinner();
         submitPanel = new javax.swing.JPanel();
         submitItineraryButton = new javax.swing.JButton();
-        itineraryDistanceResult = new javax.swing.JLabel();
         twoDistanceLabel = new javax.swing.JLabel();
+        itineraryDistanceResult = new javax.swing.JLabel();
         canvas = new grama.view.Canvas();
         MenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
@@ -244,6 +244,7 @@ public class App extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Graph Map Analysis");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setIconImage(new ImageIcon("./src/grama/view/pin.png").getImage());
         setMinimumSize(new java.awt.Dimension(750, 400));
         setPreferredSize(new java.awt.Dimension(1275, 850));
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -735,12 +736,12 @@ public class App extends javax.swing.JFrame {
 
         itineraryDataPanel.add(submitPanel);
 
-        itineraryDistanceResult.setAlignmentX(0.5F);
-        itineraryDataPanel.add(itineraryDistanceResult);
-
         twoDistanceLabel.setAlignmentX(0.5F);
         twoDistanceLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 0, 10, 0));
         itineraryDataPanel.add(twoDistanceLabel);
+
+        itineraryDistanceResult.setAlignmentX(0.5F);
+        itineraryDataPanel.add(itineraryDistanceResult);
 
         dataPanel.addTab("Itinéraires", itineraryDataPanel);
 
@@ -899,16 +900,17 @@ public class App extends javax.swing.JFrame {
 	 */
 	private void enablePanels(boolean state) {
 		resetFilters();
-		firstCityRestaurantComparisonRadio.setSelected(state);
-		firstCityRecreationComparisonRadio.setSelected(state);
-		firstCityOpenComparisonRadio.setSelected(state);
-		secondCityRestaurantComparisonRadio.setSelected(state);
-		secondCityRecreationComparisonRadio.setSelected(state);
-		secondCityOpenComparisonRadio.setSelected(state);
+		resetValueSpinner();
 		citySelectorCheckBox.setEnabled(state);
 		neighborExaclyRadioButton.setEnabled(state);
 		recreationSelectorCheckBox.setEnabled(state);
 		restaurantSelectorCheckBox.setEnabled(state);
+		firstCityRestaurantComparisonRadio.setSelected(false);
+		firstCityRecreationComparisonRadio.setSelected(false);
+		firstCityOpenComparisonRadio.setSelected(false);
+		secondCityRestaurantComparisonRadio.setSelected(false);
+		secondCityRecreationComparisonRadio.setSelected(false);
+		secondCityOpenComparisonRadio.setSelected(false);
 		neighborExaclyRadioButton.setSelected(false);
 		citySelectorCheckBox.setSelected(true);
 		recreationSelectorCheckBox.setSelected(true);
@@ -927,6 +929,8 @@ public class App extends javax.swing.JFrame {
 		linkDepartureCategoryField.setText("");
 		linkArrivalNameField.setText("");
 		linkArrivalCategoryField.setText("");
+		twoDistanceLabel.setText("");
+		itineraryDistanceResult.setText("");
 		cityCounterLabel.setText("Villes : " + graph.getNumberNodes(NodeType.CITY));
 		restaurantCounterLabel.setText("Restaurants : " + graph.getNumberNodes(NodeType.RESTAURANT));
 		recreationCounterLabel.setText("Loisirs : " + graph.getNumberNodes(NodeType.RECREATION));
@@ -1212,7 +1216,7 @@ public class App extends javax.swing.JFrame {
     }//GEN-LAST:event_windowClosing
 
     private void menuItemAbout(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAbout
-        JOptionPane.showConfirmDialog(this, "Graph Map Analysis - Application Java - Version 1.0", "A propos", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showConfirmDialog(this, "Graph Map Analysis - Application Java - Version 1.0\nGitHub repository: https://github.com/Eviive/GRAMA", "A propos", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_menuItemAbout
 
     private void sliderValueChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderValueChanged
@@ -1267,6 +1271,7 @@ public class App extends javax.swing.JFrame {
 
     private void nodeSearchbar(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeSearchbar
 		Node search = graph.getNode(placeNameField.getText());
+		canvas.addSelected(0, search);
 		displayNode(search);
 		jumpNumberSpinner.setValue(0);
 		jumpNumberSlider.setValue(0);
@@ -1283,6 +1288,7 @@ public class App extends javax.swing.JFrame {
     private void menuItemRefresh(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRefresh
 		if (!graph.getNodeMap().isEmpty()) {
 			enablePanels(true);
+			canvas.resetSelected();
 			canvas.setDisplay(graph.getNodes(), graph.getDistinctLinks());
 		}
     }//GEN-LAST:event_menuItemRefresh
@@ -1357,6 +1363,7 @@ public class App extends javax.swing.JFrame {
 				canvas.addSelected(1, null);
 				break;
 			case 1:
+				canvas.resetSelected();
 				Link displayedLink = (Link)linksComboBox.getSelectedItem();
 				if (displayedLink != null) {
 					canvas.addSelected(0, displayedLink.getDeparture());
@@ -1386,10 +1393,11 @@ public class App extends javax.swing.JFrame {
 
 		if (departureItineraryComboBox.getSelectedItem() != null && destinationItineraryComboBox.getSelectedItem() != null){
 			if (((Node)departureItineraryComboBox.getSelectedItem()).isTwoDistance((Node)destinationItineraryComboBox.getSelectedItem(), nodesFilter, linksFilter)){
-				twoDistanceLabel.setText("Ces noeuds sont à deux distances.");
-			}	
+				twoDistanceLabel.setText("Ces noeuds sont à 2-distance.");
+			}
 		}
 	}
+	
 	/**
 	 * @param args the command line arguments
 	 */

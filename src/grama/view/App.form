@@ -169,6 +169,9 @@
     <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
       <Color id="Default Cursor"/>
     </Property>
+    <Property name="iconImage" type="java.awt.Image" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+      <Connection code="new ImageIcon(&quot;./src/grama/view/pin.png&quot;).getImage()" type="code"/>
+    </Property>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[750, 400]"/>
     </Property>
@@ -1138,11 +1141,6 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JLabel" name="itineraryDistanceResult">
-              <Properties>
-                <Property name="alignmentX" type="float" value="0.5"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="twoDistanceLabel">
               <Properties>
                 <Property name="alignmentX" type="float" value="0.5"/>
@@ -1151,6 +1149,11 @@
                     <EmptyBorder bottom="10" left="0" right="0" top="10"/>
                   </Border>
                 </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="itineraryDistanceResult">
+              <Properties>
+                <Property name="alignmentX" type="float" value="0.5"/>
               </Properties>
             </Component>
           </SubComponents>
