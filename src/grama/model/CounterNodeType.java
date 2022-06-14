@@ -12,11 +12,11 @@ public final class CounterNodeType {
 	
 	private Map<NodeType, Integer> mapCounter = new HashMap<>();
 	
-	public CounterNodeType(){
+	public CounterNodeType() {
 		reset();
 	}
 	
-	public CounterNodeType(int cities, int retaurants, int recreations){
+	public CounterNodeType(int cities, int retaurants, int recreations) {
 		this();
 		mapCounter.put(NodeType.CITY,cities);
 		mapCounter.put(NodeType.RESTAURANT,retaurants);
@@ -27,7 +27,7 @@ public final class CounterNodeType {
 	 * Updates the number of needed types
 	 * @param nodes The <code>List</code> of <code>Nodes</code> in which we will count
 	 */
-	public void update(List<Node> nodes){
+	public void update(List<Node> nodes) {
 		reset();
 		nodes.stream()
 			 .distinct()
@@ -37,8 +37,8 @@ public final class CounterNodeType {
 	/**
 	 * Resets all the needed types
 	 */
-	public void reset(){
-		for (NodeType NodeType : NodeType.values()){
+	public void reset() {
+		for (NodeType NodeType : NodeType.values()) {
 			mapCounter.put(NodeType, 0);
 		}
 	}
@@ -47,7 +47,7 @@ public final class CounterNodeType {
 	 * Increments by 1 the type <code>type</code>
 	 * @param type The type of <code>Node</code> we want to increment
 	 */
-	public void incrementType(NodeType type){
+	public void incrementType(NodeType type) {
 		mapCounter.put(type, mapCounter.get(type)+1);
 	}
 	
@@ -62,15 +62,15 @@ public final class CounterNodeType {
 	 * @param type The type we want to get the number from
 	 * @return Returns the number of <code>Nodes</code> we need to go through of type <code>type</code>
 	 */
-	public int getNumber(NodeType type){
+	public int getNumber(NodeType type) {
 		return mapCounter.get(type);
 	}
 	
 	/**
-	 * @param objectif 
+	 * @param objectif The object representing the number of elements we need to go through
 	 * @return Returns the type of <code>Nodes</code> we miss
 	 */
-	public NodeType getInsufisantType(CounterNodeType objectif){
+	public NodeType getInsufisantType(CounterNodeType objectif) {
 		return mapCounter.entrySet().stream()
 									.filter(counter -> counter.getValue() < objectif.getMapCounter().get(counter.getKey()))
 									.map(counter -> counter.getKey())

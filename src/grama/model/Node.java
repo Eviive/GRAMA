@@ -85,7 +85,7 @@ public final class Node implements Comparable<Node> {
 	/**
 	 * @param neighbor A neighbor of this node
 	 * @return The list of paths to the same neighbor
-	 * @throws ItineraryException 
+	 * @throws ItineraryException If the itinerary is not possible
 	 */
 	public List<Link> getPaths(Node neighbor) throws ItineraryException {
 		List<Link> paths = linkList.stream()
@@ -101,7 +101,7 @@ public final class Node implements Comparable<Node> {
 	 /**
 	 * @param neighbor A neighbor of this node
 	 * @return The <code>shortest</code> path to a neighbor node
-	 * @throws ItineraryException
+	 * @throws ItineraryException If the itinerary is not possible
 	 */
 	public Link getShortestPath(Node neighbor) throws ItineraryException {
 		int distance = Integer.MAX_VALUE;

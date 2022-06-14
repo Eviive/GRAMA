@@ -198,7 +198,7 @@ public final class Graph {
 	/**
 	 * @param path A list of link representing a path
 	 * @return The total distance in kilometer
-	 * @throws ItineraryException 
+	 * @throws ItineraryException If the itinerary is not possible
 	 */
 	public int getDistancePath(List<Link> path) throws ItineraryException{
 		
@@ -222,7 +222,7 @@ public final class Graph {
 	 * @param departure The starting node
 	 * @param arrival The arrival node
 	 * @return A list of link representing the shortest path between 2 places
-	 * @throws ItineraryException 
+	 * @throws ItineraryException If the itinerary is not possible
 	 */
 	public List<Link> getShortestItinerary(Node departure, Node arrival) throws ItineraryException {
 		return getShortestItinerary(departure, arrival, Arrays.asList(NodeType.values()), Arrays.asList(LinkType.values()));
@@ -235,7 +235,7 @@ public final class Graph {
 	 * @param nodeTypes The list of <code>Node</code> types we want
 	 * @param linkTypes The list of <code>Link</code> types we want
 	 * @return A list of link representing the shortest path between 2 places
-	 * @throws ItineraryException 
+	 * @throws ItineraryException If the itinerary is not possible
 	 */
 	public List<Link> getShortestItinerary(Node departure, Node arrival, List<NodeType> nodeTypes, List<LinkType> linkTypes) throws ItineraryException{
 		
@@ -309,8 +309,8 @@ public final class Graph {
 	 * @param nodeTypes The list of <code>Node</code> types we want
 	 * @param linkTypes The list of <code>Link</code> types we want
 	 * @param objectif The object telling us how many nodes of a certain type we need to go through
-	 * @return
-	 * @throws ItineraryException 
+	 * @return Returns a <code>List</code> of <code>Links</code> representing the path of the itinerary
+	 * @throws ItineraryException If the itinerary is not possible
 	 */
 	public List<Link> getShortestItinerary(Node departure, Node arrival, List<NodeType> nodeTypes, List<LinkType> linkTypes, CounterNodeType objectif) throws ItineraryException{
 
@@ -356,7 +356,7 @@ public final class Graph {
 	 * @param linksfilter The <code>List</code> of <code>Link</code> types we want
 	 * @param Nodesfilter The <code>List</code> of <code>Node</code> types we want
 	 * @return Returns the nearest <code>Node</code> with the right type
-	 * @throws ItineraryException 
+	 * @throws ItineraryException If the itinerary is not possible
 	 */
 	private Node getNearestNode(Node departure, NodeType type, List<Node> treated, List<LinkType> linksfilter, List<NodeType> nodesfilter) throws ItineraryException {
 		Node nearestNode = null;

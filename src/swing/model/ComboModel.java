@@ -10,7 +10,7 @@ import javax.swing.ComboBoxModel;
  * The class representing a graph
  * @author VAILLON Albert
  * @version JDK 11.0.13
- * @param <E> The type of object of the model
+ * @param <E> The type of object the ComboBox will contain (the toString method will automatically be called to display text in the UI)
  */
 public class ComboModel<E extends Comparable> extends AbstractListModel<E> implements ComboBoxModel<E> {
 	

@@ -74,7 +74,6 @@ public class App extends javax.swing.JFrame {
 					displayNode(clickedNode);
 					if (!canvas.isSelected(clickedNode)) {
 						if (dataPanel.getSelectedIndex() == 0) {
-							canvas.addSelected(0, clickedNode);
 							firstNodeListModel.setSelectedItem(clickedNode);
 							if (clickedNode.getType() == NodeType.CITY) {
 								firstCityListModel.setSelectedItem(clickedNode);
@@ -221,7 +220,7 @@ public class App extends javax.swing.JFrame {
         twoDistanceLabel = new javax.swing.JLabel();
         itineraryDistanceResult = new javax.swing.JLabel();
         canvas = new grama.view.Canvas();
-        MenuBar = new javax.swing.JMenuBar();
+        menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
         refreshMenuItem = new javax.swing.JMenuItem();
@@ -805,7 +804,7 @@ public class App extends javax.swing.JFrame {
         });
         fileMenu.add(exitMenuItem);
 
-        MenuBar.add(fileMenu);
+        menuBar.add(fileMenu);
 
         optionsMenu.setText("Filtres");
 
@@ -864,7 +863,7 @@ public class App extends javax.swing.JFrame {
         });
         optionsMenu.add(highwayMenuItem);
 
-        MenuBar.add(optionsMenu);
+        menuBar.add(optionsMenu);
 
         helpMenu.setMnemonic(KeyEvent.VK_COMMA);
         helpMenu.setText("?");
@@ -878,9 +877,9 @@ public class App extends javax.swing.JFrame {
         });
         helpMenu.add(aboutMenuItem);
 
-        MenuBar.add(helpMenu);
+        menuBar.add(helpMenu);
 
-        setJMenuBar(MenuBar);
+        setJMenuBar(menuBar);
 
         pack();
         setLocationRelativeTo(null);
@@ -1413,7 +1412,6 @@ public class App extends javax.swing.JFrame {
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuBar MenuBar;
     private javax.swing.JMenuItem aboutMenuItem;
     private grama.view.Canvas canvas;
     private javax.swing.JLabel cityComparisonLabel;
@@ -1473,6 +1471,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel linkcategoryLabel;
     private javax.swing.JComboBox<Link> linksComboBox;
     private javax.swing.JPanel linksSelectionPanel;
+    private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel nationalCounterLabel;
     private javax.swing.JCheckBoxMenuItem nationalMenuItem;
     private javax.swing.JRadioButton neighborExaclyRadioButton;

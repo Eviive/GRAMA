@@ -57,6 +57,10 @@ public class Canvas extends JPanel {
 		});
 	}
 	
+	/**
+	 * Invoked by Swing to draw components
+	 * @param g The Graphics class is the abstract class for all graphics contexts that allow an application to draw onto components
+	 */
 	@Override
 	public void paint(Graphics g){
 		graphic = (Graphics2D)g;
